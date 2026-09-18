@@ -1,308 +1,555 @@
-
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Briefcase, TrendingUp, Users, Download, ArrowRight } from 'lucide-react';
-import { Helmet } from 'react-helmet';
-import { Button } from '@/components/ui/button';
-import ThemeToggle from '@/components/layout/ThemeToggle';
-import LanguageToggle from '@/components/layout/LanguageToggle';
-import { useLanguage } from '@/contexts/LanguageContext';
-import BrandHeader from '@/components/layout/BrandHeader';
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  CheckCircle2,
+  ClipboardList,
+  Download,
+  FileSpreadsheet,
+  MapPin,
+  Plus,
+  Users,
+  Wrench,
+} from "lucide-react";
+import { Helmet } from "react-helmet";
+import ThemeToggle from "@/components/layout/ThemeToggle";
+import LanguageToggle from "@/components/layout/LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
+import "./LandingPage.css";
 
 export default function LandingPage() {
   const { language } = useLanguage();
-  const isEn = language === 'en';
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
-
+  const isEn = language === "en";
+  const t = (es, en) => (isEn ? en : es);
+  const jobs = [
+    [
+      t("Revisión de cámara de frío", "Cold room inspection"),
+      t("Cocina central", "Central kitchen"),
+      t("En curso", "In progress"),
+      "active",
+    ],
+    [
+      t("Mantenimiento de horno", "Oven maintenance"),
+      t("Planta de producción", "Production facility"),
+      t("Completado", "Completed"),
+      "done",
+    ],
+    [
+      t("Control de extracción", "Extraction inspection"),
+      t("Comedor corporativo", "Corporate dining"),
+      t("Pendiente", "Pending"),
+      "pending",
+    ],
+  ];
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+    <div className="tracking-landing">
       <Helmet>
-        <title>App de seguimiento laboral</title>
+        <title>
+          {t(
+            "Tracking · ServiFood | Control de tu operación",
+            "Tracking · ServiFood | Your operation under control",
+          )}
+        </title>
+        <meta
+          name="description"
+          content={t(
+            "Trabajos, costos, equipos y reportes en un solo lugar. Conocé Tracking, la herramienta de seguimiento operativo de ServiFood.",
+            "Jobs, costs, teams and reports in one place. Discover Tracking by ServiFood.",
+          )}
+        />
       </Helmet>
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl dark:border-slate-800/60 dark:bg-slate-950/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between sm:justify-end">
-            <div className="flex sm:hidden items-center gap-2">
-              <LanguageToggle />
-              <ThemeToggle />
-            </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="hidden sm:flex items-center gap-2">
-                <LanguageToggle />
-                <ThemeToggle />
-              </div>
-              <Link to="/login">
-                <Button
-                  variant="ghost"
-                  className="hidden sm:inline-flex text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/70"
-                >
-                  {isEn ? 'Sign in' : 'Iniciar Sesión'}
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button className="h-10 text-sm px-5 rounded-full shadow-lg shadow-blue-900/40">
-                  {isEn ? 'Create account' : 'Crear cuenta'}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="relative flex-1 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          <BrandHeader />
-        </div>
-        {/* Background gradient + glow */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950" />
-        <div className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-blue-400/30 blur-[140px] opacity-70 dark:bg-blue-600/40" />
-        <div className="pointer-events-none absolute bottom-[-160px] right-[-80px] h-[420px] w-[420px] rounded-full bg-indigo-300/25 blur-[140px] opacity-70 dark:bg-indigo-500/30" />
-
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 -z-10 opacity-[0.06] dark:opacity-[0.12] [background-image:radial-gradient(circle_at_1px_1px,#64748b_1px,transparent_0)] [background-size:32px_32px]" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 lg:pt-24 lg:pb-32">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            transition={{ duration: 0.6 }}
-            variants={fadeIn}
-            className="grid gap-12 items-center"
+      <a className="tracking-skip" href="#contenido">
+        {t("Ir al contenido", "Skip to content")}
+      </a>
+      <header className="tracking-header">
+        <nav
+          className="tracking-container tracking-nav"
+          aria-label={t("Navegación principal", "Main navigation")}
+        >
+          <a
+            href="#"
+            className="tracking-brand"
+            aria-label="ServiFood Tracking"
           >
-            {/* Left column - copy */}
-            <div className="text-center flex flex-col items-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white/90 px-3 py-1 text-xs sm:text-sm text-slate-700 mb-4 shadow-sm shadow-slate-900/10 dark:border-slate-700/70 dark:bg-slate-900/60 dark:text-slate-300 dark:shadow-slate-900/40">
-                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-semibold">
-                  ●
-                </span>
-                <span className="font-medium">
-                  {isEn ? 'Organize all your jobs and costs in one place' : 'Organizá tus trabajos y costos en un solo lugar'}
-                </span>
+            <img src="/servifood_logo_white_text_HQ.png" alt="ServiFood" />
+            <span>TRACKING</span>
+          </a>
+          <div className="tracking-nav-sections">
+            <a href="#plataforma">{t("Plataforma", "Platform")}</a>
+            <a href="#flujo">{t("Cómo funciona", "How it works")}</a>
+          </div>
+          <div className="tracking-nav-actions">
+            <LanguageToggle className="tracking-toggle" />
+            <ThemeToggle className="tracking-toggle tracking-theme" />
+            <Link className="tracking-signin" to="/login">
+              {t("Ingresar", "Sign in")}
+              <ArrowUpRight size={15} />
+            </Link>
+          </div>
+        </nav>
+      </header>
+      <main id="contenido">
+        <section className="tracking-hero">
+          <div className="tracking-container tracking-hero-grid">
+            <div className="tracking-hero-copy">
+              <div className="tracking-eyebrow">
+                <span className="tracking-dot" />
+                {t(
+                  "GESTIÓN OPERATIVA · SERVIFOOD",
+                  "OPERATIONS MANAGEMENT · SERVIFOOD",
+                )}
               </div>
-
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-4">
-                <span className="block leading-[1.05]">{isEn ? 'Professional tracking' : 'Seguimiento profesional'}</span>
-                <span className="block bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-500 bg-clip-text text-transparent dark:from-blue-300 dark:via-sky-400 dark:to-indigo-300">
-                  {isEn ? 'for your daily work' : 'para tu trabajo diario'}
-                </span>
+              <h1>
+                {t("Cada trabajo.", "Every job.")}
+                <br />
+                {t("Cada detalle.", "Every detail.")}
+                <br />
+                <em>{t("Bajo control.", "Under control.")}</em>
               </h1>
-
-              <p className="mt-4 max-w-xl text-base sm:text-lg text-slate-700 dark:text-slate-300/90 leading-relaxed">
-                {isEn
-                  ? 'Log jobs, control costs, manage teams and generate reports ready to share. Designed for professionals and teams who want to move beyond spreadsheets.'
-                  : 'Registra trabajos, controla costos, gestiona equipos y genera reportes listos para enviar a tu estudio contable. Pensado para profesionales y equipos que quieren dejar atrás las planillas manuales.'}
+              <p>
+                {t(
+                  "Conectá lo que pasa en campo con las decisiones de tu operación. Trabajos, costos y equipos, con el seguimiento que necesitás.",
+                  "Connect work in the field with your operational decisions. Jobs, costs and teams, with the tracking you need.",
+                )}
               </p>
-
-              <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
-                <Link to="/register" className="sm:w-auto">
-                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                    <Button className="w-full sm:w-auto h-12 sm:h-14 text-sm sm:text-base rounded-full px-7 sm:px-8 shadow-xl shadow-blue-900/40">
-                      {isEn ? 'Try it free now' : 'Probar gratis ahora'}
-                      <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-                    </Button>
-                  </motion.div>
+              <div className="tracking-hero-actions">
+                <Link
+                  to="/register"
+                  className="tracking-button tracking-button-accent"
+                >
+                  {t("Crear mi cuenta", "Create my account")}
+                  <ArrowRight size={18} />
                 </Link>
-
-                <Link to="/login" className="sm:w-auto">
-                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                    <Button
-                      variant="outline"
-                      className="w-full sm:w-auto h-12 sm:h-14 rounded-full border-slate-300 bg-white/70 text-slate-900 hover:bg-slate-100 dark:border-slate-600 dark:bg-transparent dark:text-slate-100 dark:hover:bg-slate-900/60"
-                    >
-                      {isEn ? 'I already have an account' : 'Ya tengo cuenta'}
-                    </Button>
-                  </motion.div>
-                </Link>
+                <a href="#plataforma" className="tracking-text-link">
+                  {t("Explorar la plataforma", "Explore the platform")}
+                  <ArrowDownIcon />
+                </a>
               </div>
-
-              {/* Stats */}
-              <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 max-w-lg mx-auto">
-                <StatsCard value="+30%" label={isEn ? 'Better work visibility' : 'Mejor visibilidad del trabajo'} />
-                <StatsCard value="-6h" label={isEn ? 'Less time on spreadsheets/month' : 'Menos tiempo en planillas al mes'} />
-                <StatsCard value="100%" label={isEn ? 'Data ready for accounting' : 'Datos listos para contabilidad'} className="hidden sm:flex" />
+              <div className="tracking-hero-note">
+                <Check size={14} />
+                {t(
+                  "Del primer registro al reporte final.",
+                  "From the first entry to the final report.",
+                )}
               </div>
             </div>
-
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-18 lg:py-20 bg-background border-t border-slate-200/70 dark:border-slate-800/70">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <motion.h2
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-xs font-semibold tracking-[0.25em] text-slate-400 uppercase mb-3"
-            >
-              {isEn ? 'Key benefits' : 'Beneficios clave'}
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.08 }}
-              className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 dark:text-slate-50"
-            >
-              {isEn ? 'Everything you need to control your operation' : 'Todo lo que necesitás para tener el control de tu operación'}
-            </motion.p>
+            <div className="tracking-hero-visual">
+              <div className="tracking-photo-frame">
+                <img
+                  className="tracking-operation-photo"
+                  src="/images/tracking-operation.webp"
+                  width="1536"
+                  height="1024"
+                  alt={t(
+                    "Técnico inspeccionando equipamiento de una cocina industrial",
+                    "Technician inspecting commercial kitchen equipment",
+                  )}
+                  fetchPriority="high"
+                />
+                <div className="tracking-photo-caption">
+                  <span>01 / {t("EN CAMPO", "IN THE FIELD")}</span>
+                  <span>
+                    {t("Donde el trabajo sucede.", "Where work happens.")}
+                  </span>
+                </div>
+              </div>
+              <div className="tracking-job-card">
+                <div className="tracking-job-card-top">
+                  <span className="tracking-icon-box">
+                    <Wrench size={19} />
+                  </span>
+                  <span className="tracking-status active">
+                    {t("En curso", "In progress")}
+                  </span>
+                </div>
+                <small>{t("SEGUIMIENTO DE TRABAJO", "JOB TRACKING")}</small>
+                <h3>
+                  {t("Mantenimiento preventivo", "Preventive maintenance")}
+                </h3>
+                <p>
+                  <MapPin size={13} />
+                  {t(
+                    "Cocina central · Equipo de frío",
+                    "Central kitchen · Cooling equipment",
+                  )}
+                </p>
+                <div className="tracking-job-progress">
+                  <span />
+                </div>
+                <div className="tracking-job-card-bottom">
+                  <span>
+                    <span className="tracking-avatar">ML</span>
+                    {t("Responsable asignado", "Owner assigned")}
+                  </span>
+                  <CheckCircle2 size={17} />
+                </div>
+              </div>
+              <span className="tracking-visual-label">
+                {t(
+                  "Vista ilustrativa del seguimiento",
+                  "Illustrative tracking preview",
+                )}
+              </span>
+            </div>
           </div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-80px' }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7"
-          >
-            <BenefitCard
-              icon={Briefcase}
-              title={isEn ? 'Job management' : 'Gestión de trabajos'}
-              desc={isEn ? 'Log each job with hours, costs, location and key notes so nothing is missed.' : 'Registrá cada trabajo con horas, costos, ubicación y notas clave para no perder ningún detalle.'}
-            />
-            <BenefitCard
-              icon={TrendingUp}
-              title={isEn ? 'Financial control' : 'Control financiero'}
-              desc={isEn ? 'Clear tracking of income and expenses, with monthly views to ease decisions.' : 'Seguimiento claro de ingresos y gastos, con vistas mensuales que facilitan la toma de decisiones.'}
-            />
-            <BenefitCard
-              icon={Users}
-              title={isEn ? 'Teamwork' : 'Trabajo en equipo'}
-              desc={isEn ? 'Create groups, assign responsibilities and keep everyone on the same page.' : 'Organizá grupos, asigná responsabilidades y mantené a todo el equipo en la misma página.'}
-            />
-            <BenefitCard
-              icon={Download}
-              title={isEn ? 'Instant reports' : 'Reportes instantáneos'}
-              desc={isEn ? 'Generate Excel reports ready to send to accounting or share with clients.' : 'Generá reportes en Excel listos para enviar a tu estudio contable o compartir con tus clientes.'}
-            />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 dark:text-slate-50">
-              {isEn ? 'How does it work?' : '¿Cómo funciona?'}
-            </h2>
-            <p className="mt-4 text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl mx-auto">
-              {isEn
-                ? 'Get organized in three simple steps. No long implementations, no unnecessary complexity.'
-                : 'Empezá a ordenar tu negocio en tres pasos simples. Sin implementaciones largas, sin complejidad innecesaria.'}
-            </p>
+          <div className="tracking-container tracking-capabilities">
+            {[
+              [ClipboardList, t("Trabajos organizados", "Organized jobs")],
+              [Users, t("Equipos conectados", "Connected teams")],
+              [Wrench, t("Operación visible", "Visible operations")],
+              [FileSpreadsheet, t("Reportes claros", "Clear reports")],
+            ].map(([Icon, label]) => (
+              <div key={label}>
+                <Icon size={18} />
+                <span>{label}</span>
+              </div>
+            ))}
           </div>
+        </section>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="relative grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12"
+        <section id="plataforma" className="tracking-platform tracking-section">
+          <div className="tracking-container">
+            <div className="tracking-section-heading">
+              <div>
+                <div className="tracking-eyebrow">
+                  {t(
+                    "VISIBILIDAD PARA DECIDIR",
+                    "VISIBILITY TO MAKE DECISIONS",
+                  )}
+                </div>
+                <h2>
+                  {t("Toda la operación.", "Your entire operation.")}
+                  <br />
+                  <span>{t("Una mirada clara.", "One clear view.")}</span>
+                </h2>
+              </div>
+              <p>
+                {t(
+                  "Menos información dispersa. Más contexto para saber qué se hizo, quién lo hizo y cuánto costó.",
+                  "Less scattered information. More context to know what was done, who did it and what it cost.",
+                )}
+              </p>
+            </div>
+            <div className="tracking-workspace">
+              <aside className="tracking-workspace-sidebar" aria-hidden="true">
+                <span className="tracking-mini-brand">
+                  S<span>F</span>
+                  <i />
+                </span>
+                <ClipboardList size={21} />
+                <Users size={21} />
+                <FileSpreadsheet size={21} />
+                <Wrench size={21} />
+              </aside>
+              <div className="tracking-workspace-main">
+                <div className="tracking-workspace-top">
+                  <div>
+                    <small>WORKSPACE / {t("OPERACIÓN", "OPERATIONS")}</small>
+                    <h3>{t("Resumen de trabajos", "Job overview")}</h3>
+                  </div>
+                  <span className="tracking-preview-label">
+                    {t("Vista ilustrativa", "Illustrative preview")}
+                  </span>
+                </div>
+                <div className="tracking-kpis">
+                  {[
+                    ["12", t("Trabajos registrados", "Registered jobs")],
+                    ["04", t("En curso", "In progress")],
+                    ["08", t("Completados", "Completed")],
+                  ].map(([value, label]) => (
+                    <div key={label}>
+                      <span>{label}</span>
+                      <strong>{value}</strong>
+                      <span className="tracking-kpi-line" />
+                    </div>
+                  ))}
+                </div>
+                <div className="tracking-job-table">
+                  <div className="tracking-table-heading">
+                    <span>{t("TRABAJO / UBICACIÓN", "JOB / LOCATION")}</span>
+                    <span>{t("ESTADO", "STATUS")}</span>
+                  </div>
+                  {jobs.map(([name, location, status, kind]) => (
+                    <div className="tracking-table-row" key={name}>
+                      <div className="tracking-table-job">
+                        <span className="tracking-table-icon">
+                          <Wrench size={16} />
+                        </span>
+                        <div>
+                          <strong>{name}</strong>
+                          <small>{location}</small>
+                        </div>
+                      </div>
+                      <span className={`tracking-status ${kind}`}>
+                        {status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="tracking-workspace-callout">
+                <span className="tracking-eyebrow">
+                  {t("DEL DATO A LA ACCIÓN", "FROM DATA TO ACTION")}
+                </span>
+                <h3>
+                  {t(
+                    "El detalle hace la diferencia.",
+                    "The details make the difference.",
+                  )}
+                </h3>
+                <p>
+                  {t(
+                    "Horas, ubicaciones, responsables y notas. Cada registro suma contexto para tu próximo paso.",
+                    "Hours, locations, owners and notes. Every entry adds context for your next step.",
+                  )}
+                </p>
+                <a href="#flujo">
+                  {t("Conocé el flujo de trabajo", "Discover the workflow")}
+                  <ArrowUpRight size={19} />
+                </a>
+                <div className="tracking-record">
+                  <CheckCircle2 size={24} />
+                  <div>
+                    <strong>
+                      {t("Información conectada", "Connected information")}
+                    </strong>
+                    <small>
+                      {t(
+                        "Un mismo lugar para todo el equipo",
+                        "One place for the whole team",
+                      )}
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="tracking-benefits">
+              <article className="tracking-benefit">
+                <div className="tracking-finance-visual" aria-hidden="true">
+                  <div>
+                    <small>
+                      {t("DISTRIBUCIÓN DE COSTOS", "COST BREAKDOWN")}
+                    </small>
+                    <div className="tracking-cost-bar">
+                      <i />
+                      <i />
+                      <i />
+                    </div>
+                    <div className="tracking-cost-legend">
+                      <span>{t("Materiales", "Materials")}</span>
+                      <span>{t("Mano de obra", "Labor")}</span>
+                      <span>{t("Otros", "Other")}</span>
+                    </div>
+                  </div>
+                </div>
+                <span className="tracking-card-number">
+                  01 / {t("COSTOS", "COSTS")}
+                </span>
+                <h3>
+                  {t("Cada costo, en contexto.", "Every cost, in context.")}
+                </h3>
+                <p>
+                  {t(
+                    "Relacioná ingresos y gastos con tus trabajos. Entendé tus números sin reconstruir planillas.",
+                    "Connect income and expenses to your jobs. Understand your numbers without rebuilding spreadsheets.",
+                  )}
+                </p>
+              </article>
+              <article className="tracking-benefit">
+                <div className="tracking-team-visual" aria-hidden="true">
+                  <div className="tracking-team-avatars">
+                    <span>ML</span>
+                    <span>JR</span>
+                    <span>AC</span>
+                    <span>
+                      <Plus size={18} />
+                    </span>
+                  </div>
+                  <div className="tracking-team-line">
+                    <span />
+                    <CheckCircle2 size={20} />
+                    <span />
+                  </div>
+                  <small>
+                    {t(
+                      "UN EQUIPO. LA MISMA INFORMACIÓN.",
+                      "ONE TEAM. THE SAME INFORMATION.",
+                    )}
+                  </small>
+                </div>
+                <span className="tracking-card-number">
+                  02 / {t("EQUIPOS", "TEAMS")}
+                </span>
+                <h3>
+                  {t("Responsabilidades claras.", "Clear responsibilities.")}
+                </h3>
+                <p>
+                  {t(
+                    "Organizá grupos y asigná responsables. Que cada persona sepa dónde aportar y qué seguir.",
+                    "Organize groups and assign owners. Help everyone know where to contribute and what to track.",
+                  )}
+                </p>
+              </article>
+              <article className="tracking-benefit">
+                <div className="tracking-report-visual" aria-hidden="true">
+                  <div className="tracking-report-file">
+                    <FileSpreadsheet size={28} />
+                    <div>
+                      <strong>{t("Reporte de trabajos", "Job report")}</strong>
+                      <small>Excel · .xlsx</small>
+                    </div>
+                    <Download size={19} />
+                  </div>
+                  <span className="tracking-report-lines" />
+                </div>
+                <span className="tracking-card-number">
+                  03 / {t("REPORTES", "REPORTS")}
+                </span>
+                <h3>{t("Listos para compartir.", "Ready to share.")}</h3>
+                <p>
+                  {t(
+                    "Convertí tus registros en reportes de Excel para tu equipo, tus clientes o tu estudio contable.",
+                    "Turn your records into Excel reports for your team, your clients or your accountant.",
+                  )}
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="flujo" className="tracking-flow tracking-section">
+          <div className="tracking-container tracking-flow-grid">
+            <div>
+              <div className="tracking-eyebrow">
+                {t("UN FLUJO SIMPLE", "A SIMPLE WORKFLOW")}
+              </div>
+              <h2>
+                {t("Del trabajo diario", "From daily work")}
+                <br />
+                {t("a una visión completa.", "to the full picture.")}
+              </h2>
+              <p>
+                {t(
+                  "Una forma más ordenada de trabajar, de principio a fin.",
+                  "A more organized way to work, from start to finish.",
+                )}
+              </p>
+              <Link to="/register" className="tracking-text-link">
+                {t("Empezar ahora", "Get started")}
+                <ArrowRight size={18} />
+              </Link>
+              <div className="tracking-flow-stamp">
+                <Wrench size={27} />
+                <span>
+                  TRACKING
+                  <br />
+                  <small>BY SERVIFOOD</small>
+                </span>
+              </div>
+            </div>
+            <ol className="tracking-steps">
+              {[
+                [
+                  t("Prepará tu espacio", "Set up your workspace"),
+                  t(
+                    "Creá tu cuenta y organizá la información de tu equipo.",
+                    "Create your account and organize your team information.",
+                  ),
+                  Users,
+                ],
+                [
+                  t("Registrá lo que pasa", "Record what happens"),
+                  t(
+                    "Cargá trabajos, horas, ubicaciones y gastos asociados.",
+                    "Add jobs, hours, locations and associated expenses.",
+                  ),
+                  ClipboardList,
+                ],
+                [
+                  t(
+                    "Convertí registros en decisiones",
+                    "Turn records into decisions",
+                  ),
+                  t(
+                    "Revisá resultados y exportá reportes para planificar lo que sigue.",
+                    "Review results and export reports to plan your next steps.",
+                  ),
+                  FileSpreadsheet,
+                ],
+              ].map(([title, description, Icon], i) => (
+                <li key={title}>
+                  <span className="tracking-step-number">0{i + 1}</span>
+                  <div>
+                    <Icon size={23} />
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+        <section className="tracking-cta">
+          <div className="tracking-container tracking-cta-inner">
+            <div>
+              <div className="tracking-eyebrow">
+                {t("TU PRÓXIMO PASO", "YOUR NEXT STEP")}
+              </div>
+              <h2>
+                {t("Más claridad.", "More clarity.")}
+                <br />
+                {t("Mejor operación.", "Better operations.")}
+              </h2>
+            </div>
+            <div>
+              <p>
+                {t(
+                  "Dale a cada trabajo el seguimiento que merece.",
+                  "Give every job the tracking it deserves.",
+                )}
+              </p>
+              <Link
+                to="/register"
+                className="tracking-button tracking-button-accent"
+              >
+                {t("Crear mi cuenta", "Create my account")}
+                <ArrowRight size={18} />
+              </Link>
+              <Link to="/login" className="tracking-cta-login">
+                {t(
+                  "¿Ya tenés cuenta? Ingresá",
+                  "Already have an account? Sign in",
+                )}
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer className="tracking-footer">
+        <div className="tracking-container">
+          <a
+            href="#"
+            className="tracking-brand"
+            aria-label="ServiFood Tracking"
           >
-            {/* Desktop Connector Line */}
-            <div className="hidden md:block absolute top-12 left-[13%] right-[13%] h-px bg-slate-700/70 -z-0" />
-
-            <Step
-              number="1"
-              title={isEn ? 'Create your account' : 'Crea tu cuenta'}
-              desc={
-                isEn
-                  ? 'Sign up free in seconds, set your basic data and get ready to start.'
-                  : 'Registrate gratis en segundos, configurá tus datos básicos y dejá lista tu cuenta para empezar.'
-              }
-            />
-            <Step
-              number="2"
-              title={isEn ? 'Log your jobs' : 'Registrá tus trabajos'}
-              desc={
-                isEn
-                  ? 'Add daily jobs, clients, amounts and expenses so everything stays centralized.'
-                  : 'Cargá trabajos diarios, clientes, montos y gastos asociados para tener todo centralizado.'
-              }
-            />
-            <Step
-              number="3"
-              title={isEn ? 'See your numbers' : 'Mirá tus números'}
-              desc={
-                isEn
-                  ? 'View performance, download reports and use that info to plan next month.'
-                  : 'Visualizá tu rendimiento, descargá reportes y usá esa información para planificar el próximo mes.'
-              }
-            />
-          </motion.div>
+            <img src="/servifood_logo_white_text_HQ.png" alt="ServiFood" />
+            <span>TRACKING</span>
+          </a>
+          <p>
+            {t(
+              "Seguimiento profesional. Todos los días.",
+              "Professional tracking. Every day.",
+            )}
+          </p>
+          <span>© {new Date().getFullYear()} ServiFood</span>
         </div>
-      </section>
-
+      </footer>
     </div>
   );
 }
 
-function BenefitCard({ icon: Icon, title, desc }) {
-  const itemVariant = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  return (
-    <motion.div 
-      variants={itemVariant}
-      whileHover={{ y: -8 }}
-      className="bg-card p-7 rounded-2xl border border-border shadow-lg shadow-slate-900/10 dark:shadow-slate-950/60 hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
-    >
-      <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-5 text-blue-500 dark:text-blue-400">
-        <Icon className="w-6 h-6 sm:w-7 sm:h-7" />
-      </div>
-      <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">{title}</h3>
-      <p className="text-slate-600 dark:text-slate-300/90 leading-relaxed text-sm sm:text-[0.9rem]">{desc}</p>
-    </motion.div>
-  );
+function ArrowDownIcon() {
+  return <ArrowRight size={16} className="tracking-arrow-down" />;
 }
-
-function Step({ number, title, desc }) {
-  const itemVariant = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  return (
-    <motion.div variants={itemVariant} className="flex flex-col items-center text-center relative z-10">
-      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-slate-900 text-blue-300 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-semibold mb-5 sm:mb-6 shadow-xl shadow-slate-950/80">
-        {number}
-      </div>
-      <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">{title}</h3>
-      <p className="text-slate-700 dark:text-slate-300 max-w-xs leading-relaxed text-sm">{desc}</p>
-    </motion.div>
-  );
-}
-
-function StatsCard({ value, label, className = '' }) {
-  return (
-    <div
-      className={`rounded-2xl border border-border bg-card px-4 py-3 sm:px-5 sm:py-4 shadow-md shadow-slate-900/10 dark:shadow-slate-950/70 ${className}`}
-    >
-      <div className="text-sm font-medium text-slate-600 dark:text-slate-400">{label}</div>
-      <div className="mt-1 text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-50">{value}</div>
-    </div>
-  );
-}
-
-// DashboardPreview fue reemplazado por una imagen estática en el hero
