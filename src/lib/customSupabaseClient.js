@@ -60,40 +60,6 @@ if (!globalThis.__supabaseUrlHostLogged) {
 
 const customSupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
-const runDevHealthCheck = async () => {
-  try {
-    const response = await fetch(
-      `${supabaseUrl}/rest/v1/jobs?select=id&limit=1`,
-      {
-        headers: {
-          apikey: supabaseAnonKey,
-          Authorization: `Bearer ${supabaseAnonKey}`,
-        },
-      }
-    );
-
-    if (!response.ok) {
-      let body = null;
-      try {
-        body = await response.json();
-      } catch {
-        body = null;
-      }
-
-      if (response.status === 404 || body?.code === 'PGRST205') {
-        console.error('App apuntando a proyecto equivocado o DB no migrada');
-      }
-    }
-  } catch (error) {
-    console.warn('Supabase health check failed:', error);
-  }
-};
-
-if (import.meta.env.DEV && typeof window !== 'undefined' && !globalThis.__supabaseHealthCheckRan) {
-  globalThis.__supabaseHealthCheckRan = true;
-  void runDevHealthCheck();
-}
-
 export default customSupabaseClient;
 
 export { 

@@ -136,20 +136,22 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="tracking-hero-visual">
+              <span className="tracking-photo-index" aria-hidden="true">
+                SF / 01
+              </span>
               <div className="tracking-photo-frame">
                 <img
                   className="tracking-operation-photo"
-                  src="/images/tracking-operation.webp"
-                  width="1536"
-                  height="1024"
+                  src="/images/servifood-produccion.jpg"
+                  width="640"
+                  height="800"
                   alt={t(
-                    "Técnico inspeccionando equipamiento de una cocina industrial",
-                    "Technician inspecting commercial kitchen equipment",
+                    "Operación de producción de ServiFood",
+                    "ServiFood production operations",
                   )}
-                  fetchPriority="high"
                 />
                 <div className="tracking-photo-caption">
-                  <span>01 / {t("EN CAMPO", "IN THE FIELD")}</span>
+                  <span>01 / {t("PRODUCCIÓN", "PRODUCTION")}</span>
                   <span>
                     {t("Donde el trabajo sucede.", "Where work happens.")}
                   </span>
@@ -208,7 +210,6 @@ export default function LandingPage() {
             ))}
           </div>
         </section>
-
         <section id="plataforma" className="tracking-platform tracking-section">
           <div className="tracking-container">
             <div className="tracking-section-heading">
@@ -325,9 +326,111 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section
+          className="tracking-editorial"
+          aria-labelledby="operation-heading"
+        >
+          <div className="tracking-container tracking-editorial-grid">
+            <div className="tracking-editorial-photo">
+              <img
+                src="/images/servifood-planta.jpg"
+                width="480"
+                height="600"
+                loading="lazy"
+                alt={t("Planta de ServiFood", "ServiFood facility")}
+              />
+              <div className="tracking-site-label">
+                <span className="tracking-dot" /> SERVIFOOD{" "}
+                <span>02 / {t("PLANTA", "FACILITY")}</span>
+              </div>
+              <div className="tracking-photo-signal">
+                <span className="tracking-signal-pulse" />
+                <span>{t("REGISTRO ACTIVO", "ACTIVE RECORD")}</span>
+                <strong>08:42</strong>
+              </div>
+              <div className="tracking-photo-coordinate" aria-hidden="true">
+                <Plus size={28} />
+                <span>
+                  {t("OPERACIÓN / CONTINUIDAD", "OPERATIONS / CONTINUITY")}
+                </span>
+              </div>
+            </div>
+            <div className="tracking-editorial-copy">
+              <div className="tracking-eyebrow">
+                {t(
+                  "EL TRABAJO REAL ES EL PUNTO DE PARTIDA",
+                  "REAL WORK IS THE STARTING POINT",
+                )}
+              </div>
+              <h2 id="operation-heading">
+                {t("La operación", "Operations")}
+                <br />
+                {t("no se detiene.", "never stop.")}
+                <br />
+                <em>
+                  {t("El seguimiento, tampoco.", "Neither does tracking.")}
+                </em>
+              </h2>
+              <p>
+                {t(
+                  "Detrás de cada jornada hay instalaciones, equipos y personas. Tracking conecta ese trabajo con un registro claro para que el próximo paso tenga contexto.",
+                  "Behind every working day are facilities, equipment and people. Tracking connects that work with clear records, giving context to the next step.",
+                )}
+              </p>
+              <div className="tracking-operation-chain">
+                <div>
+                  <MapPin size={19} />
+                  <span>{t("En planta", "On site")}</span>
+                </div>
+                <ArrowRight size={16} />
+                <div>
+                  <ClipboardList size={19} />
+                  <span>{t("En el registro", "On record")}</span>
+                </div>
+                <ArrowRight size={16} />
+                <div>
+                  <FileSpreadsheet size={19} />
+                  <span>{t("En tus decisiones", "In your decisions")}</span>
+                </div>
+              </div>
+              <div className="tracking-field-note">
+                <span>01—02</span>
+                <p>
+                  {t(
+                    "Del lugar donde sucede al lugar donde decidís.",
+                    "From where it happens to where you decide.",
+                  )}
+                </p>
+                <ArrowUpRight size={28} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="tracking-details tracking-section">
+          <div className="tracking-container">
+            <div className="tracking-details-heading">
+              <div className="tracking-eyebrow">
+                {t("CADA PARTE, CONECTADA", "EVERY PART, CONNECTED")}
+              </div>
+              <h2>
+                {t("El control está", "Control is")}{" "}
+                <em>{t("en los detalles.", "in the details.")}</em>
+              </h2>
+            </div>
             <div className="tracking-benefits">
-              <article className="tracking-benefit">
+              <article className="tracking-benefit tracking-benefit-costs">
                 <div className="tracking-finance-visual" aria-hidden="true">
+                  <div className="tracking-cost-orbit">
+                    <span>
+                      <Wrench size={26} />
+                      <strong>{t("Cada trabajo", "Every job")}</strong>
+                      <small>{t("TIENE SU CONTEXTO", "HAS ITS CONTEXT")}</small>
+                    </span>
+                  </div>
                   <div>
                     <small>
                       {t("DISTRIBUCIÓN DE COSTOS", "COST BREAKDOWN")}
