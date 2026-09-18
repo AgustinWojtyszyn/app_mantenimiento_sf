@@ -2313,6 +2313,16 @@
   border-top: 1px solid #ffd0a0;
 }
 
+.tracking-cta .tracking-eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  padding: 8px 12px;
+  background: #0a2f5d;
+  color: #ffffff !important;
+  border-left: 3px solid #ff8a1f;
+  border-radius: 3px;
+}
+
 .tracking-cta .tracking-button {
   background: #0a376d;
   color: #fff;
