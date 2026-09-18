@@ -2308,28 +2308,35 @@
 }
 
 .tracking-cta {
-  background: linear-gradient(100deg, #fff1e2 0%, #ffe2c2 100%);
-  color: #15385d;
-  border-top: 1px solid #ffd0a0;
+  background:
+    radial-gradient(circle at 78% 20%, rgba(40, 111, 190, 0.28), transparent 34%),
+    linear-gradient(115deg, #082b59 0%, #0a376d 58%, #071f3f 100%);
+  color: #ffffff;
+  border-top: 1px solid #ff8a1f66;
 }
 
 .tracking-cta .tracking-eyebrow {
-  display: inline-flex;
-  width: fit-content;
-  padding: 8px 12px;
-  background: #0a2f5d;
-  color: #ffffff !important;
-  border-left: 3px solid #ff8a1f;
-  border-radius: 3px;
+  display: flex;
+  width: auto;
+  padding: 0;
+  background: transparent;
+  color: #ffb15c !important;
+  border-left: 0;
+  border-radius: 0;
+}
+
+.tracking-cta p,
+.tracking-cta-login {
+  color: #c5d5e6 !important;
 }
 
 .tracking-cta .tracking-button {
-  background: #0a376d;
-  color: #fff;
+  background: #ff8a1f;
+  color: #ffffff;
 }
 
 .tracking-cta .tracking-button:hover {
-  background: #0d4a8d;
+  background: #ff9f43;
 }
 
 .dark .tracking-platform {
