@@ -142,7 +142,7 @@ export default function LandingPage() {
               <div className="tracking-photo-frame">
                 <img
                   className="tracking-operation-photo"
-                  src="/images/servifood-produccion.jpg"
+                  src="/images/servifood-produccion.webp"
                   width="640"
                   height="800"
                   alt={t(
@@ -336,7 +336,7 @@ export default function LandingPage() {
           <div className="tracking-container tracking-editorial-grid">
             <div className="tracking-editorial-photo">
               <img
-                src="/images/servifood-planta.jpg"
+                src="/images/servifood-planta.webp"
                 width="480"
                 height="600"
                 loading="lazy"
