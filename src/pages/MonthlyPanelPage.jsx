@@ -483,11 +483,11 @@ export default function MonthlyPanelPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 text-lg md:text-xl px-4 md:px-8">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="maintenance-page space-y-7 animate-in fade-in duration-500">
+            <div className="maintenance-page-heading flex flex-col gap-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:flex-row md:items-center md:justify-between">
         <div>
-	        <h1 className="text-4xl md:text-5xl font-bold text-[#1e3a8a] dark:text-slate-50">{t('monthlyPage.title')}</h1>
-	        <p className="text-xl md:text-2xl text-gray-500 dark:text-slate-300">{t('monthlyPage.subtitle')}</p>
+	        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#082b59] dark:text-slate-50">{t('monthlyPage.title')}</h1>
+	        <p className="mt-1 text-base md:text-lg text-gray-500 dark:text-slate-300">{t('monthlyPage.subtitle')}</p>
         </div>
         <div className="flex flex-col sm:flex-row sm:flex-wrap md:flex-nowrap items-stretch justify-end gap-3 w-full md:w-auto">
           <Button
@@ -557,7 +557,7 @@ export default function MonthlyPanelPage() {
 
       <div data-tour="panel-mensual-filtros">
         <JobFilters filters={filters} onChange={handleFilterChange} />
-        <div className="mt-4 flex flex-col gap-2 rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
+        <div className="maintenance-panel mt-4 flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">Lugar</p>
@@ -583,7 +583,7 @@ export default function MonthlyPanelPage() {
         workers={workerOptions}
       />
 
-      <section className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
+      <section className="maintenance-panel rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Summary of the period' : 'Resumen del período'}</h2>
           <span className="text-sm text-gray-500 dark:text-slate-400">{filters.startDate} – {filters.endDate}</span>
@@ -673,7 +673,7 @@ export default function MonthlyPanelPage() {
       </section>
 
       {/* Tabla consolidada */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden card-lg" data-tour="panel-mensual-tabla">
+      <div className="maintenance-table-shell bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden card-lg" data-tour="panel-mensual-tabla">
         <div className="px-4 md:px-6 py-4 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
           <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Summary table' : 'Tabla resumen'}</h2>
           <span className="text-sm md:text-base text-gray-500 dark:text-slate-300">{filteredJobs.length} {isEn ? 'records' : 'registros'}</span>
