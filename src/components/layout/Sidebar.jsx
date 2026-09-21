@@ -70,11 +70,11 @@ export default function Sidebar() {
 
       {/* Sidebar Content */}
       <aside className={`
-        sidebar fixed lg:static inset-y-0 left-0 z-50 w-72 bg-primary text-primary-foreground transform transition-transform duration-200 ease-in-out
+        sidebar fixed lg:static inset-y-0 left-0 z-50 w-72 bg-[#082b59] text-white transform transition-transform duration-200 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         pt-12 lg:pt-0 shadow-xl
       `}>
-        <nav className="sidebar-nav text-nav-lg">
+        <nav className="sidebar-nav text-nav-lg pt-5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -85,7 +85,7 @@ export default function Sidebar() {
                 onClick={handleNavClick}
                 className={`
                   sidebar-item flex items-center font-semibold rounded-xl transition-all duration-200 text-base sm:text-lg
-                  ${isActive ? "bg-blue-800 text-white shadow-md translate-x-1" : "text-blue-100 hover:bg-blue-800/50 hover:text-white hover:translate-x-1"}
+                  ${isActive ? "bg-white/12 text-white shadow-sm ring-1 ring-white/10 translate-x-1" : "text-blue-100 hover:bg-white/8 hover:text-white hover:translate-x-1"}
                 `}
               >
                 <Icon className="w-6 h-6 sm:w-8 sm:h-8 mr-4" />
@@ -95,7 +95,7 @@ export default function Sidebar() {
           })}
         </nav>
 
-        <div className="sidebar-user mt-auto border-t border-blue-800 bg-[#152e6e]">
+        <div className="sidebar-user mt-auto border-t border-white/10 bg-[#061f43]">
           <div className="mb-4 px-1 min-w-0">
             <p className="text-base sm:text-lg font-semibold leading-snug whitespace-normal break-words">{displayName}</p>
             {displayEmail && (
@@ -110,7 +110,7 @@ export default function Sidebar() {
             <button
               type="button"
               onClick={signOut}
-              className="flex w-full items-center justify-center gap-2 text-sm font-medium text-blue-100 hover:text-white hover:bg-blue-800 rounded-md transition-colors"
+              className="flex w-full items-center justify-center gap-2 text-sm font-medium text-blue-100 hover:text-white hover:bg-white/10 rounded-md transition-colors"
             >
               <LogOut className="w-5 h-5 flex-shrink-0" />
               <span className="truncate">{t('nav.logout')}</span>
