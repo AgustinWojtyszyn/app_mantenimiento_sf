@@ -1024,9 +1024,6 @@
   .tracking-job-card {
     left: 0;
   }
-  .tracking-visual-label {
-    left: 0;
-  }
   .tracking-capabilities {
     grid-template-columns: repeat(2, 1fr);
     gap: 23px;
@@ -1398,9 +1395,36 @@
 .tracking-photo-caption {
   top: 24px;
   bottom: auto;
-  flex-direction: column;
-  gap: 7px;
-  text-shadow: 0 1px 7px #000;
+  left: 24px;
+  right: auto;
+  display: grid;
+  justify-items: start;
+  gap: 5px;
+  width: max-content;
+  max-width: calc(100% - 48px);
+  padding: 12px 14px 11px 15px;
+  background: rgba(7, 31, 63, 0.86);
+  border-left: 3px solid #ff8a1f;
+  border-radius: 3px;
+  box-shadow: 0 10px 28px rgba(2, 14, 31, 0.22);
+  backdrop-filter: blur(8px);
+  text-shadow: none;
+}
+
+.tracking-photo-caption-index {
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  color: #ffb15c !important;
+}
+
+.tracking-photo-caption-copy {
+  font-size: 11px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #ffffff !important;
 }
 .tracking-photo-frame:after {
   background: linear-gradient(
@@ -1426,10 +1450,6 @@
   left: -35px;
   transform: rotate(-3deg);
   border-top: 4px solid #ff8a1f;
-}
-.tracking-visual-label {
-  bottom: -25px;
-  left: -25px;
 }
 .tracking-platform {
   background: #f7f6f2;
@@ -2078,12 +2098,16 @@
     bottom: 0;
     width: 265px;
   }
-  .tracking-visual-label {
-    bottom: -23px;
-  }
   .tracking-photo-caption {
-    top: 20px;
-    bottom: auto;
+    top: 16px;
+    left: 16px;
+    right: auto;
+    max-width: calc(100% - 32px);
+    padding: 10px 12px 9px 13px;
+  }
+
+  .tracking-photo-caption-copy {
+    font-size: 10px;
   }
   .tracking-editorial-grid {
     grid-template-columns: 1fr;
