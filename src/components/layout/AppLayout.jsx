@@ -8,14 +8,14 @@ import BrandHeader from '@/components/layout/BrandHeader';
 
 export default function AppLayout() {
   return (
-    <div className="flex h-screen bg-background text-foreground overflow-hidden font-sans">
+    <div className="flex h-screen overflow-hidden bg-slate-100/80 text-foreground font-sans dark:bg-slate-950">
       <Sidebar />
       <div className="hidden lg:flex fixed top-4 right-6 z-50 items-center gap-2">
         <LanguageToggle className="shadow-md bg-background/80 backdrop-blur-md border border-border/70" />
         <ThemeToggle className="shadow-md bg-background/80 backdrop-blur-md border border-border/70" />
       </div>
-      <main className="flex-1 overflow-y-auto w-full p-4 lg:p-8 pt-16 sm:pt-20 lg:pt-10">
-        <div className="max-w-7xl mx-auto space-y-6 text-[15px] sm:text-base lg:text-lg">
+      <main className="app-main-scroll flex-1 overflow-y-auto w-full px-4 pb-8 pt-16 sm:px-6 sm:pt-20 lg:px-8 lg:pb-12 lg:pt-8">
+        <div className="mx-auto max-w-[1440px] space-y-7 text-[15px] sm:text-base lg:text-[17px]">
           <BrandHeader />
           <Outlet />
         </div>
