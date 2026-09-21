@@ -13,7 +13,13 @@ describe('DailyJobsPage summary status wiring', () => {
 
   it('envia selectedStatus al servicio de resumen', () => {
     expect(source).toMatch(
-      /jobsService\.getDailyJobsSummary\(\{\s*date,\s*location: selectedLocation,\s*status: selectedStatus,\s*search: debouncedSearchTerm,\s*\}\)/
+      /jobsService\.getDailyJobsSummary\(\{\s*date,\s*location: selectedLocation,\s*status: selectedStatus,\s*requestedBy: debouncedRequestedBy,\s*search: debouncedSearchTerm,\s*\}\)/
+    );
+  });
+
+  it('mantiene el filtro de solicitante conectado al resumen', () => {
+    expect(source).toMatch(
+      /requestedBy:\s*debouncedRequestedBy/
     );
   });
 
