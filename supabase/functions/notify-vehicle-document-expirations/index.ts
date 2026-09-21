@@ -99,7 +99,7 @@ const buildAlertEmail = (alert: Record<string, any>) => {
               <tr>
                 <td style="padding:0 28px 26px;">
                   <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 16px;color:#1e3a8a;font-size:14px;line-height:1.5;">
-                    Revisar la documentacion asociada y actualizar el estado desde la App de Tracking Laboral.
+                    Revisar la documentación asociada y actualizar el estado desde Mantenimiento.
                   </div>
                 </td>
               </tr>
