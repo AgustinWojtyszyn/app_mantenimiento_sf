@@ -48,15 +48,15 @@ export default function LandingPage() {
       <Helmet>
         <title>
           {t(
-            "Tracking · ServiFood | Control de tu operación",
-            "Tracking · ServiFood | Your operation under control",
+            "Mantenimiento · ServiFood | Control de tu operación",
+            "Mantenimiento · ServiFood | Your operation under control",
           )}
         </title>
         <meta
           name="description"
           content={t(
-            "Trabajos, costos, equipos y reportes en un solo lugar. Conocé Tracking, la herramienta de seguimiento operativo de ServiFood.",
-            "Jobs, costs, teams and reports in one place. Discover Tracking by ServiFood.",
+            "Trabajos, costos, equipos y reportes en un solo lugar. Conocé Mantenimiento, la herramienta de gestión operativa de ServiFood.",
+            "Jobs, costs, teams and reports in one place. Discover Mantenimiento by ServiFood.",
           )}
         />
       </Helmet>
@@ -71,10 +71,10 @@ export default function LandingPage() {
           <a
             href="#"
             className="tracking-brand"
-            aria-label="ServiFood Tracking"
+            aria-label="ServiFood Mantenimiento"
           >
             <img src="/servifood_logo_white_text_HQ.png" alt="ServiFood" />
-            <span>TRACKING</span>
+            <span>MANTENIMIENTO</span>
           </a>
           <div className="tracking-nav-sections">
             <a href="#plataforma">{t("Plataforma", "Platform")}</a>
@@ -191,7 +191,7 @@ export default function LandingPage() {
               <span className="tracking-visual-label">
                 {t(
                   "Vista ilustrativa del seguimiento",
-                  "Illustrative tracking preview",
+                  "Illustrative maintenance preview",
                 )}
               </span>
             </div>
@@ -371,13 +371,13 @@ export default function LandingPage() {
                 {t("no se detiene.", "never stop.")}
                 <br />
                 <em>
-                  {t("El seguimiento, tampoco.", "Neither does tracking.")}
+                  {t("El mantenimiento, tampoco.", "Neither does maintenance.")}
                 </em>
               </h2>
               <p>
                 {t(
-                  "Detrás de cada jornada hay instalaciones, equipos y personas. Tracking conecta ese trabajo con un registro claro para que el próximo paso tenga contexto.",
-                  "Behind every working day are facilities, equipment and people. Tracking connects that work with clear records, giving context to the next step.",
+                  "Detrás de cada jornada hay instalaciones, equipos y personas. Mantenimiento conecta ese trabajo con un registro claro para que el próximo paso tenga contexto.",
+                  "Behind every working day are facilities, equipment and people. Mantenimiento connects that work with clear records, giving context to the next step.",
                 )}
               </p>
               <div className="tracking-operation-chain">
@@ -546,9 +546,7 @@ export default function LandingPage() {
               <div className="tracking-flow-stamp">
                 <Wrench size={27} />
                 <span>
-                  TRACKING
-                  <br />
-                  <small>BY SERVIFOOD</small>
+                  MANTENIMIENTO
                 </span>
               </div>
             </div>
@@ -610,7 +608,7 @@ export default function LandingPage() {
               <p>
                 {t(
                   "Dale a cada trabajo el seguimiento que merece.",
-                  "Give every job the tracking it deserves.",
+                  "Give every job the maintenance follow-up it deserves.",
                 )}
               </p>
               <Link
@@ -635,15 +633,15 @@ export default function LandingPage() {
           <a
             href="#"
             className="tracking-brand"
-            aria-label="ServiFood Tracking"
+            aria-label="ServiFood Mantenimiento"
           >
             <img src="/servifood_logo_white_text_HQ.png" alt="ServiFood" />
-            <span>TRACKING</span>
+            <span>MANTENIMIENTO</span>
           </a>
           <p>
             {t(
               "Seguimiento profesional. Todos los días.",
-              "Professional tracking. Every day.",
+              "Professional maintenance management. Every day.",
             )}
           </p>
           <span>© {new Date().getFullYear()} ServiFood</span>
