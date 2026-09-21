@@ -99,7 +99,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div 
               initial={{ opacity: 0, x: -10 }} 
               animate={{ opacity: 1, x: 0 }} 
@@ -114,7 +114,7 @@ export default function LoginPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                 error={errors.email}
-                className="dark:bg-slate-800 dark:border-slate-700 dark:text-slate-50"
+                className="h-13 text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-50"
               />
             </motion.div>
             
@@ -133,14 +133,14 @@ export default function LoginPage() {
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 error={errors.password}
                 showPasswordToggle
-                className="dark:bg-slate-800 dark:border-slate-700 dark:text-slate-50"
+                className="h-13 text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-50"
               />
             </motion.div>
 
             <div className="flex justify-between items-center">
               <Link
                 to="/forgot-password"
-                className="text-sm font-semibold text-[#1e3a8a] transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1e3a8a] focus-visible:ring-offset-2 dark:text-blue-200 dark:hover:text-blue-300"
+                className="text-base font-semibold text-[#1e3a8a] transition-colors hover:text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1e3a8a] focus-visible:ring-offset-2 dark:text-blue-200 dark:hover:text-blue-300"
               >
                 Olvidé mi contraseña
               </Link>
@@ -152,13 +152,13 @@ export default function LoginPage() {
               transition={{ delay: 0.3 }}
               className="pt-2"
             >
-              <Button type="submit" disabled={loading} className="w-full shadow-lg shadow-blue-900/10">
+              <Button type="submit" disabled={loading} className="h-12 w-full bg-[#082b59] text-base font-bold text-white shadow-lg shadow-blue-950/10 hover:bg-[#0a376d]">
                 {loading ? "Iniciando sesión..." : "Ingresar"}
               </Button>
             </motion.div>
           </form>
 
-          <div className="text-center text-sm mt-8 pt-6 border-t border-gray-100">
+          <div className="text-center text-base mt-8 pt-6 border-t border-gray-100 dark:border-slate-800">
             <span className="text-gray-600 dark:text-slate-300">{t('auth.noAccount')} </span>
             <Link to="/register" className="font-semibold text-[#1e3a8a] dark:text-blue-200 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors">
               {t('auth.registerCta')}
