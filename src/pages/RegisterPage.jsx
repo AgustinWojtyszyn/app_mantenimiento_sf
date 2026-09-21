@@ -158,7 +158,7 @@ export default function RegisterPage() {
               value={field.value}
               onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
               error={field.error}
-              className="h-13 text-base"
+              className="h-[52px] text-base"
             />
           </motion.div>
         ))}
@@ -175,7 +175,7 @@ export default function RegisterPage() {
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             error={errors.password}
             showPasswordToggle
-            className="h-13 text-base"
+            className="h-[52px] text-base"
           />
         </motion.div>
 
@@ -190,7 +190,7 @@ export default function RegisterPage() {
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             error={errors.confirmPassword}
             showPasswordToggle
-            className="h-13 text-base"
+            className="h-[52px] text-base"
           />
         </motion.div>
 
