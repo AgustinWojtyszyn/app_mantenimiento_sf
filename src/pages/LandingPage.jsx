@@ -153,8 +153,10 @@ export default function LandingPage() {
                   )}
                 />
                 <div className="tracking-photo-caption">
-                  <span>01 / {t("PRODUCCIÓN", "PRODUCTION")}</span>
-                  <span>
+                  <span className="tracking-photo-caption-index">
+                    01 / {t("PRODUCCIÓN", "PRODUCTION")}
+                  </span>
+                  <span className="tracking-photo-caption-copy">
                     {t("Donde el trabajo sucede.", "Where work happens.")}
                   </span>
                 </div>
@@ -190,12 +192,6 @@ export default function LandingPage() {
                   <CheckCircle2 size={17} />
                 </div>
               </div>
-              <span className="tracking-visual-label">
-                {t(
-                  "Vista ilustrativa del seguimiento",
-                  "Illustrative maintenance preview",
-                )}
-              </span>
             </div>
           </div>
           <div className="tracking-container tracking-capabilities">
