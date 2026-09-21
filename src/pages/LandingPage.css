@@ -2782,3 +2782,84 @@
     font-size: 10px;
   }
 }
+
+
+/* Final legibility correction for the editorial and benefit copy. */
+.tracking-landing .tracking-editorial-copy > p {
+  font-size: 17px;
+  line-height: 1.72;
+  max-width: 470px;
+}
+
+.tracking-landing .tracking-operation-chain > div > span {
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.tracking-landing .tracking-field-note > span {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tracking-landing .tracking-field-note > p {
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 300px;
+}
+
+.tracking-landing .tracking-benefit p {
+  font-size: 15.5px;
+  line-height: 1.68;
+  max-width: 420px;
+}
+
+.tracking-landing .tracking-benefit-costs p {
+  font-size: 15.5px;
+}
+
+.tracking-landing .tracking-report-file strong {
+  font-size: 13px;
+}
+
+.tracking-landing .tracking-report-file small {
+  font-size: 11px;
+}
+
+@media (max-width: 800px) {
+  .tracking-landing .tracking-editorial-copy > p {
+    font-size: 16px;
+  }
+
+  .tracking-landing .tracking-operation-chain > div > span {
+    font-size: 12px;
+  }
+
+  .tracking-landing .tracking-field-note > p {
+    font-size: 14px;
+  }
+
+  .tracking-landing .tracking-benefit p,
+  .tracking-landing .tracking-benefit-costs p {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tracking-landing .tracking-editorial-copy > p {
+    font-size: 15.5px;
+  }
+
+  .tracking-landing .tracking-operation-chain > div > span {
+    font-size: 11px;
+  }
+
+  .tracking-landing .tracking-field-note > p {
+    font-size: 14px;
+  }
+
+  .tracking-landing .tracking-benefit p,
+  .tracking-landing .tracking-benefit-costs p {
+    font-size: 14.5px;
+  }
+}
