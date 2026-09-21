@@ -1,4 +1,4 @@
-# 🔧 ServiFood Tracking · Panel de Mantenimiento
+# 🔧 Mantenimiento · ServiFood
 
 <p align="center">
   <strong>Plataforma web full-stack para la gestión de trabajos de mantenimiento, personal, costos, vehículos, planta y operación diaria.</strong>
@@ -12,7 +12,7 @@
 
 ## 🚀 Vista general
 
-**ServiFood Tracking** es una plataforma web desarrollada para centralizar la gestión operativa y de mantenimiento de ServiFood.
+**Mantenimiento · ServiFood** es una plataforma web desarrollada para centralizar la gestión operativa y de mantenimiento de ServiFood.
 
 El sistema reúne dentro de una única aplicación:
 
@@ -46,7 +46,7 @@ La interfaz está orientada al trabajo diario de personal operativo y administra
 <p align="center">
   <img
     src="https://github.com/user-attachments/assets/f192af5e-347d-457d-8baa-27d52ff100fa"
-    alt="ServiFood Tracking - Panel de Mantenimiento"
+    alt="Mantenimiento · ServiFood"
     width="100%"
   />
 </p>
