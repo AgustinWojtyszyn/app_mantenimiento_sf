@@ -17,10 +17,12 @@ import { Helmet } from "react-helmet";
 import ThemeToggle from "@/components/layout/ThemeToggle";
 import LanguageToggle from "@/components/layout/LanguageToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import "./LandingPage.css";
 
 export default function LandingPage() {
   const { language } = useLanguage();
+  const { theme } = useTheme();
   const isEn = language === "en";
   const t = (es, en) => (isEn ? en : es);
   const jobs = [
@@ -44,7 +46,7 @@ export default function LandingPage() {
     ],
   ];
   return (
-    <div className="tracking-landing">
+    <div className={`tracking-landing ${theme === "dark" ? "tracking-theme-dark" : "tracking-theme-light"}`}>
       <Helmet>
         <title>
           {t(
