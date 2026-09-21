@@ -2863,3 +2863,181 @@
     font-size: 14.5px;
   }
 }
+
+
+/* Final microcopy pass: keep the visual hierarchy, remove sub-12px copy on desktop. */
+.tracking-landing .tracking-eyebrow {
+  font-size: 13px;
+}
+
+.tracking-landing .tracking-hero-note,
+.tracking-landing .tracking-text-link {
+  font-size: 13px;
+}
+
+.tracking-landing .tracking-capabilities > div {
+  font-size: 14px;
+}
+
+.tracking-landing .tracking-photo-caption-index {
+  font-size: 10.5px;
+}
+
+.tracking-landing .tracking-photo-caption-copy {
+  font-size: 12.5px;
+}
+
+.tracking-landing .tracking-photo-index {
+  font-size: 11.5px;
+}
+
+.tracking-landing .tracking-job-card > small {
+  font-size: 11px;
+}
+
+.tracking-landing .tracking-job-card > p {
+  font-size: 12px;
+}
+
+.tracking-landing .tracking-job-card-bottom > span {
+  font-size: 11.5px;
+}
+
+.tracking-landing .tracking-workspace-top small,
+.tracking-landing .tracking-preview-label {
+  font-size: 11.5px;
+}
+
+.tracking-landing .tracking-kpis span {
+  font-size: 12px;
+}
+
+.tracking-landing .tracking-table-heading {
+  font-size: 11px;
+}
+
+.tracking-landing .tracking-table-job strong {
+  font-size: 13px;
+}
+
+.tracking-landing .tracking-table-job small {
+  font-size: 11.5px;
+}
+
+.tracking-landing .tracking-status {
+  font-size: 11px;
+}
+
+.tracking-landing .tracking-workspace-callout .tracking-eyebrow {
+  font-size: 11.5px;
+}
+
+.tracking-landing .tracking-workspace-callout p {
+  font-size: 14px;
+}
+
+.tracking-landing .tracking-workspace-callout > a {
+  font-size: 12.5px;
+}
+
+.tracking-landing .tracking-record strong {
+  font-size: 12px;
+}
+
+.tracking-landing .tracking-record small {
+  font-size: 11px;
+}
+
+.tracking-landing .tracking-card-number {
+  font-size: 11.5px;
+}
+
+.tracking-landing .tracking-finance-visual small,
+.tracking-landing .tracking-cost-legend {
+  font-size: 11.5px;
+}
+
+.tracking-landing .tracking-team-visual > small {
+  font-size: 10.5px;
+}
+
+.tracking-landing .tracking-report-file strong {
+  font-size: 13.5px;
+}
+
+.tracking-landing .tracking-report-file small {
+  font-size: 11.5px;
+}
+
+.tracking-landing .tracking-site-label {
+  font-size: 12px;
+}
+
+.tracking-landing .tracking-site-label > span:last-child,
+.tracking-landing .tracking-photo-signal {
+  font-size: 10.5px;
+}
+
+.tracking-landing .tracking-photo-signal strong,
+.tracking-landing .tracking-photo-coordinate span {
+  font-size: 11px;
+}
+
+.tracking-landing .tracking-editorial-copy .tracking-eyebrow {
+  font-size: 11.5px;
+}
+
+.tracking-landing .tracking-field-note > span {
+  font-size: 13px;
+}
+
+.tracking-landing .tracking-steps p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.tracking-landing .tracking-cta-login {
+  font-size: 12.5px;
+}
+
+.tracking-landing .tracking-footer .tracking-brand > span,
+.tracking-landing .tracking-footer p,
+.tracking-landing .tracking-footer > .tracking-container > span {
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .tracking-landing .tracking-eyebrow {
+    font-size: 11px;
+  }
+
+  .tracking-landing .tracking-capabilities > div {
+    font-size: 12px;
+  }
+
+  .tracking-landing .tracking-workspace-top small,
+  .tracking-landing .tracking-preview-label,
+  .tracking-landing .tracking-kpis span,
+  .tracking-landing .tracking-table-heading,
+  .tracking-landing .tracking-status {
+    font-size: 10.5px;
+  }
+
+  .tracking-landing .tracking-table-job strong {
+    font-size: 12px;
+  }
+
+  .tracking-landing .tracking-table-job small {
+    font-size: 11px;
+  }
+
+  .tracking-landing .tracking-steps p {
+    font-size: 13.5px;
+  }
+
+  .tracking-landing .tracking-footer .tracking-brand > span,
+  .tracking-landing .tracking-footer p,
+  .tracking-landing .tracking-footer > .tracking-container > span {
+    font-size: 10.5px;
+  }
+}
