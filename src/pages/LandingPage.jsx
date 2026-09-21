@@ -49,14 +49,14 @@ export default function LandingPage() {
         <title>
           {t(
             "Mantenimiento · ServiFood | Control de tu operación",
-            "Mantenimiento · ServiFood | Your operation under control",
+            "Maintenance · ServiFood | Your operation under control",
           )}
         </title>
         <meta
           name="description"
           content={t(
             "Trabajos, costos, equipos y reportes en un solo lugar. Conocé Mantenimiento, la herramienta de gestión operativa de ServiFood.",
-            "Jobs, costs, teams and reports in one place. Discover Mantenimiento by ServiFood.",
+            "Jobs, costs, teams and reports in one place. Discover Maintenance by ServiFood.",
           )}
         />
       </Helmet>
@@ -71,10 +71,10 @@ export default function LandingPage() {
           <a
             href="#"
             className="tracking-brand"
-            aria-label="ServiFood Mantenimiento"
+            aria-label={t("ServiFood Mantenimiento", "ServiFood Maintenance")}
           >
             <img src="/servifood_logo_white_text_HQ.png" alt="ServiFood" />
-            <span>MANTENIMIENTO</span>
+            <span>{t("MANTENIMIENTO", "MAINTENANCE")}</span>
           </a>
           <div className="tracking-nav-sections">
             <a href="#plataforma">{t("Plataforma", "Platform")}</a>
@@ -377,7 +377,7 @@ export default function LandingPage() {
               <p>
                 {t(
                   "Detrás de cada jornada hay instalaciones, equipos y personas. Mantenimiento conecta ese trabajo con un registro claro para que el próximo paso tenga contexto.",
-                  "Behind every working day are facilities, equipment and people. Mantenimiento connects that work with clear records, giving context to the next step.",
+                  "Behind every working day are facilities, equipment and people. Maintenance connects that work with clear records, giving context to the next step.",
                 )}
               </p>
               <div className="tracking-operation-chain">
@@ -546,7 +546,7 @@ export default function LandingPage() {
               <div className="tracking-flow-stamp">
                 <Wrench size={27} />
                 <span>
-                  MANTENIMIENTO
+                  {t("MANTENIMIENTO", "MAINTENANCE")}
                 </span>
               </div>
             </div>
@@ -636,7 +636,7 @@ export default function LandingPage() {
             aria-label="ServiFood Mantenimiento"
           >
             <img src="/servifood_logo_white_text_HQ.png" alt="ServiFood" />
-            <span>MANTENIMIENTO</span>
+            <span>{t("MANTENIMIENTO", "MAINTENANCE")}</span>
           </a>
           <p>
             {t(
