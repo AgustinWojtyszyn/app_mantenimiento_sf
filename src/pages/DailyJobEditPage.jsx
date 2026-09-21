@@ -73,7 +73,7 @@ export default function DailyJobEditPage() {
   }
 
   return (
-    <div className="w-full">
+    <div className="maintenance-page w-full">
       <div className="max-w-[1200px] mx-auto space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -86,7 +86,7 @@ export default function DailyJobEditPage() {
               <ArrowLeft className="w-4 h-4 mr-2" /> Volver
             </Button>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-slate-50">Editar solicitud</h1>
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#082b59] dark:text-slate-50">Editar solicitud</h1>
               <p className="text-sm md:text-base text-gray-500 dark:text-slate-300">
                 Actualizá los datos del trabajo seleccionado.
               </p>
