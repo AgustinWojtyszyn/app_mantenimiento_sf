@@ -582,8 +582,8 @@ export default function DailyJobsPage() {
   }, [user, loading, jobs.length, role, startTour, resumeTourIfNeeded]);
 
   return (
-    <div className="space-y-6 md:space-y-8">
-      <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-3 text-gray-900 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-50 md:p-4 xl:flex-row xl:items-center xl:justify-between">
+    <div className="maintenance-page space-y-6 md:space-y-8">
+      <div className="maintenance-toolbar flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 text-gray-900 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-50 md:p-5 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex flex-col md:flex-row md:items-center gap-3 w-full xl:w-auto">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-50 md:text-3xl">
               {isEn ? 'Daily Jobs' : 'Trabajos Diarios'}
@@ -684,7 +684,7 @@ export default function DailyJobsPage() {
         </div>
       </div>
 
-      <section className="rounded-xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:p-5 shadow-sm">
+      <section className="maintenance-panel rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-slate-50">
             {isEn ? 'Day summary' : 'Resumen del día'}
@@ -778,7 +778,7 @@ export default function DailyJobsPage() {
         onPageSizeChange={handlePageSizeChange}
       />
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden card-lg" data-tour="tabla-trabajos">
+      <div className="maintenance-table-shell bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden card-lg" data-tour="tabla-trabajos">
         <div className="px-4 md:px-6 py-3 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
           <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Summary table' : 'Tabla resumen'}</h2>
           <span className="text-sm md:text-base text-gray-500 dark:text-slate-300">{totalCount} {isEn ? 'jobs' : 'trabajos'}</span>
