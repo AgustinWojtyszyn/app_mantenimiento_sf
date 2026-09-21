@@ -2372,3 +2372,128 @@
   background: #f5f8fc;
   color: #173553;
 }
+
+
+/* Landing theme is bound directly to ThemeContext so the public page
+   visibly changes even when global utility/theme styles are overridden. */
+.tracking-landing.tracking-theme-light {
+  --paper: #f5f8fc;
+  --ink: #173553;
+  --muted: #647890;
+  --line: #d9e4f2;
+}
+
+.tracking-landing.tracking-theme-dark {
+  --paper: #07182c;
+  --ink: #edf5ff;
+  --muted: #aabbd0;
+  --line: #27435f;
+  background: #07182c;
+  color: #edf5ff;
+}
+
+.tracking-theme-dark .tracking-header,
+.tracking-theme-dark .tracking-footer {
+  background: #020b16;
+}
+
+.tracking-theme-dark .tracking-hero {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(31, 92, 168, 0.28), transparent 32%),
+    linear-gradient(135deg, #020b16 0%, #061a33 54%, #020812 100%);
+}
+
+.tracking-theme-dark .tracking-platform {
+  background: #081d35;
+  color: #eef6ff;
+}
+
+.tracking-theme-dark .tracking-section-heading h2 span,
+.tracking-theme-dark .tracking-section .tracking-eyebrow,
+.tracking-theme-dark .tracking-platform p {
+  color: #a9bdd2;
+}
+
+.tracking-theme-dark .tracking-workspace {
+  border-color: #28445f;
+  box-shadow: 0 24px 65px rgba(0, 0, 0, 0.22);
+}
+
+.tracking-theme-dark .tracking-editorial {
+  background: #0c223b;
+  color: #edf5ff;
+  border-color: #27435f;
+}
+
+.tracking-theme-dark .tracking-editorial-copy {
+  border-left-color: #365572;
+}
+
+.tracking-theme-dark .tracking-editorial-copy .tracking-eyebrow,
+.tracking-theme-dark .tracking-editorial-copy > p,
+.tracking-theme-dark .tracking-field-note > span,
+.tracking-theme-dark .tracking-field-note > p {
+  color: #a9bdd2;
+}
+
+.tracking-theme-dark .tracking-field-note {
+  border-top-color: #365572;
+}
+
+.tracking-theme-dark .tracking-details {
+  background: #06182b;
+  color: #f5f9ff;
+}
+
+.tracking-theme-dark .tracking-benefit {
+  background: #102945;
+  color: #edf5ff;
+}
+
+.tracking-theme-dark .tracking-benefit:last-child {
+  background: #1a2638;
+  color: #edf5ff;
+}
+
+.tracking-theme-dark .tracking-benefit p,
+.tracking-theme-dark .tracking-team-visual > small {
+  color: #adbed0;
+}
+
+.tracking-theme-dark .tracking-benefit > div:first-child {
+  background: transparent !important;
+}
+
+.tracking-theme-dark .tracking-benefit-costs {
+  background: #082b59;
+  color: #f5f9ff;
+}
+
+.tracking-theme-dark .tracking-flow {
+  background: #091d33;
+  color: #eef6ff;
+}
+
+.tracking-theme-dark .tracking-flow p,
+.tracking-theme-dark .tracking-flow .tracking-eyebrow {
+  color: #a9bdd2;
+}
+
+.tracking-theme-dark .tracking-steps li {
+  border-color: #2c4762;
+}
+
+.tracking-theme-dark .tracking-step-number {
+  color: #6f96c0 !important;
+}
+
+.tracking-theme-dark .tracking-cta {
+  background:
+    radial-gradient(circle at 78% 20%, rgba(31, 92, 168, 0.23), transparent 34%),
+    linear-gradient(115deg, #020b16 0%, #082b59 58%, #020812 100%);
+}
+
+.tracking-theme-dark .tracking-nav-actions .tracking-toggle {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.18);
+}
