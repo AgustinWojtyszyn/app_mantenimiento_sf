@@ -4208,3 +4208,280 @@
     padding: 24px;
   }
 }
+
+
+/* =========================================================
+   LANDING FINAL RESPONSIVE + FOOTER PASS
+   ========================================================= */
+.tracking-landing .tracking-footer {
+  padding: 34px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.tracking-landing .tracking-footer > .tracking-container {
+  min-height: 64px;
+}
+
+.tracking-landing .tracking-footer .tracking-brand {
+  gap: 14px;
+}
+
+.tracking-landing .tracking-footer .tracking-brand img {
+  width: 48px;
+  height: auto;
+  object-fit: contain;
+}
+
+.tracking-landing .tracking-footer .tracking-brand > span {
+  padding-left: 14px;
+  letter-spacing: 1.8px;
+}
+
+.tracking-landing .tracking-footer p {
+  max-width: 320px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+@media (max-width: 1100px) {
+  .tracking-landing .tracking-container {
+    width: min(100% - 48px, 1120px);
+  }
+
+  .tracking-landing .tracking-nav {
+    gap: 18px;
+  }
+
+  .tracking-landing .tracking-nav-sections {
+    gap: 16px;
+  }
+
+  .tracking-landing .tracking-hero-grid {
+    gap: 44px;
+  }
+
+  .tracking-landing .tracking-workspace {
+    overflow: hidden;
+  }
+
+  .tracking-landing .tracking-cta-inner {
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 800px) {
+  .tracking-landing .tracking-container {
+    width: min(100% - 34px, 760px);
+  }
+
+  .tracking-landing .tracking-nav {
+    height: auto;
+    min-height: 78px;
+    flex-wrap: wrap;
+    padding-block: 12px;
+  }
+
+  .tracking-landing .tracking-brand {
+    order: 1;
+  }
+
+  .tracking-landing .tracking-nav-actions {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .tracking-landing .tracking-nav-sections {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    padding-top: 4px;
+  }
+
+  .tracking-landing .tracking-hero-grid {
+    grid-template-columns: 1fr;
+    padding-top: 54px;
+  }
+
+  .tracking-landing .tracking-hero-copy {
+    max-width: 650px;
+  }
+
+  .tracking-landing .tracking-hero-visual {
+    max-width: 620px;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .tracking-landing .tracking-capabilities {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+
+  .tracking-landing .tracking-capabilities > div {
+    min-height: 64px;
+    padding: 12px 8px;
+  }
+
+  .tracking-landing .tracking-section-heading,
+  .tracking-landing .tracking-details-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .tracking-landing .tracking-section-heading > p {
+    max-width: 620px;
+  }
+
+  .tracking-landing .tracking-editorial-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tracking-landing .tracking-editorial-photo {
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .tracking-landing .tracking-editorial-copy {
+    max-width: 650px;
+    margin-inline: auto;
+  }
+
+  .tracking-landing .tracking-benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .tracking-landing .tracking-benefit-costs {
+    grid-row: auto;
+  }
+
+  .tracking-landing .tracking-flow-grid > div:first-child {
+    grid-template-columns: 1fr;
+  }
+
+  .tracking-landing .tracking-flow-grid h2,
+  .tracking-landing .tracking-flow-grid > div > p,
+  .tracking-landing .tracking-flow .tracking-text-link {
+    grid-column: 1;
+  }
+
+  .tracking-landing .tracking-flow-grid h2 {
+    grid-row: auto;
+  }
+
+  .tracking-landing .tracking-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .tracking-landing .tracking-steps li,
+  .tracking-landing .tracking-steps li:first-child,
+  .tracking-landing .tracking-steps li:nth-child(2),
+  .tracking-landing .tracking-steps li:nth-child(3) {
+    margin-top: 0;
+  }
+
+  .tracking-landing .tracking-cta-inner {
+    flex-direction: column;
+  }
+
+  .tracking-landing .tracking-footer > .tracking-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .tracking-landing .tracking-container {
+    width: calc(100% - 28px);
+  }
+
+  .tracking-landing .tracking-nav {
+    gap: 10px;
+  }
+
+  .tracking-landing .tracking-brand img {
+    width: 42px;
+    height: auto;
+  }
+
+  .tracking-landing .tracking-brand > span {
+    padding-left: 12px;
+  }
+
+  .tracking-landing .tracking-nav-actions {
+    gap: 6px;
+  }
+
+  .tracking-landing .tracking-nav-sections {
+    gap: 20px;
+  }
+
+  .tracking-landing .tracking-hero-grid {
+    padding-top: 42px;
+    padding-bottom: 56px;
+  }
+
+  .tracking-landing .tracking-hero-actions {
+    align-items: stretch;
+  }
+
+  .tracking-landing .tracking-hero-actions .tracking-button,
+  .tracking-landing .tracking-hero-actions .tracking-text-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tracking-landing .tracking-photo-frame {
+    height: 430px;
+  }
+
+  .tracking-landing .tracking-job-card {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    transform: rotate(-1.2deg);
+  }
+
+  .tracking-landing .tracking-capabilities {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tracking-landing .tracking-workspace-callout {
+    padding: 28px 22px;
+  }
+
+  .tracking-landing .tracking-editorial-copy {
+    padding-left: 18px;
+  }
+
+  .tracking-landing .tracking-operation-chain {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .tracking-landing .tracking-operation-chain > svg {
+    display: none;
+  }
+
+  .tracking-landing .tracking-operation-chain > div {
+    min-width: 0;
+  }
+
+  .tracking-landing .tracking-benefit-costs > div:first-child {
+    flex-direction: column;
+  }
+
+  .tracking-landing .tracking-cta-inner > div:last-child {
+    padding: 22px;
+  }
+
+  .tracking-landing .tracking-cta .tracking-button {
+    width: 100%;
+  }
+
+  .tracking-landing .tracking-footer > .tracking-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
