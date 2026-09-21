@@ -111,7 +111,7 @@ export default function LandingPage() {
               <p>
                 {t(
                   "Conectá lo que pasa en campo con las decisiones de tu operación. Trabajos, costos y equipos, con el seguimiento que necesitás.",
-                  "Connect work in the field with your operational decisions. Jobs, costs and teams, with the tracking you need.",
+                  "Connect work in the field with your operational decisions. Jobs, costs and teams, with the follow-up you need.",
                 )}
               </p>
               <div className="tracking-hero-actions">
