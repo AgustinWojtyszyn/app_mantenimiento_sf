@@ -75,7 +75,14 @@ export default function LandingPage() {
             className="tracking-brand"
             aria-label={t("ServiFood Mantenimiento", "ServiFood Maintenance")}
           >
-            <img src="/servifood_logo_white_text_HQ.png" alt="ServiFood" />
+            <img
+              src="/servifood_logo_white_text_HQ.png"
+              alt="ServiFood"
+              width="180"
+              height="230"
+              decoding="async"
+              fetchPriority="high"
+            />
             <span>{t("MANTENIMIENTO", "MAINTENANCE")}</span>
           </a>
           <div className="tracking-nav-sections">
@@ -151,6 +158,9 @@ export default function LandingPage() {
                     "Operación de producción de ServiFood",
                     "ServiFood production operations",
                   )}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                 />
                 <div className="tracking-photo-caption">
                   <span className="tracking-photo-caption-index">
@@ -338,6 +348,7 @@ export default function LandingPage() {
                 width="480"
                 height="600"
                 loading="lazy"
+                decoding="async"
                 alt={t("Planta de ServiFood", "ServiFood facility")}
               />
               <div className="tracking-site-label">
@@ -633,7 +644,14 @@ export default function LandingPage() {
             className="tracking-brand"
             aria-label={t("ServiFood Mantenimiento", "ServiFood Maintenance")}
           >
-            <img src="/servifood_logo_white_text_HQ.png" alt="ServiFood" />
+            <img
+              src="/servifood_logo_white_text_HQ.png"
+              alt="ServiFood"
+              width="180"
+              height="230"
+              loading="lazy"
+              decoding="async"
+            />
             <span>{t("MANTENIMIENTO", "MAINTENANCE")}</span>
           </a>
           <p>
