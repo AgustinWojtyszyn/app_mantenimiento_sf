@@ -114,7 +114,7 @@ export default function LoginPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                 error={errors.email}
-                className="h-13 text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-50"
+                className="h-[52px] text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-50"
               />
             </motion.div>
             
@@ -133,7 +133,7 @@ export default function LoginPage() {
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 error={errors.password}
                 showPasswordToggle
-                className="h-13 text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-50"
+                className="h-[52px] text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-50"
               />
             </motion.div>
 
