@@ -3655,3 +3655,556 @@
     font-size: 15px !important;
   }
 }
+
+
+/* =========================================================
+   FINAL PREMIUM POLISH
+   Keeps the current identity, improves hierarchy and depth.
+   ========================================================= */
+
+/* 1) Product workspace: larger, clearer and less screenshot-like */
+.tracking-landing .tracking-platform {
+  padding-top: 110px;
+  padding-bottom: 125px;
+}
+
+.tracking-landing .tracking-section-heading {
+  margin-bottom: 54px;
+}
+
+.tracking-landing .tracking-workspace {
+  grid-template-columns: 72px minmax(0, 1.55fr) minmax(300px, 0.78fr);
+  min-height: 560px;
+  border: 1px solid rgba(120, 151, 184, 0.28);
+  border-radius: 14px;
+  box-shadow:
+    0 30px 80px rgba(4, 25, 49, 0.14),
+    0 4px 18px rgba(4, 25, 49, 0.08);
+  transform: translateZ(0);
+  transition:
+    transform 260ms ease,
+    box-shadow 260ms ease,
+    border-color 260ms ease;
+}
+
+.tracking-landing .tracking-workspace:hover {
+  transform: translateY(-4px);
+  border-color: rgba(90, 139, 193, 0.44);
+  box-shadow:
+    0 38px 95px rgba(4, 25, 49, 0.18),
+    0 8px 24px rgba(4, 25, 49, 0.1);
+}
+
+.tracking-landing .tracking-workspace-sidebar {
+  padding-top: 34px;
+  gap: 34px;
+}
+
+.tracking-landing .tracking-workspace-sidebar > svg {
+  width: 23px;
+  height: 23px;
+}
+
+.tracking-landing .tracking-workspace-main {
+  padding: 38px 38px 32px;
+}
+
+.tracking-landing .tracking-workspace-top {
+  margin-bottom: 8px;
+}
+
+.tracking-landing .tracking-workspace-top h3 {
+  margin-top: 10px;
+  font-size: 27px;
+  letter-spacing: -0.7px;
+}
+
+.tracking-landing .tracking-preview-label {
+  padding: 8px 11px;
+  border-radius: 7px;
+  background: #f7fafc;
+}
+
+.tracking-landing .tracking-kpis {
+  gap: 16px;
+  margin: 30px 0 32px;
+}
+
+.tracking-landing .tracking-kpis > div {
+  padding: 18px 18px 15px;
+  border-radius: 8px;
+  border: 1px solid #e6edf5;
+  background: #f8fafc;
+}
+
+.tracking-landing .tracking-kpis strong {
+  margin-top: 4px;
+  font-size: 38px;
+  line-height: 1.25;
+  letter-spacing: -1px;
+}
+
+.tracking-landing .tracking-kpi-line {
+  width: 38px;
+  height: 4px;
+  margin-top: 3px;
+}
+
+.tracking-landing .tracking-table-heading {
+  padding-bottom: 13px;
+}
+
+.tracking-landing .tracking-table-row {
+  padding: 18px 0;
+}
+
+.tracking-landing .tracking-table-job {
+  gap: 13px;
+}
+
+.tracking-landing .tracking-table-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+}
+
+.tracking-landing .tracking-table-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tracking-landing .tracking-table-job small {
+  display: block;
+  margin-top: 5px;
+}
+
+/* Two representative rows are enough for a marketing preview. */
+.tracking-landing .tracking-job-table .tracking-table-row:last-child {
+  display: none;
+}
+
+.tracking-landing .tracking-workspace-callout {
+  padding: 46px 34px;
+  justify-content: center;
+  border-left: 1px solid #dbe6f1;
+}
+
+.tracking-landing .tracking-workspace-callout h3 {
+  margin: 22px 0 18px;
+  max-width: 260px;
+  font-size: 32px;
+  line-height: 1.12;
+  letter-spacing: -1.15px;
+}
+
+.tracking-landing .tracking-workspace-callout p {
+  max-width: 275px;
+}
+
+.tracking-landing .tracking-workspace-callout > a {
+  margin-top: 30px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #c8d7e5;
+}
+
+.tracking-landing .tracking-record {
+  margin-top: 34px;
+  padding-top: 26px;
+}
+
+/* 2) Benefits: stronger cards and better visual balance */
+.tracking-landing .tracking-details {
+  padding-top: 110px;
+  padding-bottom: 120px;
+}
+
+.tracking-landing .tracking-details-heading {
+  margin-bottom: 52px;
+}
+
+.tracking-landing .tracking-benefits {
+  gap: 24px;
+}
+
+.tracking-landing .tracking-benefit {
+  min-height: 290px;
+  padding: 36px;
+  border: 1px solid rgba(125, 154, 187, 0.17);
+  border-radius: 10px;
+  overflow: hidden;
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease;
+}
+
+.tracking-landing .tracking-benefit:hover {
+  transform: translateY(-5px);
+  border-color: rgba(98, 145, 198, 0.36);
+  box-shadow: 0 24px 55px rgba(3, 22, 43, 0.14);
+}
+
+.tracking-landing .tracking-benefit h3 {
+  margin-block: 18px 16px;
+  font-size: 29px;
+  line-height: 1.13;
+  letter-spacing: -0.8px;
+}
+
+.tracking-landing .tracking-benefit-costs {
+  min-height: 610px;
+  padding: 46px;
+}
+
+.tracking-landing .tracking-benefit-costs h3 {
+  font-size: 39px;
+  line-height: 1.08;
+  max-width: 330px;
+}
+
+.tracking-landing .tracking-benefit-costs > div:first-child {
+  margin-top: 34px;
+}
+
+.tracking-landing .tracking-cost-orbit {
+  width: 235px !important;
+  height: 235px;
+}
+
+.tracking-landing .tracking-team-visual {
+  min-height: 190px !important;
+  border-radius: 9px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(93, 143, 199, 0.18), transparent 58%),
+    transparent !important;
+}
+
+.tracking-landing .tracking-team-avatars > span {
+  width: 52px;
+  height: 52px;
+  border-width: 3px;
+}
+
+.tracking-landing .tracking-team-line {
+  width: 70%;
+  margin: 18px 0;
+}
+
+.tracking-landing .tracking-report-visual {
+  min-height: 190px;
+  display: grid;
+  place-items: center;
+}
+
+.tracking-landing .tracking-report-file {
+  width: 94%;
+  padding: 22px;
+  gap: 16px;
+  border-radius: 8px;
+  box-shadow: 0 18px 35px rgba(17, 41, 66, 0.12);
+}
+
+/* 3) Workflow: larger numbers, connected visual rhythm */
+.tracking-landing .tracking-flow {
+  padding-top: 118px;
+  padding-bottom: 128px;
+}
+
+.tracking-landing .tracking-flow-grid {
+  gap: 62px;
+}
+
+.tracking-landing .tracking-steps {
+  gap: 28px;
+}
+
+.tracking-landing .tracking-steps li,
+.tracking-landing .tracking-steps li:first-child {
+  min-height: 270px;
+  padding: 34px 26px 30px;
+  border: 1px solid rgba(110, 145, 179, 0.18);
+  border-top: 1px solid rgba(110, 145, 179, 0.36);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.018);
+  gap: 28px;
+  position: relative;
+  transition:
+    transform 230ms ease,
+    border-color 230ms ease,
+    background 230ms ease;
+}
+
+.tracking-landing .tracking-steps li:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 138, 31, 0.38);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.tracking-landing .tracking-steps li::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 26px;
+  width: 54px;
+  height: 3px;
+  border-radius: 999px;
+  background: #ff8a1f;
+}
+
+.tracking-landing .tracking-step-number {
+  font-size: 72px;
+  line-height: 0.9;
+  letter-spacing: -4px;
+  color: #84a7cb !important;
+}
+
+.tracking-landing .tracking-steps h3 {
+  margin-bottom: 13px;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.tracking-landing .tracking-steps li > div > svg {
+  top: 30px;
+  right: 25px;
+  width: 38px;
+  height: 38px;
+  padding: 9px;
+  border: 1px solid rgba(255, 138, 31, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 138, 31, 0.07);
+  box-sizing: border-box;
+}
+
+/* 4) Final CTA: stronger close and clearer action */
+.tracking-landing .tracking-cta {
+  padding-block: 100px;
+}
+
+.tracking-landing .tracking-cta-inner {
+  gap: 80px;
+}
+
+.tracking-landing .tracking-cta h2 {
+  font-size: clamp(54px, 5.8vw, 82px);
+  line-height: 1.02;
+}
+
+.tracking-landing .tracking-cta-inner > div:last-child {
+  min-width: 390px;
+  max-width: 430px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 12px;
+  background: rgba(4, 21, 42, 0.26);
+  backdrop-filter: blur(10px);
+}
+
+.tracking-landing .tracking-cta p {
+  margin-bottom: 26px;
+}
+
+.tracking-landing .tracking-cta .tracking-button {
+  min-height: 58px;
+  padding: 17px 25px;
+  font-size: 16px !important;
+  border-radius: 7px;
+  box-shadow: 0 12px 28px rgba(255, 138, 31, 0.16);
+}
+
+.tracking-landing .tracking-cta-login {
+  margin-top: 22px;
+}
+
+/* 5) Subtle depth and motion */
+.tracking-landing .tracking-button,
+.tracking-landing .tracking-text-link,
+.tracking-landing .tracking-job-card,
+.tracking-landing .tracking-editorial-photo,
+.tracking-landing .tracking-report-file {
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    opacity 220ms ease;
+}
+
+.tracking-landing .tracking-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(255, 138, 31, 0.18);
+}
+
+.tracking-landing .tracking-text-link:hover {
+  transform: translateX(3px);
+}
+
+.tracking-landing .tracking-job-card:hover {
+  transform: rotate(-1.2deg) translateY(-4px);
+  box-shadow: 0 28px 65px rgba(0, 16, 31, 0.26);
+}
+
+.tracking-landing .tracking-editorial-photo:hover {
+  transform: translateY(-3px);
+}
+
+.tracking-landing .tracking-report-file:hover {
+  transform: rotate(-4deg) translateY(-3px);
+}
+
+@supports (animation-timeline: view()) {
+  @keyframes tracking-premium-reveal {
+    from {
+      opacity: 0.18;
+      transform: translateY(34px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .tracking-landing .tracking-platform,
+  .tracking-landing .tracking-editorial,
+  .tracking-landing .tracking-details,
+  .tracking-landing .tracking-flow,
+  .tracking-landing .tracking-cta {
+    animation-name: tracking-premium-reveal;
+    animation-duration: 1ms;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 34%;
+  }
+}
+
+@media (max-width: 1100px) {
+  .tracking-landing .tracking-workspace {
+    grid-template-columns: 62px minmax(0, 1fr) 275px;
+  }
+
+  .tracking-landing .tracking-workspace-main {
+    padding: 30px 28px;
+  }
+
+  .tracking-landing .tracking-workspace-callout {
+    padding: 34px 25px;
+  }
+
+  .tracking-landing .tracking-benefit {
+    padding: 30px;
+  }
+
+  .tracking-landing .tracking-benefit-costs {
+    padding: 38px;
+  }
+}
+
+@media (max-width: 800px) {
+  .tracking-landing .tracking-platform,
+  .tracking-landing .tracking-details,
+  .tracking-landing .tracking-flow {
+    padding-top: 78px;
+    padding-bottom: 84px;
+  }
+
+  .tracking-landing .tracking-workspace {
+    grid-template-columns: 54px minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .tracking-landing .tracking-workspace-callout {
+    grid-column: 1 / -1;
+    border-left: 0;
+    border-top: 1px solid #dbe6f1;
+  }
+
+  .tracking-landing .tracking-workspace-callout h3,
+  .tracking-landing .tracking-workspace-callout p {
+    max-width: 100%;
+  }
+
+  .tracking-landing .tracking-benefit-costs {
+    min-height: 0;
+  }
+
+  .tracking-landing .tracking-steps li,
+  .tracking-landing .tracking-steps li:first-child {
+    min-height: 240px;
+  }
+
+  .tracking-landing .tracking-step-number {
+    font-size: 62px;
+  }
+
+  .tracking-landing .tracking-cta-inner {
+    gap: 42px;
+  }
+
+  .tracking-landing .tracking-cta-inner > div:last-child {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .tracking-landing .tracking-workspace {
+    display: block;
+  }
+
+  .tracking-landing .tracking-workspace-sidebar {
+    display: none;
+  }
+
+  .tracking-landing .tracking-workspace-main {
+    padding: 24px 20px;
+  }
+
+  .tracking-landing .tracking-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .tracking-landing .tracking-job-table .tracking-table-row:last-child {
+    display: flex;
+  }
+
+  .tracking-landing .tracking-benefit,
+  .tracking-landing .tracking-benefit-costs {
+    padding: 28px;
+  }
+
+  .tracking-landing .tracking-benefit h3 {
+    font-size: 26px;
+  }
+
+  .tracking-landing .tracking-benefit-costs h3 {
+    font-size: 34px;
+  }
+
+  .tracking-landing .tracking-cost-orbit {
+    width: 160px !important;
+    height: 160px;
+  }
+
+  .tracking-landing .tracking-steps li,
+  .tracking-landing .tracking-steps li:first-child {
+    min-height: 0;
+    padding: 26px 22px;
+  }
+
+  .tracking-landing .tracking-step-number {
+    font-size: 52px;
+  }
+
+  .tracking-landing .tracking-steps li > div > svg {
+    width: 34px;
+    height: 34px;
+    right: 20px;
+    top: 25px;
+  }
+
+  .tracking-landing .tracking-cta {
+    padding-block: 68px;
+  }
+
+  .tracking-landing .tracking-cta-inner > div:last-child {
+    padding: 24px;
+  }
+}
