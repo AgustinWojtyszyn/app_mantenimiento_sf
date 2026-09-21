@@ -633,7 +633,7 @@ export default function LandingPage() {
           <a
             href="#"
             className="tracking-brand"
-            aria-label="ServiFood Mantenimiento"
+            aria-label={t("ServiFood Mantenimiento", "ServiFood Maintenance")}
           >
             <img src="/servifood_logo_white_text_HQ.png" alt="ServiFood" />
             <span>{t("MANTENIMIENTO", "MAINTENANCE")}</span>
