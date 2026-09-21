@@ -1,30 +1,29 @@
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { Loader2 } from 'lucide-react';
 
-// Pages
+// Keep the public landing eager and split the rest by route.
 import LandingPage from '@/pages/LandingPage';
-import LoginPage from '@/pages/LoginPage';
-import ResetPasswordPage from '@/pages/ResetPasswordPage';
-import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
-import RegisterPage from '@/pages/RegisterPage';
-import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
-import DataDeletionPage from '@/pages/DataDeletionPage';
 
-// Protected Pages
-import DailyJobsPage from '@/pages/DailyJobsPage';
-import DailyJobCreatePage from '@/pages/DailyJobCreatePage';
-import DailyJobEditPage from '@/pages/DailyJobEditPage';
-import MonthlyPanelPage from '@/pages/MonthlyPanelPage';
-import JobDetailPage from '@/pages/JobDetailPage';
-import GroupsPage from '@/pages/GroupsPage';
-import SettingsPage from '@/pages/SettingsPage';
-import AdminPage from '@/pages/AdminPage';
-import WorkersPage from '@/pages/WorkersPage';
-import TutorialPage from '@/pages/TutorialPage';
-import EquipmentLogPage from '@/pages/EquipmentLogPage';
+const LoginPage = lazy(() => import('@/pages/LoginPage'));
+const ResetPasswordPage = lazy(() => import('@/pages/ResetPasswordPage'));
+const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage'));
+const RegisterPage = lazy(() => import('@/pages/RegisterPage'));
+const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage'));
+const DataDeletionPage = lazy(() => import('@/pages/DataDeletionPage'));
+const DailyJobsPage = lazy(() => import('@/pages/DailyJobsPage'));
+const DailyJobCreatePage = lazy(() => import('@/pages/DailyJobCreatePage'));
+const DailyJobEditPage = lazy(() => import('@/pages/DailyJobEditPage'));
+const MonthlyPanelPage = lazy(() => import('@/pages/MonthlyPanelPage'));
+const JobDetailPage = lazy(() => import('@/pages/JobDetailPage'));
+const GroupsPage = lazy(() => import('@/pages/GroupsPage'));
+const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
+const AdminPage = lazy(() => import('@/pages/AdminPage'));
+const WorkersPage = lazy(() => import('@/pages/WorkersPage'));
+const TutorialPage = lazy(() => import('@/pages/TutorialPage'));
+const EquipmentLogPage = lazy(() => import('@/pages/EquipmentLogPage'));
 
 // Components
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -43,6 +42,13 @@ function App() {
 
   return (
     <Router>
+      <Suspense
+        fallback={
+          <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+            <Loader2 className="w-8 h-8 animate-spin text-[#1e3a8a] dark:text-blue-300" />
+          </div>
+        }
+      >
       <Routes>
         {/* Public Routes */}
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -106,6 +112,7 @@ function App() {
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
     </Router>
   );
 }
