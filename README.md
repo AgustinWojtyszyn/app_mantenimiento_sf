@@ -224,7 +224,7 @@ Los reportes pueden utilizar datos relacionados con:
 
 # 📤 Exportación a Excel
 
-ServiFood Tracking utiliza **ExcelJS** para generar archivos `.xlsx`.
+Mantenimiento · ServiFood utiliza **ExcelJS** para generar archivos `.xlsx`.
 
 La exportación está integrada en distintos módulos de la plataforma.
 
@@ -409,7 +409,7 @@ Cancelado
 
 # 📄 Documentación y vencimientos
 
-ServiFood Tracking permite controlar documentación relacionada con vehículos y personal.
+Mantenimiento · ServiFood permite controlar documentación relacionada con vehículos y personal.
 
 Entre los documentos contemplados se encuentran:
 
@@ -520,7 +520,7 @@ El idioma puede cambiarse desde la aplicación.
 
 # 🌙 Apariencia
 
-ServiFood Tracking incluye soporte para:
+Mantenimiento · ServiFood incluye soporte para:
 
 - modo claro;
 - modo oscuro.
@@ -996,7 +996,7 @@ GitHub: [@AgustinWojtyszyn](https://github.com/AgustinWojtyszyn)
 ---
 
 <p align="center">
-  <strong>ServiFood Tracking · Panel de Mantenimiento</strong>
+  <strong>Mantenimiento · ServiFood · Panel de Mantenimiento</strong>
 </p>
 
 <p align="center">
