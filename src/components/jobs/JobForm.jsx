@@ -234,7 +234,7 @@ export default function JobForm({
     <form onSubmit={handleSubmit} className={isPage ? 'space-y-6 mt-2' : 'space-y-4 mt-2'}>
       {isPage ? (
         <>
-          <section className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:p-6 space-y-4 shadow-sm">
+          <section className="maintenance-form-section rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-7 space-y-5">
             <div className="space-y-1">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-300">Datos principales</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">Fecha, estado y datos de contacto de la solicitud.</p>
@@ -250,7 +250,7 @@ export default function JobForm({
             />
           </section>
 
-          <section className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:p-6 space-y-4 shadow-sm">
+          <section className="maintenance-form-section rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-7 space-y-5">
             <div className="space-y-1">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-300">Detalle del trabajo</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">Tipo de acción, sector/equipo y descripción manual.</p>
@@ -264,7 +264,7 @@ export default function JobForm({
             />
           </section>
 
-          <section className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:p-6 space-y-4 shadow-sm">
+          <section className="maintenance-form-section rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-7 space-y-5">
             <div className="space-y-1">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-300">Imágenes</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">{imageSectionDescription}</p>
@@ -281,7 +281,7 @@ export default function JobForm({
             />
           </section>
 
-          <section className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:p-6 space-y-4 shadow-sm">
+          <section className="maintenance-form-section rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-7 space-y-5">
             <div className="space-y-1">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-300">Asignación y costos</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">Trabajador asignado y montos en pesos.</p>
@@ -299,7 +299,7 @@ export default function JobForm({
             />
           </section>
 
-          <section className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 md:p-6 space-y-4 shadow-sm">
+          <section className="maintenance-form-section rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-7 space-y-5">
             <div className="space-y-1">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-300">Acciones finales</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">Guardá la solicitud o cancelá la carga.</p>
