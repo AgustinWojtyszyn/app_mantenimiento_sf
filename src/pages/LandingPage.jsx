@@ -166,7 +166,7 @@ export default function LandingPage() {
                     {t("En curso", "In progress")}
                   </span>
                 </div>
-                <small>{t("SEGUIMIENTO DE TRABAJO", "JOB TRACKING")}</small>
+                <small>{t("SEGUIMIENTO DE TRABAJO", "MAINTENANCE JOB")}</small>
                 <h3>
                   {t("Mantenimiento preventivo", "Preventive maintenance")}
                 </h3>
