@@ -12,8 +12,8 @@ export default function DailyJobCreatePage() {
 
   return (
     <div className="maintenance-page w-full">
-      <div className="max-w-[1200px] mx-auto space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto max-w-[1200px] space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <Button
               type="button"
@@ -25,10 +25,10 @@ export default function DailyJobCreatePage() {
             </Button>
             <div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#082b59] dark:text-slate-50">
-                {isDuplicate ? 'Duplicar trabajo' : 'Nueva solicitud'}
+                {isDuplicate ? 'Duplicar trabajo' : 'Nuevo trabajo'}
               </h1>
               <p className="text-sm md:text-base text-gray-500 dark:text-slate-300">
-                {isDuplicate ? 'Revisá la información precargada antes de guardar.' : 'Cargá la información completa para generar el trabajo.'}
+                {isDuplicate ? 'Revisá la información precargada antes de guardar.' : 'Completá los datos principales, el detalle, la evidencia y la asignación.'}
               </p>
             </div>
           </div>
