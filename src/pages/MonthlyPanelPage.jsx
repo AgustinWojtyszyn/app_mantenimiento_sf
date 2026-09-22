@@ -483,7 +483,7 @@ export default function MonthlyPanelPage() {
   };
 
   return (
-    <div className="maintenance-page space-y-7 animate-in fade-in duration-500">
+    <div className="maintenance-page space-y-5 animate-in fade-in duration-500">
       <div className="maintenance-page-heading flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:flex-row md:items-center md:justify-between md:p-5">
         <div className="min-w-0">
           <h1 className="text-2xl font-black tracking-tight text-[#082b59] dark:text-slate-50 md:text-3xl">{t('monthlyPage.title')}</h1>
