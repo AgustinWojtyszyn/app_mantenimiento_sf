@@ -9,7 +9,7 @@ import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { formatDate, formatCurrency } from '@/utils/formatters';
 import { getMonthStart, getMonthEnd } from '@/utils/dates';
 import { normalizeJobStatus } from '@/utils/jobStatus';
-import { Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2 } from 'lucide-react';
+import { Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, MoreHorizontal } from 'lucide-react';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ExcelExportButton from '@/components/common/ExcelExportButton';
 import JobFilters from '@/components/jobs/JobFilters';
@@ -484,90 +484,106 @@ export default function MonthlyPanelPage() {
 
   return (
     <div className="maintenance-page space-y-7 animate-in fade-in duration-500">
-            <div className="maintenance-page-heading flex flex-col gap-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:flex-row md:items-center md:justify-between">
-        <div>
-	        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-[#082b59] dark:text-slate-50">{t('monthlyPage.title')}</h1>
-	        <p className="mt-1 text-base md:text-lg text-gray-500 dark:text-slate-300">{t('monthlyPage.subtitle')}</p>
+      <div className="maintenance-page-heading flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:flex-row md:items-center md:justify-between md:p-5">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-black tracking-tight text-[#082b59] dark:text-slate-50 md:text-3xl">{t('monthlyPage.title')}</h1>
+          <div className="mt-1 flex flex-col gap-1 text-sm text-gray-500 dark:text-slate-300 sm:flex-row sm:items-center sm:gap-3">
+            <span>{t('monthlyPage.subtitle')}</span>
+            <span className="hidden h-1 w-1 rounded-full bg-gray-300 dark:bg-slate-600 sm:block" aria-hidden="true" />
+            <span className="font-medium text-gray-700 dark:text-slate-200">{filters.startDate} – {filters.endDate}</span>
+          </div>
         </div>
-        <div className="flex flex-col sm:flex-row sm:flex-wrap md:flex-nowrap items-stretch justify-end gap-3 w-full md:w-auto">
+
+        <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-end md:w-auto">
           <Button
             variant="default"
             onClick={handleShare}
             disabled={!hasJobs || loading}
-            className="gap-2 min-w-[170px] w-full sm:w-auto text-base md:text-lg h-12 md:h-14 shadow-md bg-[#25D366] hover:bg-[#1ebe5a] text-white border-0"
+            className="h-10 w-full gap-2 bg-[#25D366] px-4 text-sm font-semibold text-white shadow-sm hover:bg-[#1ebe5a] sm:w-auto"
           >
-            <MessageCircle className="w-5 h-5" />
+            <MessageCircle className="h-4 w-4" />
             {isEn ? 'Share WhatsApp' : 'Compartir WhatsApp'}
           </Button>
-          <ConfirmationModal
-            title={isEn ? 'Clean completed?' : '¿Limpiar completados?'}
-            description={isEn ? 'Delete all completed jobs in the selected range.' : 'Eliminar todos los trabajos con estado completado en el rango seleccionado.'}
-            confirmLabel={isEn ? 'Delete' : 'Eliminar'}
-            onConfirm={handleClearCompleted}
-            trigger={
+
+          <details className="relative w-full sm:w-auto">
+            <summary className="flex h-10 w-full cursor-pointer list-none items-center justify-center gap-2 rounded-md border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 sm:w-auto">
+              <MoreHorizontal className="h-4 w-4" />
+              {isEn ? 'More actions' : 'Más acciones'}
+            </summary>
+            <div className="absolute right-0 z-30 mt-2 grid w-full min-w-[250px] gap-2 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-slate-700 dark:bg-slate-900 sm:w-72">
+              <ExcelExportButton
+                jobs={filteredJobs}
+                grouped={true}
+                startDate={filters.startDate}
+                endDate={filters.endDate}
+                label={isEn ? 'Export to Excel' : 'Exportar a Excel'}
+                icon={FileSpreadsheet}
+                className="h-10 w-full justify-start bg-emerald-50 text-sm font-semibold text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-200"
+              />
               <Button
                 type="button"
-                variant="destructive"
-                disabled={clearDisabled}
-                className="gap-2 min-w-[170px] w-full sm:w-auto text-base md:text-lg h-12 md:h-14 shadow-sm bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+                variant="ghost"
+                onClick={handleExportCompletedExcel}
+                disabled={loading || exportingCompleted}
+                className="h-10 w-full justify-start gap-2 text-sm font-semibold"
               >
-                <Trash2 className="w-4 h-4" />
-                {clearing ? (isEn ? 'Cleaning...' : 'Limpiando...') : (isEn ? 'Clear completed' : 'Limpiar completados')}
+                <FileSpreadsheet className="h-4 w-4" />
+                {isEn ? 'Export completed' : 'Exportar completados'}
               </Button>
-            }
-          />
-          <ConfirmationModal
-            title={isEn ? 'Clean pending?' : '¿Limpiar pendientes?'}
-            description={isEn ? 'Delete all pending jobs in the selected range.' : 'Eliminar todos los trabajos pendientes en el rango seleccionado.'}
-            confirmLabel={isEn ? 'Delete pending' : 'Eliminar pendientes'}
-            onConfirm={handleClearPending}
-            trigger={
-              <Button
-                type="button"
-                variant="secondary"
-                disabled={clearPendingDisabled}
-                className="gap-2 min-w-[170px] w-full sm:w-auto text-base md:text-lg h-12 md:h-14 shadow-sm bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
-              >
-                <Trash2 className="w-4 h-4" />
-                {clearingPending ? (isEn ? 'Cleaning pending...' : 'Limpiando pendientes...') : (isEn ? 'Clear pending' : 'Limpiar pendientes')}
-              </Button>
-            }
-          />
-          <ExcelExportButton 
-              jobs={filteredJobs} 
-              grouped={true}
-              startDate={filters.startDate}
-              endDate={filters.endDate}
-              label={isEn ? 'Export to Excel' : 'Exportar a Excel'}
-              icon={FileSpreadsheet}
-              className="min-w-[170px] w-full sm:w-auto text-base md:text-lg h-12 md:h-14 shadow-md bg-gradient-to-r from-[#1D976C] to-[#93F9B9] text-[#0b4f31] hover:from-[#168b60] hover:to-[#83efad] border-0"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleExportCompletedExcel}
-            disabled={loading || exportingCompleted}
-            className="gap-2 min-w-[170px] w-full sm:w-auto text-base md:text-lg h-12 md:h-14 shadow-sm"
-          >
-            <FileSpreadsheet className="w-5 h-5" />
-            {isEn ? 'Export completed' : 'Exportar completados'}
-          </Button>
+              <ConfirmationModal
+                title={isEn ? 'Clean completed?' : '¿Limpiar completados?'}
+                description={isEn ? 'Delete all completed jobs in the selected range.' : 'Eliminar todos los trabajos con estado completado en el rango seleccionado.'}
+                confirmLabel={isEn ? 'Delete' : 'Eliminar'}
+                onConfirm={handleClearCompleted}
+                trigger={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    disabled={clearDisabled}
+                    className="h-10 w-full justify-start gap-2 text-sm font-semibold text-red-700 hover:bg-red-50 hover:text-red-800 dark:text-red-300 dark:hover:bg-red-950/30"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {clearing ? (isEn ? 'Cleaning...' : 'Limpiando...') : (isEn ? 'Clear completed' : 'Limpiar completados')}
+                  </Button>
+                }
+              />
+              <ConfirmationModal
+                title={isEn ? 'Clean pending?' : '¿Limpiar pendientes?'}
+                description={isEn ? 'Delete all pending jobs in the selected range.' : 'Eliminar todos los trabajos pendientes en el rango seleccionado.'}
+                confirmLabel={isEn ? 'Delete pending' : 'Eliminar pendientes'}
+                onConfirm={handleClearPending}
+                trigger={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    disabled={clearPendingDisabled}
+                    className="h-10 w-full justify-start gap-2 text-sm font-semibold text-amber-800 hover:bg-amber-50 hover:text-amber-900 dark:text-amber-200 dark:hover:bg-amber-950/30"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {clearingPending ? (isEn ? 'Cleaning pending...' : 'Limpiando pendientes...') : (isEn ? 'Clear pending' : 'Limpiar pendientes')}
+                  </Button>
+                }
+              />
+            </div>
+          </details>
         </div>
       </div>
 
       <div data-tour="panel-mensual-filtros">
         <JobFilters filters={filters} onChange={handleFilterChange} />
-        <div className="maintenance-panel mt-4 flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div>
+        <div className="maintenance-panel mt-3 rounded-xl border border-gray-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+            <div className="shrink-0">
               <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">Lugar</p>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Filtrá por empresa o ubicación registrada.</p>
+              <p className="text-xs text-gray-500 dark:text-slate-400">Empresa o ubicación registrada.</p>
             </div>
-            <LocationCombobox
-              value={filters.location}
-              options={locationOptions}
-              onChange={(value) => handleFilterChange('location', value)}
-            />
+            <div className="w-full lg:max-w-sm">
+              <LocationCombobox
+                value={filters.location}
+                options={locationOptions}
+                onChange={(value) => handleFilterChange('location', value)}
+              />
+            </div>
           </div>
           {unknownLocationOptions.length > 0 ? (
             <p className="text-xs text-amber-700 dark:text-amber-300">
@@ -615,6 +631,7 @@ export default function MonthlyPanelPage() {
                 const isDeltaNegative = card.delta < 0;
                 const isNeutral = card.delta === 0;
                 const isActive = filters.status === 'all' ? card.key === 'all' : card.key === filters.status;
+                const isBalanceCard = card.key === 'balance';
                 const statusFilterValue = card.key === 'all' ? 'all' : card.key === 'pending' ? 'pending' : card.key === 'completed' ? 'completed' : null;
                 const changeLabel = card.asPercent
                   ? `${Math.abs(card.delta).toFixed(1)} puntos ${card.delta >= 0 ? 'más' : 'menos'} que el período anterior`
@@ -624,7 +641,7 @@ export default function MonthlyPanelPage() {
                 const tone = isNeutral ? 'text-gray-600 dark:text-slate-300' : (card.isPositiveGood ? (isDeltaPositive ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300') : (isDeltaNegative ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'));
                 const icon = isNeutral ? '•' : (card.isPositiveGood ? (isDeltaPositive ? '↑' : '↓') : (isDeltaNegative ? '↑' : '↓'));
                 return (
-                  <div key={card.key} className={`rounded-lg border p-3 shadow-sm ${isActive ? 'border-[#1e3a8a] bg-blue-50/50 dark:border-blue-500 dark:bg-blue-950/20' : 'border-gray-200 bg-gray-50 dark:border-slate-800 dark:bg-slate-950/40'}`}>
+                  <div key={card.key} className={`rounded-lg border p-3 shadow-sm ${isBalanceCard ? 'xl:col-span-2' : ''} ${isActive ? 'border-[#1e3a8a] bg-blue-50/50 dark:border-blue-500 dark:bg-blue-950/20' : 'border-gray-200 bg-gray-50 dark:border-slate-800 dark:bg-slate-950/40'}`}>
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-semibold text-gray-700 dark:text-slate-200">{card.label}</span>
                       {statusFilterValue ? (
