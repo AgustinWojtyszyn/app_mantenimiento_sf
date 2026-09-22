@@ -582,10 +582,10 @@ export default function DailyJobsPage() {
   }, [user, loading, jobs.length, role, startTour, resumeTourIfNeeded]);
 
   return (
-    <div className="maintenance-page space-y-6 md:space-y-8">
-      <div className="maintenance-toolbar flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 text-gray-900 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-50 md:p-5 xl:flex-row xl:items-center xl:justify-between">
+    <div className="maintenance-page space-y-4 md:space-y-5">
+      <div className="maintenance-toolbar flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-3 text-gray-900 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-50 md:p-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex flex-col md:flex-row md:items-center gap-3 w-full xl:w-auto">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-50 md:text-3xl">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-50">
               {isEn ? 'Daily Jobs' : 'Trabajos Diarios'}
             </h2>
         </div>
@@ -593,7 +593,7 @@ export default function DailyJobsPage() {
           <Button
             type="button"
             onClick={() => navigate('/app/trabajos-diarios/nuevo')}
-            className="h-11 w-full bg-[#1e3a8a] px-4 text-sm font-semibold text-white hover:bg-blue-900 sm:w-auto md:min-w-[170px] md:text-base"
+            className="h-10 w-full bg-[#1e3a8a] px-4 text-sm font-semibold text-white hover:bg-blue-900 sm:w-auto md:min-w-[150px]"
             data-tour="nuevo-trabajo"
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -601,7 +601,7 @@ export default function DailyJobsPage() {
           </Button>
           <Button
             variant="outline"
-            className="h-10 w-full gap-2 whitespace-nowrap border-emerald-200 bg-emerald-50 text-sm font-semibold text-emerald-800 hover:bg-emerald-100 sm:w-auto md:min-w-[160px]"
+            className="h-10 w-full gap-2 whitespace-nowrap border-emerald-200 bg-white text-sm font-semibold text-emerald-800 hover:bg-emerald-50 sm:w-auto md:min-w-[140px] dark:bg-slate-900"
             onClick={handleExportExcel}
             disabled={loading || exporting || sharing}
           >
@@ -609,7 +609,7 @@ export default function DailyJobsPage() {
           </Button>
           <Button
             variant="outline"
-            className="h-10 w-full gap-2 whitespace-nowrap border-green-200 bg-white text-sm font-semibold text-green-700 hover:bg-green-50 sm:w-auto md:min-w-[165px]"
+            className="h-10 w-full gap-2 whitespace-nowrap border-green-200 bg-white text-sm font-semibold text-green-700 hover:bg-green-50 sm:w-auto md:min-w-[145px] dark:bg-slate-900"
             onClick={handleShare}
             disabled={loading || sharing || exporting}
           >
@@ -684,8 +684,8 @@ export default function DailyJobsPage() {
         </div>
       </div>
 
-      <section className="maintenance-panel rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
-        <div className="mb-3 flex items-center justify-between gap-3">
+      <section className="maintenance-panel rounded-2xl border border-gray-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-4">
+        <div className="mb-2 flex items-center justify-between gap-3">
           <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-slate-50">
             {isEn ? 'Day summary' : 'Resumen del día'}
           </h3>
@@ -727,7 +727,7 @@ export default function DailyJobsPage() {
             );
             const statusFilter = getSummaryStatusCardFilter(card.key);
             const active = isSummaryStatusCardActive(card.key, selectedStatus);
-            const className = `min-h-[82px] rounded-lg border p-3 text-left transition ${
+            const className = `min-h-[70px] rounded-lg border p-2.5 text-left transition ${
               active
                 ? 'border-[#1e3a8a] bg-blue-50 shadow-sm ring-2 ring-[#1e3a8a]/20 dark:border-blue-500 dark:bg-blue-950/30'
                 : 'border-gray-100 bg-gray-50 dark:border-slate-800 dark:bg-slate-950/40'
@@ -748,7 +748,7 @@ export default function DailyJobsPage() {
               </div>
             );
           })}
-          <div className="min-h-[82px] rounded-lg border border-gray-100 bg-gray-50 p-3 dark:border-slate-800 dark:bg-slate-950/40">
+          <div className="min-h-[70px] rounded-lg border border-gray-100 bg-gray-50 p-2.5 dark:border-slate-800 dark:bg-slate-950/40">
             <span className="text-xs font-semibold uppercase text-gray-500 dark:text-slate-400">
               {isEn ? 'Estimated balance' : 'Balance estimado'}
             </span>
@@ -778,7 +778,7 @@ export default function DailyJobsPage() {
         onPageSizeChange={handlePageSizeChange}
       />
 
-      <div className="maintenance-table-shell bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden card-lg" data-tour="tabla-trabajos">
+      <div className="maintenance-table-shell overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900" data-tour="tabla-trabajos">
         <div className="px-4 md:px-6 py-3 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
           <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Summary table' : 'Tabla resumen'}</h2>
           <span className="text-sm md:text-base text-gray-500 dark:text-slate-300">{totalCount} {isEn ? 'jobs' : 'trabajos'}</span>
@@ -793,8 +793,8 @@ export default function DailyJobsPage() {
               {error}
             </div>
           ) : showEmptyState ? (
-            <div className="px-4 py-8 md:px-6 md:py-10">
-              <div className="mx-auto flex max-w-2xl flex-col items-center rounded-2xl border border-gray-200 bg-gray-50/70 px-5 py-10 text-center shadow-sm dark:border-slate-800 dark:bg-slate-950/40 md:px-8">
+            <div className="px-4 py-6 md:px-6 md:py-8">
+              <div className="mx-auto flex max-w-2xl flex-col items-center rounded-2xl border border-gray-200 bg-gray-50/70 px-5 py-7 text-center shadow-sm dark:border-slate-800 dark:bg-slate-950/40 md:px-8">
                 <div className="mb-4 rounded-full border border-gray-200 bg-white p-3 text-gray-700 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
                   {emptyStateConfig.kind === 'filters' ? (
                     <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
