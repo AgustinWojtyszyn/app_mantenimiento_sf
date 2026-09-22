@@ -5,6 +5,7 @@ export const useJobById = (id) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -13,10 +14,12 @@ export const useJobById = (id) => {
         setData(null);
         return;
       }
+
       setLoading(true);
       setError(null);
       const result = await jobsService.getJobById(id);
       if (!isMounted) return;
+
       if (result?.success) {
         setData(result.data || null);
       } else {
@@ -31,7 +34,9 @@ export const useJobById = (id) => {
     return () => {
       isMounted = false;
     };
-  }, [id]);
+  }, [id, refreshKey]);
 
-  return { data, loading, error };
+  const refetch = () => setRefreshKey((current) => current + 1);
+
+  return { data, loading, error, refetch };
 };
