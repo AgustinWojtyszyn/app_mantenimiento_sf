@@ -216,6 +216,24 @@ describe('buildMonthlyPeriodSummary', () => {
     expect(summary.current.pending).toBe(1);
   });
 
+  it('excluye cancelados del cumplimiento y de los importes operativos', () => {
+    const summary = buildMonthlyPeriodSummary({
+      currentJobs: [
+        { id: '1', status: 'cancelled', amount_to_charge: 5000, cost_spent: 4000 },
+        { id: '2', status: 'pending', amount_to_charge: 100, cost_spent: 20 },
+        { id: '3', status: 'completed', amount_to_charge: 200, cost_spent: 50 },
+      ],
+      previousJobs: [],
+      normalizeStatus,
+    });
+
+    expect(summary.current.activeCount).toBe(2);
+    expect(summary.current.completionRate).toBe(50);
+    expect(summary.current.amountToCharge).toBe(300);
+    expect(summary.current.workerCost).toBe(70);
+    expect(summary.current.balance).toBe(230);
+  });
+
   it('genera una conclusión operativa clara para los escenarios principales', () => {
     expect(buildMonthlyPeriodSummary({ currentJobs: [{ status: 'pending' }, { status: 'pending' }], previousJobs: [{ status: 'completed' }], normalizeStatus }).conclusion).toContain('Atención');
     expect(buildMonthlyPeriodSummary({ currentJobs: [{ status: 'pending' }], previousJobs: [{ status: 'pending' }, { status: 'pending' }], normalizeStatus }).conclusion).toContain('Evolución positiva');
