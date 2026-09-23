@@ -91,7 +91,7 @@ export default function LocationCombobox({
   };
 
   return (
-    <div ref={wrapperRef} className="relative w-full lg:w-72">
+    <div ref={wrapperRef} className="relative w-full min-w-0">
       <span id={labelId} className="sr-only">{label}</span>
       <div
         role="combobox"
@@ -102,7 +102,7 @@ export default function LocationCombobox({
         aria-label={selectedLabel ? `Lugar seleccionado: ${selectedLabel}` : 'Buscar o seleccionar lugar'}
         onClick={() => setOpen((current) => !current)}
         onKeyDown={handleKeyDown}
-        className="flex h-12 w-full items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-3 py-3 text-left text-base text-gray-900 outline-none transition focus-visible:ring-2 focus-visible:ring-[#1e3a8a] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50 md:text-lg"
+        className="flex h-10 w-full min-w-0 items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-3 text-left text-sm text-gray-900 outline-none transition focus-visible:ring-2 focus-visible:ring-[#1e3a8a]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50"
       >
         <span className={selectedLabel ? 'truncate' : 'truncate text-gray-500 dark:text-slate-400'}>
           {selectedLabel || 'Buscar o seleccionar lugar'}
@@ -118,7 +118,7 @@ export default function LocationCombobox({
               <X className="h-4 w-4" />
             </button>
           ) : null}
-          <ChevronDown className="h-5 w-5 text-gray-400" aria-hidden="true" />
+          <ChevronDown className="h-4 w-4 text-gray-400" aria-hidden="true" />
         </span>
       </div>
 
