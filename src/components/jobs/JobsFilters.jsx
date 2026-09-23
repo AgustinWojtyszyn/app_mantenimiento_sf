@@ -22,8 +22,8 @@ export default function JobsFilters({
 
   return (
     <div className="rounded-xl border border-gray-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-4">
-      <div className="grid grid-cols-1 items-end gap-3 md:grid-cols-2 xl:grid-cols-[10.5rem_minmax(14rem,1fr)_15rem_11rem_13rem_10rem]">
-        <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200">
+      <div className="grid grid-cols-1 items-end gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-[9rem_minmax(11rem,1.1fr)_minmax(13rem,1.4fr)_9rem_minmax(11rem,1fr)_9rem]">
+        <label className="min-w-0 block text-sm font-semibold text-gray-700 dark:text-slate-200">
           <span className="mb-1 block">{isEn ? 'Date' : 'Fecha'}</span>
           <input
             data-tour="filtro-fecha"
@@ -34,7 +34,7 @@ export default function JobsFilters({
           />
         </label>
 
-        <div>
+        <div className="min-w-0">
           <label htmlFor="jobs-search" className="mb-1 block text-sm font-semibold text-gray-700 dark:text-slate-200">
             {isEn ? 'Search' : 'Búsqueda'}
           </label>
@@ -51,7 +51,7 @@ export default function JobsFilters({
           </div>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <p className="mb-1 text-sm font-semibold text-gray-700 dark:text-slate-200">
             {isEn ? 'Place' : 'Lugar'}
           </p>
@@ -62,7 +62,7 @@ export default function JobsFilters({
           />
         </div>
 
-        <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200">
+        <label className="min-w-0 block text-sm font-semibold text-gray-700 dark:text-slate-200">
           <span className="mb-1 block">{isEn ? 'Status' : 'Estado'}</span>
           <select
             value={selectedStatus}
@@ -78,7 +78,7 @@ export default function JobsFilters({
           </select>
         </label>
 
-        <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200">
+        <label className="min-w-0 block text-sm font-semibold text-gray-700 dark:text-slate-200">
           <span className="mb-1 block">{isEn ? 'Requester' : 'Solicitante'}</span>
           <input
             type="search"
@@ -90,7 +90,7 @@ export default function JobsFilters({
           />
         </label>
 
-        <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200">
+        <label className="min-w-0 block text-sm font-semibold text-gray-700 dark:text-slate-200">
           <span className="mb-1 block">{isEn ? 'Rows per page' : 'Registros por página'}</span>
           <select
             value={pageSize}
