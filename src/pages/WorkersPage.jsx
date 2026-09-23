@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/contexts/ToastContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -327,13 +327,18 @@ export default function WorkersPage() {
   const [search, setSearch] = useState('');
   const [activityWorker, setActivityWorker] = useState(null);
   const [activityOpen, setActivityOpen] = useState(false);
+  const workersRequestIdRef = useRef(0);
   const role = ['admin', 'solicitante', 'trabajador', 'chofer'].includes(userRole)
     ? userRole
     : (isAdmin ? 'admin' : 'solicitante');
 
   const fetchWorkers = async () => {
+    const requestId = ++workersRequestIdRef.current;
     setLoading(true);
     const result = await workersService.getWorkers({ search });
+
+    if (requestId !== workersRequestIdRef.current) return;
+
     setLoading(false);
     if (result.success) {
       setWorkers(result.data || []);
@@ -388,9 +393,11 @@ export default function WorkersPage() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <div data-tour="trabajadores-crear">
-            <WorkerFormModal onSaved={fetchWorkers} />
-          </div>
+          {isAdmin && (
+            <div data-tour="trabajadores-crear">
+              <WorkerFormModal onSaved={fetchWorkers} />
+            </div>
+          )}
         </div>
       </div>
 
@@ -400,16 +407,18 @@ export default function WorkersPage() {
             <Users className="w-12 h-12 text-gray-300 dark:text-slate-500" />
             <p className="font-semibold text-lg text-gray-900 dark:text-slate-50">{t('workersPage.emptyTitle')}</p>
             <p className="text-base max-w-md text-gray-600 dark:text-slate-300">
-		      {t('workersPage.emptyDesc')}
+              {isAdmin ? t('workersPage.emptyDesc') : 'No hay trabajadores disponibles en tus grupos.'}
             </p>
-            <WorkerFormModal
-              onSaved={fetchWorkers}
-              trigger={
-                <Button className="mt-2 bg-[#1e3a8a] hover:bg-blue-900 text-white">
-                  {t('workersPage.createCta')}
-                </Button>
-              }
-            />
+            {isAdmin && (
+              <WorkerFormModal
+                onSaved={fetchWorkers}
+                trigger={
+                  <Button className="mt-2 bg-[#1e3a8a] hover:bg-blue-900 text-white">
+                    {t('workersPage.createCta')}
+                  </Button>
+                }
+              />
+            )}
           </div>
         ) : (
           <>
