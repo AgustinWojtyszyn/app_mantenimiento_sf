@@ -13,6 +13,21 @@ begin
     return new;
   end if;
 
+  -- A client-created self profile must always start unprivileged. This closes
+  -- the insert path as well as the update path.
+  if tg_op = 'INSERT' then
+    if new.id is distinct from auth.uid()
+      or coalesce(new.role, 'user') <> 'user'
+      or coalesce(to_jsonb(new.permissions), '[]'::jsonb) <> '[]'::jsonb
+      or new.deleted_at is not null
+    then
+      raise exception 'New user profiles cannot contain privileged fields'
+        using errcode = '42501';
+    end if;
+
+    return new;
+  end if;
+
   -- Existing administrators may manage privileged fields for the admin console.
   -- Non-admin users may edit profile data and may deactivate their own account,
   -- but they cannot change role/permissions or reactivate themselves.
@@ -35,13 +50,13 @@ begin
 
   return new;
 end;
-$$;
+$;
 
 revoke all on function public.protect_user_privileged_fields() from public, anon, authenticated;
 
 drop trigger if exists protect_user_privileged_fields on public.users;
 create trigger protect_user_privileged_fields
-before update on public.users
+before insert or update on public.users
 for each row
 execute function public.protect_user_privileged_fields();
 
