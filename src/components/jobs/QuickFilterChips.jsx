@@ -9,8 +9,9 @@ export default function QuickFilterChips({ filters, onChange, groups = [], worke
   const statusOptions = useMemo(() => ([
     { value: 'all', label: isEn ? 'All' : 'Todos' },
     { value: 'pending', label: isEn ? 'Pending' : 'Pendiente' },
+    { value: 'in_progress', label: isEn ? 'In progress' : 'En proceso' },
     { value: 'completed', label: isEn ? 'Completed' : 'Completado' },
-    { value: 'archived', label: isEn ? 'Archived' : 'Archivado' },
+    { value: 'cancelled', label: isEn ? 'Cancelled' : 'Cancelado' },
   ]), [isEn]);
 
   const groupOptions = useMemo(() => {
