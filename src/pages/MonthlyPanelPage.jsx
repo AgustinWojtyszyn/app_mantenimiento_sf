@@ -305,6 +305,10 @@ export default function MonthlyPanelPage() {
     () => filteredJobs.filter((record) => isCompletedRecord(record) && isWithinSelectedRange(record)),
     [filteredJobs, filters.startDate, filters.endDate]
   );
+  const pendingJobsInView = useMemo(
+    () => filteredJobs.filter((record) => normalizeStatusValue(record) === 'pending' && isWithinSelectedRange(record)),
+    [filteredJobs, filters.startDate, filters.endDate]
+  );
 
   useEffect(() => {
     const allRawStatuses = jobs.map(getRawStatusValue);
@@ -402,22 +406,24 @@ export default function MonthlyPanelPage() {
       return;
     }
     if (!mountedRef.current) return;
+
     setClearing(true);
-    const result = await jobsService.deleteCompletedJobs(filters.startDate, filters.endDate);
+    const result = await jobsService.deleteJobsByIds(completedJobsInView, { actorId: user?.id || null });
+
     if (!mountedRef.current) return;
     if (result.success) {
       const removed = result.removed || 0;
       addToast(
         removed === 0
-          ? (isEn ? 'No completed jobs to remove.' : 'No hay trabajos completados para eliminar.')
+          ? (isEn ? 'No completed jobs match the active filters.' : 'No hay trabajos completados con los filtros activos.')
           : (isEn ? `Removed ${removed} completed jobs.` : `Se eliminaron ${removed} trabajos completados.`),
         'success'
       );
-      void fetchJobs();
+      await Promise.all([fetchJobs(), fetchMonthlySummary()]);
     } else {
       addToast(result.error, 'error');
     }
-    setClearing(false);
+    if (mountedRef.current) setClearing(false);
   };
 
   const handleClearPending = async () => {
@@ -426,22 +432,24 @@ export default function MonthlyPanelPage() {
       return;
     }
     if (!mountedRef.current) return;
+
     setClearingPending(true);
-    const result = await jobsService.deletePendingJobs(filters.startDate, filters.endDate);
+    const result = await jobsService.deleteJobsByIds(pendingJobsInView, { actorId: user?.id || null });
+
     if (!mountedRef.current) return;
     if (result.success) {
       const removed = result.removed || 0;
       addToast(
         removed === 0
-          ? (isEn ? 'No pending jobs to remove.' : 'No hay trabajos pendientes para eliminar.')
+          ? (isEn ? 'No pending jobs match the active filters.' : 'No hay trabajos pendientes con los filtros activos.')
           : (isEn ? `Removed ${removed} pending jobs.` : `Se eliminaron ${removed} trabajos pendientes.`),
         'success'
       );
-      void fetchJobs();
+      await Promise.all([fetchJobs(), fetchMonthlySummary()]);
     } else {
       addToast(result.error, 'error');
     }
-    setClearingPending(false);
+    if (mountedRef.current) setClearingPending(false);
   };
 
   const handleDeleteJob = async (jobId) => {
@@ -514,7 +522,7 @@ export default function MonthlyPanelPage() {
               </Button>
               <ConfirmationModal
                 title={isEn ? 'Clean completed?' : '¿Limpiar completados?'}
-                description={isEn ? 'Delete all completed jobs in the selected range.' : 'Eliminar todos los trabajos con estado completado en el rango seleccionado.'}
+                description={isEn ? 'Delete completed jobs that match the active filters.' : 'Eliminar los trabajos completados que coinciden con los filtros activos.'}
                 confirmLabel={isEn ? 'Delete' : 'Eliminar'}
                 onConfirm={handleClearCompleted}
                 trigger={
@@ -531,7 +539,7 @@ export default function MonthlyPanelPage() {
               />
               <ConfirmationModal
                 title={isEn ? 'Clean pending?' : '¿Limpiar pendientes?'}
-                description={isEn ? 'Delete all pending jobs in the selected range.' : 'Eliminar todos los trabajos pendientes en el rango seleccionado.'}
+                description={isEn ? 'Delete pending jobs that match the active filters.' : 'Eliminar los trabajos pendientes que coinciden con los filtros activos.'}
                 confirmLabel={isEn ? 'Delete pending' : 'Eliminar pendientes'}
                 onConfirm={handleClearPending}
                 trigger={
