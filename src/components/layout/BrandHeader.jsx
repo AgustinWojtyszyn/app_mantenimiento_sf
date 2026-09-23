@@ -15,9 +15,6 @@ export default function BrandHeader() {
             loading="lazy"
           />
         </div>
-        <div className="maintenance-hero__flag" aria-hidden="true">
-          <div className="maintenance-hero__sun" />
-        </div>
       </div>
     </header>
   );
