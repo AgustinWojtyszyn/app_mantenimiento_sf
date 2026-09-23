@@ -240,7 +240,7 @@ const getSimpleSummaryPart = (jobs, normalizeStatus) => {
   return { total, pending, completed };
 };
 
-const getActiveJobs = (jobs, normalizeStatus) => (Array.isArray(jobs) ? jobs : []).filter((job) => normalizeStatus(job) !== 'archived');
+const getActiveJobs = (jobs, normalizeStatus) => (Array.isArray(jobs) ? jobs : []).filter((job) => normalizeStatus(job) !== 'cancelled');
 
 const getUniqueValues = (jobs, accessor) => {
   const seen = new Set();
