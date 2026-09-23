@@ -39,7 +39,8 @@ const basePlanEs = [
     route: '/app/trabajadores',
     selector: '[data-tour="trabajadores-crear"]',
     title: 'Trabajadores',
-    description: 'Agrega nuevos trabajadores.'
+    description: 'Agrega nuevos trabajadores.',
+    requiresAdmin: true
   },
   {
     route: '/app/trabajadores',
@@ -143,7 +144,8 @@ const basePlanEn = [
     route: '/app/trabajadores',
     selector: '[data-tour="trabajadores-crear"]',
     title: 'Workers',
-    description: 'Add new workers.'
+    description: 'Add new workers.',
+    requiresAdmin: true
   },
   {
     route: '/app/trabajadores',
