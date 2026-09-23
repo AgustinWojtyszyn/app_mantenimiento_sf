@@ -137,9 +137,9 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setProfile(null);
       setSession(null);
-      addToast('Cuenta eliminada.', 'success');
+      addToast('Cuenta desactivada.', 'success');
     } else {
-      addToast(result.message || 'No se pudo eliminar la cuenta.', 'error');
+      addToast(result.message || 'No se pudo desactivar la cuenta.', 'error');
     }
     return result;
   }, [addToast]);
