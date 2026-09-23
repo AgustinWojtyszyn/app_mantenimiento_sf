@@ -1,5 +1,5 @@
 # 🔧 Mantenimiento · ServiFood
-
+.
 <p align="center">
   <strong>Plataforma web full-stack para la gestión de trabajos de mantenimiento, personal, costos, vehículos, planta y operación diaria.</strong>
 </p>
