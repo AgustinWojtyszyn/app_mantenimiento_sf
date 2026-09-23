@@ -17,6 +17,7 @@ const buildJobsService = async ({ rpcResult, rpcError = null, rpcImpl = null } =
           })),
           error: null,
         })),
+        remove: vi.fn().mockResolvedValue({ error: null }),
       })),
     },
   };
@@ -431,6 +432,39 @@ describe('jobsService.listJobsPaginated', () => {
     expect(result.copiedCount).toBe(1);
     expect(result.failedCount).toBe(2);
     expect(result.error).toBe('Se copiaron 1 trabajos y fallaron 2.');
+  });
+});
+
+describe('jobsService bulk cleanup', () => {
+  it('elimina tambien los adjuntos devueltos por la RPC nueva', async () => {
+    const rpcImpl = vi.fn().mockResolvedValue({
+      data: {
+        deleted_count: 2,
+        image_paths: ['user-1/job-1/a.jpg', 'user-2/job-2/b.jpg'],
+      },
+      error: null,
+    });
+    const { jobsService, supabase } = await buildJobsService({ rpcImpl });
+
+    const result = await jobsService.deleteCompletedJobs('2026-07-10', '2026-07-10', {
+      location: 'ServiFood',
+      requestedBy: 'Juan',
+      search: 'motor',
+    });
+
+    const storageClient = supabase.storage.from.mock.results[0].value;
+    expect(result).toMatchObject({ success: true, removed: 2 });
+    expect(storageClient.remove).toHaveBeenCalledWith([
+      'user-1/job-1/a.jpg',
+      'user-2/job-2/b.jpg',
+    ]);
+  });
+
+  it('mantiene compatibilidad con la respuesta numerica anterior', async () => {
+    const { jobsService } = await buildJobsService({ rpcResult: 3 });
+    const result = await jobsService.deletePendingJobs('2026-07-10', '2026-07-10');
+
+    expect(result).toMatchObject({ success: true, removed: 3 });
   });
 });
 
