@@ -45,7 +45,7 @@ export default function DataDeletionPage() {
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-slate-50">Eliminación de datos de usuario</h1>
-                <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">Última actualización: 9 de marzo de 2026</p>
+                <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">Última actualización: 23 de septiembre de 2026</p>
               </div>
             </div>
 
@@ -55,7 +55,8 @@ export default function DataDeletionPage() {
                 {' '}
                 <span className="font-medium text-slate-900 dark:text-slate-50">agustinwojtyszyn99@gmail.com</span>.
                 La eliminación puede incluir información de perfil, trabajos, costos, grupos y registros asociados,
-                según el alcance solicitado.
+                según el alcance solicitado. La opción "Desactivar cuenta" de Configuración solo bloquea el acceso;
+                no reemplaza este proceso de eliminación definitiva.
               </p>
 
               <div className="grid gap-4">
