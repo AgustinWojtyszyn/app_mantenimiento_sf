@@ -98,6 +98,7 @@ export default function DailyJobsPage() {
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [updatingStatusIds, setUpdatingStatusIds] = useState([]);
+  const [deletingJobIds, setDeletingJobIds] = useState([]);
   const [pendingStatusChange, setPendingStatusChange] = useState(null);
   const reqIdRef = useRef(0);
   const summaryReqIdRef = useRef(0);
@@ -523,6 +524,24 @@ export default function DailyJobsPage() {
     }
   };
 
+  const handleDeleteJob = async (job) => {
+    if (!job?.id || deletingJobIds.includes(job.id)) return;
+
+    setDeletingJobIds((ids) => [...ids, job.id]);
+    setRowActionsOpenId(null);
+
+    const result = await jobsService.deleteJob(job.id, { actorId: user?.id || null });
+
+    if (result.success) {
+      addToast(isEn ? 'Job deleted.' : 'Trabajo eliminado.', 'success');
+      await Promise.all([fetchJobs(), fetchSummary()]);
+    } else {
+      addToast(result.error || (isEn ? 'The job could not be deleted.' : 'No se pudo eliminar el trabajo.'), 'error');
+    }
+
+    setDeletingJobIds((ids) => ids.filter((id) => id !== job.id));
+  };
+
   useEffect(() => {
     if (!user || loading) return;
     if (typeof window === 'undefined') return;
@@ -874,6 +893,8 @@ export default function DailyJobsPage() {
                     (() => {
                       const normalizedStatus = normalizeJobStatus(job?.estado || job?.status);
                       const isRowUpdating = updatingStatusIds.includes(job.id);
+                      const isDeleting = deletingJobIds.includes(job.id);
+                      const canDeleteJob = isAdmin || job?.user_id === user?.id;
                       const isPending = normalizedStatus === 'pending';
                       const isCompleted = normalizedStatus === 'completed';
                       return (
@@ -952,6 +973,34 @@ export default function DailyJobsPage() {
                           >
                             <Copy className="w-4 h-4 mr-1" /> Duplicar
                           </Button>
+                          {canDeleteJob && (
+                            <ConfirmationModal
+                              title={isEn ? 'Delete job?' : '¿Eliminar trabajo?'}
+                              description={
+                                isEn
+                                  ? `This will permanently delete "${job.title || job.description || 'this job'}".`
+                                  : `Se eliminará definitivamente "${job.title || job.description || 'este trabajo'}".`
+                              }
+                              confirmLabel={isEn ? 'Delete' : 'Eliminar'}
+                              onConfirm={() => handleDeleteJob(job)}
+                              trigger={
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  disabled={isRowUpdating || isDeleting}
+                                  className="h-9 px-3 rounded-full border-red-200 text-xs font-semibold text-red-700 shadow-sm hover:bg-red-50 hover:text-red-800 dark:border-red-900/60 dark:text-red-300 dark:hover:bg-red-950/40 md:text-sm"
+                                >
+                                  {isDeleting ? (
+                                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="w-4 h-4 mr-1" />
+                                  )}
+                                  {isDeleting ? (isEn ? 'Deleting...' : 'Eliminando...') : (isEn ? 'Delete' : 'Eliminar')}
+                                </Button>
+                              }
+                            />
+                          )}
                           {isCompleted && (
                             <div className="relative">
                               <Button
