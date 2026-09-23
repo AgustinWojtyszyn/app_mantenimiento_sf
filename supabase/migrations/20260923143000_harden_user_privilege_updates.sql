@@ -14,11 +14,19 @@ begin
   end if;
 
   -- Existing administrators may manage privileged fields for the admin console.
-  -- Non-admin users may only update non-privileged profile fields.
+  -- Non-admin users may edit profile data and may deactivate their own account,
+  -- but they cannot change role/permissions or reactivate themselves.
   if not public.app_is_admin(auth.uid()) then
     if new.role is distinct from old.role
       or new.permissions is distinct from old.permissions
-      or new.deleted_at is distinct from old.deleted_at
+      or (
+        new.deleted_at is distinct from old.deleted_at
+        and not (
+          old.deleted_at is null
+          and new.deleted_at is not null
+          and new.id = auth.uid()
+        )
+      )
     then
       raise exception 'Privileged user fields cannot be changed by this account'
         using errcode = '42501';
