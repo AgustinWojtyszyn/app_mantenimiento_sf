@@ -87,8 +87,9 @@ export default function JobFilters({ filters, onChange, showDates = true, showCl
                 >
                 <option value="all">Estado: Todos</option>
                 <option value="pending">Pendiente</option>
+                <option value="in_progress">En proceso</option>
                 <option value="completed">Completado</option>
-                <option value="archived">Archivado</option>
+                <option value="cancelled">Cancelado</option>
                 </select>
             </div>
 
