@@ -374,7 +374,7 @@ export default function WorkersPage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-	      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-slate-50">{t('workersPage.title')}</h1>
+	      <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-50 md:text-3xl">{t('workersPage.title')}</h1>
 	      <p className="text-base md:text-lg text-gray-500 dark:text-slate-300">{t('workersPage.subtitle')}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
