@@ -608,7 +608,7 @@ function FuelLoadFormDialog({ fuelLoad, vehicles, selectedVehicleId = '', trigge
   const prepareForm = useCallback(() => {
     const currentVehicles = vehiclesRef.current;
     const currentFuelLoad = fuelLoadRef.current;
-    const defaultVehicleId = selectedVehicleIdRef.current || currentVehicles[0]?.id || '';
+    const defaultVehicleId = selectedVehicleIdRef.current || '';
     setFormError('');
     mileageEditedRef.current = Boolean(currentFuelLoad);
     setForm(currentFuelLoad ? {
@@ -792,7 +792,7 @@ function MaintenanceLogFormDialog({ maintenanceLog, vehicles, selectedVehicleId 
   const prepareForm = useCallback(() => {
     const currentVehicles = vehiclesRef.current;
     const currentMaintenanceLog = maintenanceLogRef.current;
-    const defaultVehicleId = selectedVehicleIdRef.current || currentVehicles[0]?.id || '';
+    const defaultVehicleId = selectedVehicleIdRef.current || '';
     setFormError('');
     mileageEditedRef.current = Boolean(currentMaintenanceLog);
     setForm(currentMaintenanceLog ? {
@@ -1397,7 +1397,7 @@ function VehicleRouteFormDialog({ route, vehicles, drivers, trigger, onSaved }) 
     const currentVehicles = vehiclesRef.current;
     const currentDrivers = driversRef.current;
     const currentRoute = routeRef.current;
-    const defaultVehicleId = currentVehicles[0]?.id || '';
+    const defaultVehicleId = '';
     const defaultVehicle = findVehicleById(currentVehicles, defaultVehicleId);
     setFormError('');
     mileageStartEditedRef.current = Boolean(currentRoute);
@@ -1581,7 +1581,7 @@ function MaintenanceRequestFormDialog({ request, vehicles, drivers, trigger, onS
     const currentVehicles = vehiclesRef.current;
     const currentDrivers = driversRef.current;
     const currentRequest = requestRef.current;
-    const defaultVehicleId = currentVehicles[0]?.id || '';
+    const defaultVehicleId = '';
     const defaultVehicle = findVehicleById(currentVehicles, defaultVehicleId);
     setFormError('');
     currentMileageEditedRef.current = Boolean(currentRequest);
