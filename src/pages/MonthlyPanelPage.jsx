@@ -8,7 +8,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { formatDate, formatCurrency } from '@/utils/formatters';
 import { getMonthStart, getMonthEnd } from '@/utils/dates';
-import { normalizeJobStatus } from '@/utils/jobStatus';
+import { getJobStatusBadgeClass, getJobStatusLabel, normalizeJobStatus } from '@/utils/jobStatus';
 import { Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, MoreHorizontal } from 'lucide-react';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ExcelExportButton from '@/components/common/ExcelExportButton';
@@ -296,27 +296,9 @@ export default function MonthlyPanelPage() {
   };
   const getStatusMeta = (job) => {
     const normalized = normalizeStatusValue(job);
-    if (normalized === 'completed') {
-      return {
-        badgeClass: 'bg-green-100 text-green-700',
-        label: t('monthlyPage.status.completed')
-      };
-    }
-    if (normalized === 'pending') {
-      return {
-        badgeClass: 'bg-yellow-100 text-yellow-700',
-        label: t('monthlyPage.status.pending')
-      };
-    }
-    if (normalized === 'archived') {
-      return {
-        badgeClass: 'bg-gray-100 text-gray-700',
-        label: t('monthlyPage.status.archived')
-      };
-    }
     return {
-      badgeClass: 'bg-slate-100 text-slate-700',
-      label: isEn ? 'Not informed' : 'No informado'
+      badgeClass: getJobStatusBadgeClass(normalized),
+      label: getJobStatusLabel(normalized, isEn),
     };
   };
   const completedJobsInView = useMemo(
