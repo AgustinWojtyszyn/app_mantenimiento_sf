@@ -2252,7 +2252,7 @@ export default function EquipmentLogPage() {
               <BookOpen className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-50">Registro de equipo y planta</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-50 md:text-3xl">Registro de equipo y planta</h1>
               <p className="text-base text-gray-600 dark:text-slate-300">Control interno de vehículos, mantenimiento, combustible y sectores operativos de planta.</p>
             </div>
           </div>
