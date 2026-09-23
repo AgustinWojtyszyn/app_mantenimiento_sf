@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { normalizeJobStatus } from '@/utils/jobStatus';
 import {
   applyMonthlyPanelFilters,
   buildMonthlyLocationOptions,
@@ -141,7 +142,7 @@ describe('getPreviousDateRange', () => {
 });
 
 describe('buildMonthlyPeriodSummary', () => {
-  const normalizeStatus = (job) => job.status;
+  const normalizeStatus = (job) => normalizeJobStatus(job.status);
 
   it('cuenta total, pendientes, completados y cumplimiento con datos normales', () => {
     const currentJobs = [
