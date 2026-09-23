@@ -187,11 +187,10 @@
   position: relative;
   isolation: isolate;
   display: flex;
-  height: clamp(88px, 8vw, 108px);
-  max-height: 112px;
+  min-height: clamp(124px, 10vw, 148px);
   overflow: hidden;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   border: 1px solid rgb(148 163 184 / 0.16);
   border-radius: 16px;
   background: linear-gradient(135deg, #020817 0%, #081a38 52%, #0b2349 100%);
@@ -204,18 +203,18 @@
 .maintenance-hero__content {
   display: flex;
   align-items: center;
-  flex: 1;
-  flex-direction: row;
   justify-content: center;
-  gap: clamp(12px, 2vw, 24px);
-  padding: 10px clamp(14px, 3vw, 34px) 8px;
+  flex: 1;
+  flex-direction: column;
+  gap: clamp(6px, 0.8vw, 10px);
+  padding: 12px clamp(14px, 3vw, 34px) 14px;
   text-align: center;
 }
 
 .maintenance-hero__title {
   max-width: 100%;
   color: #fff8e7;
-  font-size: clamp(1.15rem, 1.8vw, 1.55rem);
+  font-size: clamp(1.2rem, 1.9vw, 1.65rem);
   font-style: italic;
   font-weight: 950;
   line-height: 1;
@@ -227,106 +226,33 @@
 
 .maintenance-hero__logo {
   width: auto;
-  height: clamp(34px, 3.4vw, 44px);
-  max-width: min(280px, 72vw);
+  height: clamp(54px, 5vw, 72px);
+  max-width: min(300px, 78vw);
   object-fit: contain;
-  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.28));
-}
-
-.maintenance-hero__flag {
-  position: relative;
-  height: clamp(14px, 1.5vw, 18px);
-  overflow: hidden;
-  border-top: 1px solid rgb(255 255 255 / 0.18);
-  background:
-    radial-gradient(ellipse at 18% 50%, rgb(255 255 255 / 0.16), transparent 25%),
-    radial-gradient(ellipse at 82% 45%, rgb(0 0 0 / 0.1), transparent 27%),
-    linear-gradient(100deg, rgb(255 255 255 / 0.12), transparent 22%, rgb(255 255 255 / 0.08) 45%, transparent 68%),
-    linear-gradient(
-      to bottom,
-      #74acdf 0 33.333%,
-      #ffffff 33.333% 66.666%,
-      #74acdf 66.666% 100%
-    );
-  box-shadow:
-    inset 0 8px 18px rgb(2 6 23 / 0.16),
-    inset 0 -1px 0 rgb(255 255 255 / 0.28);
-}
-
-.maintenance-hero__flag::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    repeating-linear-gradient(105deg, transparent 0 76px, rgb(255 255 255 / 0.08) 76px 92px, transparent 92px 164px),
-    linear-gradient(to right, rgb(2 6 23 / 0.14), transparent 17%, transparent 83%, rgb(2 6 23 / 0.14));
-  opacity: 0.62;
-}
-
-.maintenance-hero__sun {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: clamp(13px, 1.4vw, 17px);
-  height: clamp(13px, 1.4vw, 17px);
-  border-radius: 50%;
-  background: repeating-conic-gradient(
-    from -6deg,
-    #d89220 0 5deg,
-    transparent 5deg 10deg,
-    #f4bd3f 10deg 15deg,
-    transparent 15deg 20deg
-  );
-  box-shadow: 0 0 11px rgb(246 183 52 / 0.38);
-  transform: translate(-50%, -50%);
-}
-
-.maintenance-hero__sun::before,
-.maintenance-hero__sun::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-}
-
-.maintenance-hero__sun::before {
-  inset: 21%;
-  background:
-    radial-gradient(circle at 36% 39%, #8f5a18 0 3%, transparent 4%),
-    radial-gradient(circle at 64% 39%, #8f5a18 0 3%, transparent 4%),
-    radial-gradient(ellipse at 50% 62%, transparent 0 28%, #8f5a18 29% 33%, transparent 34%),
-    radial-gradient(circle, #ffe08a 0 36%, #f7bf3d 58%, #d89220 100%);
-  box-shadow:
-    inset 0 1px 1px rgb(255 255 255 / 0.55),
-    inset 0 -2px 3px rgb(107 72 18 / 0.22);
-}
-
-.maintenance-hero__sun::after {
-  inset: 7%;
-  border: 1px solid rgb(143 90 24 / 0.28);
+  filter: drop-shadow(0 7px 14px rgb(0 0 0 / 0.3));
 }
 
 @media (max-width: 640px) {
   .maintenance-hero {
-    height: 104px;
+    min-height: 126px;
     border-radius: 14px;
   }
 
   .maintenance-hero__content {
-    gap: 10px;
-    padding: 10px 12px 8px;
+    gap: 7px;
+    padding: 12px 12px 14px;
   }
 
   .maintenance-hero__title {
-    max-width: 72%;
+    max-width: 100%;
     font-size: clamp(1.05rem, 5vw, 1.35rem);
     white-space: normal;
     text-wrap: balance;
   }
 
   .maintenance-hero__logo {
-    height: 34px;
-    max-width: 76px;
+    height: 54px;
+    max-width: 118px;
   }
 }
 
