@@ -50,7 +50,7 @@ begin
 
   return new;
 end;
-$;
+$$;
 
 revoke all on function public.protect_user_privileged_fields() from public, anon, authenticated;
 
