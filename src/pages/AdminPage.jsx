@@ -137,7 +137,7 @@ export default function AdminPage() {
       <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-4 shadow-sm text-gray-900 dark:text-white">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <h1 className="font-bold text-2xl md:text-3xl text-gray-900 dark:text-slate-50">Panel de Administración</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-50 md:text-3xl">Panel de Administración</h1>
             <p className="text-base text-gray-600 dark:text-slate-300">Gestiona roles, permisos y seguridad en un solo lugar.</p>
           </div>
         </div>
