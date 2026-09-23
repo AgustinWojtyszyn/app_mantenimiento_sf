@@ -486,7 +486,7 @@ export default function MonthlyPanelPage() {
     <div className="maintenance-page space-y-5 animate-in fade-in duration-500">
       <div className="maintenance-page-heading flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:flex-row md:items-center md:justify-between md:p-5">
         <div className="min-w-0">
-          <h1 className="text-2xl font-black tracking-tight text-[#082b59] dark:text-slate-50 md:text-3xl">{t('monthlyPage.title')}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#082b59] dark:text-slate-50 md:text-3xl">{t('monthlyPage.title')}</h1>
           <div className="mt-1 flex flex-col gap-1 text-sm text-gray-500 dark:text-slate-300 sm:flex-row sm:items-center sm:gap-3">
             <span>{t('monthlyPage.subtitle')}</span>
             <span className="hidden h-1 w-1 rounded-full bg-gray-300 dark:bg-slate-600 sm:block" aria-hidden="true" />
