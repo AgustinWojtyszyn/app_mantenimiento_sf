@@ -57,6 +57,26 @@ const extractAttachmentPaths = (attachments) => {
     .filter(Boolean);
 };
 
+const extractJobImagePaths = (jobs = []) => Array.from(new Set(
+  (Array.isArray(jobs) ? jobs : [])
+    .flatMap((job) => extractAttachmentPaths(job?.image_attachments))
+    .filter(Boolean)
+));
+
+const normalizeBulkDeleteResult = (data) => {
+  if (data && typeof data === 'object' && !Array.isArray(data)) {
+    return {
+      removed: Number(data.deleted_count) || 0,
+      imagePaths: Array.isArray(data.image_paths) ? data.image_paths.filter(Boolean) : [],
+    };
+  }
+
+  return {
+    removed: Number(data) || 0,
+    imagePaths: [],
+  };
+};
+
 const resolveStorageErrorMessage = (error) => {
   const message = error?.message || error?.error || '';
   if (/exceeded the maximum allowed size|file size/i.test(message)) {
@@ -838,6 +858,47 @@ export const jobsService = {
     }
   },
 
+  async deleteJobsByIds(jobRecords = [], { actorId = null } = {}) {
+    try {
+      const { userId, isAdmin } = await this.resolveActorContext(actorId);
+      if (!userId) return { success: false, error: "No hay sesión activa." };
+      if (!isAdmin) return { success: false, error: "Solo los administradores pueden limpiar trabajos en lote." };
+
+      const uniqueRecords = Array.from(new Map(
+        (Array.isArray(jobRecords) ? jobRecords : [])
+          .filter((job) => job?.id)
+          .map((job) => [job.id, job])
+      ).values());
+
+      if (uniqueRecords.length === 0) {
+        return { success: true, removed: 0, message: "No hay trabajos para eliminar." };
+      }
+
+      let removed = 0;
+      const batchSize = 100;
+
+      for (let index = 0; index < uniqueRecords.length; index += batchSize) {
+        const batch = uniqueRecords.slice(index, index + batchSize);
+        const batchIds = batch.map((job) => job.id);
+        const { data, error } = await supabase
+          .from('jobs')
+          .delete()
+          .in('id', batchIds)
+          .select('id');
+
+        if (error) throw error;
+
+        removed += Array.isArray(data) ? data.length : batchIds.length;
+        await this.cleanupUploadedImages(extractJobImagePaths(batch));
+      }
+
+      return { success: true, removed, message: "Trabajos eliminados." };
+    } catch (error) {
+      console.error('deleteJobsByIds error', error);
+      return { success: false, error: "No se pudieron eliminar los trabajos seleccionados." };
+    }
+  },
+
   async deleteCompletedJobs(startDate, endDate, filters = {}) {
     try {
       const { data, error } = await supabase.rpc('bulk_delete_jobs', {
@@ -850,7 +911,9 @@ export const jobsService = {
       });
 
       if (error) throw error;
-      return { success: true, message: "Trabajos completados eliminados", removed: Number(data) || 0 };
+      const { removed, imagePaths } = normalizeBulkDeleteResult(data);
+      await this.cleanupUploadedImages(imagePaths);
+      return { success: true, message: "Trabajos completados eliminados", removed };
     } catch (error) {
       return { success: false, error: "No se pudieron limpiar los trabajos completados." };
     }
@@ -868,7 +931,9 @@ export const jobsService = {
       });
 
       if (error) throw error;
-      return { success: true, message: "Trabajos pendientes eliminados", removed: Number(data) || 0 };
+      const { removed, imagePaths } = normalizeBulkDeleteResult(data);
+      await this.cleanupUploadedImages(imagePaths);
+      return { success: true, message: "Trabajos pendientes eliminados", removed };
     } catch (error) {
       return { success: false, error: "No se pudieron limpiar los trabajos pendientes." };
     }
