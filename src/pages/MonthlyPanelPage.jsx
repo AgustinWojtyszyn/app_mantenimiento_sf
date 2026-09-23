@@ -198,9 +198,20 @@ export default function MonthlyPanelPage() {
 
   useEffect(() => {
     if (user && filters.startDate && filters.endDate) {
-        fetchJobs();
-        void fetchMonthlySummary();
+      fetchJobs();
+      void fetchMonthlySummary();
+      return;
     }
+
+    // An incomplete date range must never keep showing results from the
+    // previously selected period. Invalidate any in-flight responses too.
+    requestGuardRef.current.next();
+    summaryRequestGuardRef.current.next();
+    setJobs([]);
+    setSummary(null);
+    setSummaryError('');
+    setSummaryLoading(false);
+    setCurrentPage(1);
   }, [user, filters.startDate, filters.endDate, filters.groupId, filters.workerId, filters.requestedBy, filters.location, filters.search, fetchJobs, fetchMonthlySummary]);
 
   useEffect(() => {
