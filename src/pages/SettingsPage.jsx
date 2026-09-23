@@ -292,18 +292,25 @@ export default function SettingsPage() {
                     />
                 </div>
 
-                <div className="flex justify-center pb-10">
+                <div className="flex flex-col items-center gap-3 pb-10">
                     <ConfirmationModal
-                        title="Eliminar cuenta"
-                        description="Esta acción es irreversible. Se eliminará tu cuenta y no podrás recuperar tus datos."
-                        confirmLabel="Eliminar definitivamente"
+                        title="Desactivar cuenta"
+                        description="Se bloqueará el acceso a tu cuenta y se cerrará la sesión. Esta acción no elimina automáticamente los registros operativos asociados."
+                        confirmLabel="Desactivar cuenta"
                         onConfirm={deleteAccount}
                         trigger={
                             <Button variant="destructive" className="px-8 text-base md:text-lg">
-                                Eliminar cuenta
+                                Desactivar cuenta
                             </Button>
                         }
                     />
+                    <button
+                        type="button"
+                        onClick={() => navigate('/eliminacion-datos')}
+                        className="text-sm font-semibold text-gray-600 underline underline-offset-4 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white"
+                    >
+                        Solicitar eliminación definitiva de datos
+                    </button>
                 </div>
             </div>
         </div>
