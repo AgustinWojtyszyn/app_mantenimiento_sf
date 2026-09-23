@@ -118,8 +118,9 @@ const translations = {
       },
       status: {
         pending: 'Pendiente',
+        inProgress: 'En proceso',
         completed: 'Completado',
-        archived: 'Archivado',
+        cancelled: 'Cancelado',
       },
     },
   },
@@ -238,8 +239,9 @@ const translations = {
       },
       status: {
         pending: 'Pending',
+        inProgress: 'In progress',
         completed: 'Completed',
-        archived: 'Archived',
+        cancelled: 'Cancelled',
       },
     },
   },
