@@ -585,9 +585,9 @@ export default function DailyJobsPage() {
     <div className="maintenance-page space-y-4 md:space-y-5">
       <div className="maintenance-toolbar flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-3 text-gray-900 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-50 md:p-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex flex-col md:flex-row md:items-center gap-3 w-full xl:w-auto">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-50">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-50 md:text-3xl">
               {isEn ? 'Daily Jobs' : 'Trabajos Diarios'}
-            </h2>
+            </h1>
         </div>
         <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:justify-end xl:flex-1">
           <Button
