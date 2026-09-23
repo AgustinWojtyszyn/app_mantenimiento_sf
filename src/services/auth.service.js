@@ -273,9 +273,9 @@ export const authService = {
       const { error: signOutError } = await supabase.auth.signOut();
       if (signOutError) throw signOutError;
 
-      return { success: true, message: "Cuenta eliminada." };
+      return { success: true, message: "Cuenta desactivada." };
     } catch (error) {
-      return { success: false, message: error.message || 'No se pudo eliminar la cuenta.' };
+      return { success: false, message: error.message || 'No se pudo desactivar la cuenta.' };
     }
   }
 };
