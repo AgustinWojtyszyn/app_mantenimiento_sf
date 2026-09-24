@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import {
   formatCurrency,
-  formatDate,
   getArgentinaToday,
 } from '@/utils/formatters';
 import { getJobStatusLabel, normalizeJobStatus } from '@/utils/jobStatus';
@@ -92,10 +91,7 @@ export default function DailyOperations({
       <section aria-label={isEn ? 'Day summary' : 'Resumen del día'}>
         <div className="dashboard-section-caption">
           <span>{isEn ? 'Day overview' : 'Panorama del día'}</span>
-          <span>
-            {formatDate(date)}
-            {hasActiveFilters ? (isEn ? ' · Filtered' : ' · Con filtros') : ''}
-          </span>
+          {hasActiveFilters && <span>{isEn ? 'Filtered' : 'Con filtros'}</span>}
         </div>
         <div className="dashboard-kpis">
           {cards.map(([key, label, value, Icon]) => {
@@ -275,36 +271,6 @@ export default function DailyOperations({
           )}
         </section>
       </div>
-      <section
-        className="dashboard-panel dashboard-distribution"
-        aria-label={isEn ? 'Job distribution' : 'Distribución de trabajos'}
-      >
-        <div>
-          <h2>{isEn ? 'At a glance' : 'El día en números'}</h2>
-          <p className="dashboard-note">
-            {isEn
-              ? 'Selected date and active filters'
-              : 'Fecha seleccionada y filtros activos'}
-          </p>
-        </div>
-        <div className="dashboard-bars">
-          {cards.slice(0, 3).map(([key, label, value]) => (
-            <div className={`dashboard-bar dashboard-bar--${key}`} key={key}>
-              <div>
-                <span>{label}</span>
-                <strong>{unavailable ? '—' : value || 0}</strong>
-              </div>
-              <div className="dashboard-bar-track">
-                <div
-                  style={{
-                    width: `${unavailable ? 0 : Math.min(100, ((Number(value) || 0) / Math.max(1, Number(summary.total))) * 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
     </>
   );
 }
