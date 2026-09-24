@@ -2970,6 +2970,7 @@ function VehicleDetail({
                 </div>
               ))}
             </div>
+          </div>
           {canEdit && (
             <div className="flex gap-2">
               <VehicleFormDialog
