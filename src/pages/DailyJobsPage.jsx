@@ -6,13 +6,15 @@ import { exportService } from '@/services/export.service';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, Copy, MoreHorizontal, Plus, CheckCircle2, Undo2, Loader2, Filter, AlertCircle } from 'lucide-react';
+import { Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, Copy, MoreHorizontal, Plus, CheckCircle2, Undo2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import JobForm from '@/components/jobs/JobForm';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
 import { formatDate, formatCurrency, getArgentinaToday } from '@/utils/formatters';
 import JobsFilters from '@/components/jobs/JobsFilters';
+import DailyOperations from '@/components/jobs/DailyOperations';
+import './dailyDashboard.css';
 import JobsPagination from '@/components/jobs/JobsPagination';
 import CopyJobsFromDateDialog from '@/components/jobs/CopyJobsFromDateDialog';
 import { onboardingService } from '@/services/onboarding.service';
@@ -24,8 +26,6 @@ import {
   buildJobsAfterStatusChange,
   getDailyJobsEmptyStateConfig,
   getPageAfterStatusRemoval,
-  getSummaryStatusCardFilter,
-  isSummaryStatusCardActive,
 } from './dailyJobsQuickStatus';
 import {
   AlertDialog,
@@ -82,7 +82,6 @@ export default function DailyJobsPage() {
   const [exporting, setExporting] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [moreActionsOpen, setMoreActionsOpen] = useState(false);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [copyJobsDialogOpen, setCopyJobsDialogOpen] = useState(false);
   const [rowActionsOpenId, setRowActionsOpenId] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -99,7 +98,6 @@ export default function DailyJobsPage() {
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [updatingStatusIds, setUpdatingStatusIds] = useState([]);
-  const [deletingJobIds, setDeletingJobIds] = useState([]);
   const [pendingStatusChange, setPendingStatusChange] = useState(null);
   const reqIdRef = useRef(0);
   const summaryReqIdRef = useRef(0);
@@ -525,24 +523,6 @@ export default function DailyJobsPage() {
     }
   };
 
-  const handleDeleteJob = async (job) => {
-    if (!job?.id || deletingJobIds.includes(job.id)) return;
-
-    setDeletingJobIds((ids) => [...ids, job.id]);
-    setRowActionsOpenId(null);
-
-    const result = await jobsService.deleteJob(job.id, { actorId: user?.id || null });
-
-    if (result.success) {
-      addToast(isEn ? 'Job deleted.' : 'Trabajo eliminado.', 'success');
-      await Promise.all([fetchJobs(), fetchSummary()]);
-    } else {
-      addToast(result.error || (isEn ? 'The job could not be deleted.' : 'No se pudo eliminar el trabajo.'), 'error');
-    }
-
-    setDeletingJobIds((ids) => ids.filter((id) => id !== job.id));
-  };
-
   useEffect(() => {
     if (!user || loading) return;
     if (typeof window === 'undefined') return;
@@ -602,26 +582,27 @@ export default function DailyJobsPage() {
   }, [user, loading, jobs.length, role, startTour, resumeTourIfNeeded]);
 
   return (
-    <div className="maintenance-page space-y-4 md:space-y-5">
-      <div className="maintenance-toolbar flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-3 text-gray-900 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-50 md:p-4 xl:flex-row xl:items-center xl:justify-between">
-        <div className="flex flex-col md:flex-row md:items-center gap-3 w-full xl:w-auto">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-50 md:text-3xl">
+    <div className="daily-dashboard">
+      <div className="dashboard-header">
+        <div className="dashboard-title">
+            <h1>
               {isEn ? 'Daily Jobs' : 'Trabajos Diarios'}
             </h1>
+            <p>{isEn ? 'Operational overview for' : 'Resumen operativo del'}{' '}{new Intl.DateTimeFormat(isEn ? 'en-GB' : 'es-AR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${getArgentinaToday()}T12:00:00`))}</p>
         </div>
-        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:justify-end xl:flex-1">
+        <div className="dashboard-actions">
           <Button
             type="button"
             onClick={() => navigate('/app/trabajos-diarios/nuevo')}
-            className="h-10 w-full bg-[#1e3a8a] px-4 text-sm font-semibold text-white hover:bg-blue-900 sm:w-auto md:min-w-[150px]"
+            className="h-11 w-full bg-[#1e3a8a] px-4 text-sm font-semibold text-white hover:bg-blue-900 sm:w-auto md:min-w-[170px] md:text-base"
             data-tour="nuevo-trabajo"
           >
             <Plus className="mr-2 h-4 w-4" />
-            Nuevo Trabajo
+            {isEn ? 'New Job' : 'Nuevo Trabajo'}
           </Button>
           <Button
             variant="outline"
-            className="h-10 w-full gap-2 whitespace-nowrap border-emerald-200 bg-white text-sm font-semibold text-emerald-800 hover:bg-emerald-50 sm:w-auto md:min-w-[140px] dark:bg-slate-900"
+            className="h-10 w-full gap-2 whitespace-nowrap border-emerald-200 bg-emerald-50 text-sm font-semibold text-emerald-800 hover:bg-emerald-100 sm:w-auto md:min-w-[160px]"
             onClick={handleExportExcel}
             disabled={loading || exporting || sharing}
           >
@@ -629,7 +610,7 @@ export default function DailyJobsPage() {
           </Button>
           <Button
             variant="outline"
-            className="h-10 w-full gap-2 whitespace-nowrap border-green-200 bg-white text-sm font-semibold text-green-700 hover:bg-green-50 sm:w-auto md:min-w-[145px] dark:bg-slate-900"
+            className="h-10 w-full gap-2 whitespace-nowrap border-green-200 bg-white text-sm font-semibold text-green-700 hover:bg-green-50 sm:w-auto md:min-w-[165px]"
             onClick={handleShare}
             disabled={loading || sharing || exporting}
           >
@@ -704,125 +685,29 @@ export default function DailyJobsPage() {
         </div>
       </div>
 
-      <section className="maintenance-panel rounded-2xl border border-gray-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-4">
-        <div className="mb-2 flex items-center justify-between gap-3">
-          <h3 className="text-sm md:text-base font-semibold text-gray-900 dark:text-slate-50">
-            {isEn ? 'Day summary' : 'Resumen del día'}
-          </h3>
-          <span className="text-xs text-gray-500 dark:text-slate-400">{formatDate(date)}</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3 2xl:grid-cols-6">
-          {[
-            {
-              key: 'all',
-              label: isEn ? 'Total jobs' : 'Total de trabajos',
-              value: summary.total,
-            },
-            {
-              key: 'pending',
-              label: isEn ? 'Pending' : 'Pendientes',
-              value: summary.pending,
-            },
-            {
-              key: 'completed',
-              label: isEn ? 'Completed' : 'Completados',
-              value: summary.completed,
-            },
-            {
-              key: 'workers',
-              label: isEn ? 'Workers involved' : 'Trabajadores involucrados',
-              value: summary.workers,
-            },
-            {
-              key: 'locations',
-              label: isEn ? 'Places served' : 'Lugares atendidos',
-              value: summary.locations,
-            },
-          ].map((card) => {
-            const content = (
-              <>
-                <span className="text-xs font-semibold uppercase text-gray-500 dark:text-slate-400">{card.label}</span>
-                <span className="mt-1 block text-2xl font-bold text-gray-900 dark:text-slate-50">{card.value || 0}</span>
-              </>
-            );
-            const statusFilter = getSummaryStatusCardFilter(card.key);
-            const active = isSummaryStatusCardActive(card.key, selectedStatus);
-            const className = `min-h-[70px] rounded-lg border p-2.5 text-left transition ${
-              active
-                ? 'border-[#1e3a8a] bg-blue-50 shadow-sm ring-2 ring-[#1e3a8a]/20 dark:border-blue-500 dark:bg-blue-950/30'
-                : 'border-gray-100 bg-gray-50 dark:border-slate-800 dark:bg-slate-950/40'
-            }`;
-            return statusFilter ? (
-              <button
-                key={card.key}
-                type="button"
-                onClick={() => handleStatusFilterChange(statusFilter)}
-                aria-pressed={active}
-                className={`${className} cursor-pointer hover:border-[#1e3a8a]/50 hover:bg-blue-50/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1e3a8a] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:hover:border-blue-500/70 dark:hover:bg-blue-950/30 dark:focus-visible:ring-offset-slate-900`}
-              >
-                {content}
-              </button>
-            ) : (
-              <div key={card.key} className={className}>
-                {content}
-              </div>
-            );
-          })}
-          <div className="min-h-[70px] rounded-lg border border-gray-100 bg-gray-50 p-2.5 dark:border-slate-800 dark:bg-slate-950/40">
-            <span className="text-xs font-semibold uppercase text-gray-500 dark:text-slate-400">
-              {isEn ? 'Estimated balance' : 'Balance estimado'}
-            </span>
-            <div className="mt-2 space-y-1 text-xs text-gray-600 dark:text-slate-300">
-              <div className="flex justify-between gap-2"><span>{isEn ? 'Charge' : 'A cobrar'}</span><strong>{formatCurrency(summary.totalCharge)}</strong></div>
-              <div className="flex justify-between gap-2"><span>{isEn ? 'Worker cost' : 'Costo trab.'}</span><strong>{formatCurrency(summary.workerCost)}</strong></div>
-              <div className="flex justify-between gap-2 text-gray-900 dark:text-slate-50"><span>{isEn ? 'Difference' : 'Diferencia'}</span><strong>{formatCurrency(summary.balance)}</strong></div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <DailyOperations summary={summary} jobs={jobs} date={date} loading={loading} error={error} isEn={isEn}
+        selectedStatus={selectedStatus} hasActiveFilters={hasActiveFilters}
+        onStatusChange={handleStatusFilterChange} onView={(id) => navigate(`/app/jobs/${id}`)} />
 
-      <div className="md:hidden">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => setMobileFiltersOpen((open) => !open)}
-          aria-expanded={mobileFiltersOpen}
-          className="h-10 w-full justify-between rounded-xl border-gray-200 bg-white px-3 text-sm font-semibold text-gray-800 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-        >
-          <span className="flex items-center gap-2">
-            <Filter className="h-4 w-4" />
-            {isEn ? 'Filters' : 'Filtros'}
-            {hasActiveFilters ? (
-              <span className="rounded-full bg-[#1e3a8a] px-2 py-0.5 text-[11px] font-bold text-white">
-                {isEn ? 'Active' : 'Activos'}
-              </span>
-            ) : null}
-          </span>
-          <span className="text-xs text-gray-500 dark:text-slate-400">
-            {mobileFiltersOpen ? (isEn ? 'Hide' : 'Ocultar') : (isEn ? 'Show' : 'Mostrar')}
-          </span>
-        </Button>
-      </div>
-      <div className={`${mobileFiltersOpen ? 'block' : 'hidden'} md:block`}>
-        <JobsFilters
-          isEn={isEn}
-          date={date}
-          searchTerm={searchTerm}
-          selectedLocation={selectedLocation}
-          selectedStatus={selectedStatus}
-          requestedBy={requestedBy}
-          locationOptions={locationOptions}
-          pageSize={pageSize}
-          onDateChange={handleDateChange}
-          onSearchChange={handleSearchChange}
-          onLocationChange={handleLocationChange}
-          onStatusChange={handleStatusFilterChange}
-          onRequestedByChange={handleRequestedByChange}
-          onPageSizeChange={handlePageSizeChange}
-        />
-      </div>
+      <JobsFilters
+        compact
+        isEn={isEn}
+        date={date}
+        searchTerm={searchTerm}
+        selectedLocation={selectedLocation}
+        selectedStatus={selectedStatus}
+        requestedBy={requestedBy}
+        locationOptions={locationOptions}
+        pageSize={pageSize}
+        onDateChange={handleDateChange}
+        onSearchChange={handleSearchChange}
+        onLocationChange={handleLocationChange}
+        onStatusChange={handleStatusFilterChange}
+        onRequestedByChange={handleRequestedByChange}
+        onPageSizeChange={handlePageSizeChange}
+      />
 
-      <div className="maintenance-table-shell overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900" data-tour="tabla-trabajos">
+      <div className="dashboard-panel dashboard-table-panel" data-tour="tabla-trabajos">
         <div className="px-4 md:px-6 py-3 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
           <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Summary table' : 'Tabla resumen'}</h2>
           <span className="text-sm md:text-base text-gray-500 dark:text-slate-300">{totalCount} {isEn ? 'jobs' : 'trabajos'}</span>
@@ -833,29 +718,12 @@ export default function DailyJobsPage() {
               <LoadingSpinner />
             </div>
           ) : error ? (
-            <div className="px-4 py-6 md:px-6 md:py-8">
-              <div className="mx-auto flex max-w-xl flex-col items-center rounded-2xl border border-red-200 bg-red-50/70 px-5 py-7 text-center dark:border-red-900/60 dark:bg-red-950/20">
-                <AlertCircle className="mb-3 h-7 w-7 text-red-600 dark:text-red-300" />
-                <h3 className="text-base font-bold text-gray-900 dark:text-slate-50">
-                  {isEn ? 'We could not load the jobs' : 'No pudimos cargar los trabajos'}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-red-700 dark:text-red-200">{error}</p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    fetchJobs();
-                    fetchSummary();
-                  }}
-                  className="mt-5 border-red-200 bg-white text-red-700 hover:bg-red-100 dark:border-red-900 dark:bg-slate-900 dark:text-red-200"
-                >
-                  {isEn ? 'Try again' : 'Reintentar'}
-                </Button>
-              </div>
+            <div className="px-4 py-6 text-center text-sm md:text-base text-red-600 dark:text-red-300">
+              {error}
             </div>
           ) : showEmptyState ? (
-            <div className="px-4 py-6 md:px-6 md:py-8">
-              <div className="mx-auto flex max-w-2xl flex-col items-center rounded-2xl border border-gray-200 bg-gray-50/70 px-5 py-7 text-center shadow-sm dark:border-slate-800 dark:bg-slate-950/40 md:px-8">
+            <div className="dashboard-table-empty">
+              <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
                 <div className="mb-4 rounded-full border border-gray-200 bg-white p-3 text-gray-700 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
                   {emptyStateConfig.kind === 'filters' ? (
                     <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -907,8 +775,8 @@ export default function DailyJobsPage() {
               </div>
             </div>
           ) : (
-            <div className="table-x-scroll overflow-x-auto">
-              <table className="w-full min-w-[1250px] text-xs md:text-sm text-left whitespace-nowrap">
+            <div className="dashboard-table-wrap">
+              <table className="dashboard-table text-left">
                 <thead className="bg-gray-50 dark:bg-slate-800 text-gray-700 dark:text-slate-100 uppercase font-semibold border-b border-gray-200 dark:border-slate-700">
                   <tr>
                     <th className="px-3 md:px-4 py-3">{isEn ? 'Date' : 'Fecha'}</th>
@@ -935,22 +803,20 @@ export default function DailyJobsPage() {
                     (() => {
                       const normalizedStatus = normalizeJobStatus(job?.estado || job?.status);
                       const isRowUpdating = updatingStatusIds.includes(job.id);
-                      const isDeleting = deletingJobIds.includes(job.id);
-                      const canDeleteJob = isAdmin || job?.user_id === user?.id;
                       const isPending = normalizedStatus === 'pending';
                       const isCompleted = normalizedStatus === 'completed';
                       return (
                     <tr key={job.id} className="hover:bg-gray-50/70 dark:hover:bg-slate-800/60 transition-colors">
-                      <td className="px-3 md:px-4 py-3 text-gray-800 dark:text-slate-50">{formatDate(job.date)}</td>
-                      <td className="px-3 md:px-4 py-3 font-semibold text-gray-900 dark:text-slate-50">{job.title || job.description}</td>
-                      <td className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.location || '-'}</td>
-                      <td className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.requested_by || '-'}</td>
-                      <td className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.workers?.display_name || job.workers?.alias || '-'}</td>
-                      <td className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.job_type || job.type || '-'}</td>
-                      <td className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.groups?.name || '-'}</td>
-                      <td className="px-3 md:px-4 py-3 text-right text-gray-700 dark:text-slate-200">{formatCurrency(job.cost_spent)}</td>
-                      <td className="px-3 md:px-4 py-3 text-right text-gray-700 dark:text-slate-200">{formatCurrency(job.amount_to_charge)}</td>
-                      <td className="px-3 md:px-4 py-3 text-center">
+                      <td data-label={isEn ? 'Date' : 'Fecha'} className="px-3 md:px-4 py-3 text-gray-800 dark:text-slate-50">{formatDate(job.date)}</td>
+                      <td data-label={isEn ? 'Description' : 'Descripción'} className="px-3 md:px-4 py-3 font-semibold text-gray-900 dark:text-slate-50">{job.title || job.description}</td>
+                      <td data-label={isEn ? 'Workplace' : 'Lugar de trabajo'} className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.location || '-'}</td>
+                      <td data-label={isEn ? 'Requester' : 'Solicitante'} className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.requested_by || '-'}</td>
+                      <td data-label={isEn ? 'Worker' : 'Trabajador'} className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.workers?.display_name || job.workers?.alias || '-'}</td>
+                      <td data-label={isEn ? 'Job type' : 'Tipo de trabajo'} className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.job_type || job.type || '-'}</td>
+                      <td data-label={isEn ? 'Group' : 'Grupo'} className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">{job.groups?.name || '-'}</td>
+                      <td data-label={isEn ? 'Worker cost' : 'Costo trabajador'} className="px-3 md:px-4 py-3 text-right text-gray-700 dark:text-slate-200">{formatCurrency(job.cost_spent)}</td>
+                      <td data-label={isEn ? 'Charge' : 'Cobrar'} className="px-3 md:px-4 py-3 text-right text-gray-700 dark:text-slate-200">{formatCurrency(job.amount_to_charge)}</td>
+                      <td data-label={isEn ? 'Status' : 'Estado'} className="px-3 md:px-4 py-3 text-center">
                         <div className="flex flex-col items-center gap-2">
                           <span className={`text-[10px] md:text-xs px-3 py-1.5 rounded-full font-semibold ${getJobStatusBadgeClass(normalizedStatus)}`}>
                             {getJobStatusLabel(normalizedStatus, isEn)}
@@ -970,7 +836,7 @@ export default function DailyJobsPage() {
                           </select>
                         </div>
                       </td>
-                      <td className="px-3 md:px-4 py-3 text-center">
+                      <td data-label={isEn ? 'Actions' : 'Acciones'} className="px-3 md:px-4 py-3 text-center">
                         <div className="flex justify-center gap-2 flex-wrap">
                           {isPending && (
                             <Button
@@ -1015,34 +881,6 @@ export default function DailyJobsPage() {
                           >
                             <Copy className="w-4 h-4 mr-1" /> Duplicar
                           </Button>
-                          {canDeleteJob && (
-                            <ConfirmationModal
-                              title={isEn ? 'Delete job?' : '¿Eliminar trabajo?'}
-                              description={
-                                isEn
-                                  ? `This will permanently delete "${job.title || job.description || 'this job'}".`
-                                  : `Se eliminará definitivamente "${job.title || job.description || 'este trabajo'}".`
-                              }
-                              confirmLabel={isEn ? 'Delete' : 'Eliminar'}
-                              onConfirm={() => handleDeleteJob(job)}
-                              trigger={
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  disabled={isRowUpdating || isDeleting}
-                                  className="h-9 px-3 rounded-full border-red-200 text-xs font-semibold text-red-700 shadow-sm hover:bg-red-50 hover:text-red-800 dark:border-red-900/60 dark:text-red-300 dark:hover:bg-red-950/40 md:text-sm"
-                                >
-                                  {isDeleting ? (
-                                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                                  ) : (
-                                    <Trash2 className="w-4 h-4 mr-1" />
-                                  )}
-                                  {isDeleting ? (isEn ? 'Deleting...' : 'Eliminando...') : (isEn ? 'Delete' : 'Eliminar')}
-                                </Button>
-                              }
-                            />
-                          )}
                           {isCompleted && (
                             <div className="relative">
                               <Button
@@ -1087,7 +925,7 @@ export default function DailyJobsPage() {
             </div>
           )}
         </div>
-        {!showEmptyState && !loading && !error && totalCount > 0 && (
+        {!showEmptyState && (
           <JobsPagination
             isEn={isEn}
             currentPage={currentPage}
