@@ -6,7 +6,7 @@ import { exportService } from '@/services/export.service';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, Copy, MoreHorizontal, Plus, CheckCircle2, Undo2, Loader2 } from 'lucide-react';
+import { Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, Copy, MoreHorizontal, Plus, CheckCircle2, Undo2, Loader2, Filter, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import JobForm from '@/components/jobs/JobForm';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -82,6 +82,7 @@ export default function DailyJobsPage() {
   const [exporting, setExporting] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [moreActionsOpen, setMoreActionsOpen] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [copyJobsDialogOpen, setCopyJobsDialogOpen] = useState(false);
   const [rowActionsOpenId, setRowActionsOpenId] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -710,7 +711,7 @@ export default function DailyJobsPage() {
           </h3>
           <span className="text-xs text-gray-500 dark:text-slate-400">{formatDate(date)}</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3 2xl:grid-cols-6">
           {[
             {
               key: 'all',
@@ -780,22 +781,46 @@ export default function DailyJobsPage() {
         </div>
       </section>
 
-      <JobsFilters
-        isEn={isEn}
-        date={date}
-        searchTerm={searchTerm}
-        selectedLocation={selectedLocation}
-        selectedStatus={selectedStatus}
-        requestedBy={requestedBy}
-        locationOptions={locationOptions}
-        pageSize={pageSize}
-        onDateChange={handleDateChange}
-        onSearchChange={handleSearchChange}
-        onLocationChange={handleLocationChange}
-        onStatusChange={handleStatusFilterChange}
-        onRequestedByChange={handleRequestedByChange}
-        onPageSizeChange={handlePageSizeChange}
-      />
+      <div className="md:hidden">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setMobileFiltersOpen((open) => !open)}
+          aria-expanded={mobileFiltersOpen}
+          className="h-10 w-full justify-between rounded-xl border-gray-200 bg-white px-3 text-sm font-semibold text-gray-800 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
+        >
+          <span className="flex items-center gap-2">
+            <Filter className="h-4 w-4" />
+            {isEn ? 'Filters' : 'Filtros'}
+            {hasActiveFilters ? (
+              <span className="rounded-full bg-[#1e3a8a] px-2 py-0.5 text-[11px] font-bold text-white">
+                {isEn ? 'Active' : 'Activos'}
+              </span>
+            ) : null}
+          </span>
+          <span className="text-xs text-gray-500 dark:text-slate-400">
+            {mobileFiltersOpen ? (isEn ? 'Hide' : 'Ocultar') : (isEn ? 'Show' : 'Mostrar')}
+          </span>
+        </Button>
+      </div>
+      <div className={`${mobileFiltersOpen ? 'block' : 'hidden'} md:block`}>
+        <JobsFilters
+          isEn={isEn}
+          date={date}
+          searchTerm={searchTerm}
+          selectedLocation={selectedLocation}
+          selectedStatus={selectedStatus}
+          requestedBy={requestedBy}
+          locationOptions={locationOptions}
+          pageSize={pageSize}
+          onDateChange={handleDateChange}
+          onSearchChange={handleSearchChange}
+          onLocationChange={handleLocationChange}
+          onStatusChange={handleStatusFilterChange}
+          onRequestedByChange={handleRequestedByChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      </div>
 
       <div className="maintenance-table-shell overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900" data-tour="tabla-trabajos">
         <div className="px-4 md:px-6 py-3 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
@@ -808,8 +833,25 @@ export default function DailyJobsPage() {
               <LoadingSpinner />
             </div>
           ) : error ? (
-            <div className="px-4 py-6 text-center text-sm md:text-base text-red-600 dark:text-red-300">
-              {error}
+            <div className="px-4 py-6 md:px-6 md:py-8">
+              <div className="mx-auto flex max-w-xl flex-col items-center rounded-2xl border border-red-200 bg-red-50/70 px-5 py-7 text-center dark:border-red-900/60 dark:bg-red-950/20">
+                <AlertCircle className="mb-3 h-7 w-7 text-red-600 dark:text-red-300" />
+                <h3 className="text-base font-bold text-gray-900 dark:text-slate-50">
+                  {isEn ? 'We could not load the jobs' : 'No pudimos cargar los trabajos'}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-red-700 dark:text-red-200">{error}</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    fetchJobs();
+                    fetchSummary();
+                  }}
+                  className="mt-5 border-red-200 bg-white text-red-700 hover:bg-red-100 dark:border-red-900 dark:bg-slate-900 dark:text-red-200"
+                >
+                  {isEn ? 'Try again' : 'Reintentar'}
+                </Button>
+              </div>
             </div>
           ) : showEmptyState ? (
             <div className="px-4 py-6 md:px-6 md:py-8">
@@ -1045,7 +1087,7 @@ export default function DailyJobsPage() {
             </div>
           )}
         </div>
-        {!showEmptyState && (
+        {!showEmptyState && !loading && !error && totalCount > 0 && (
           <JobsPagination
             isEn={isEn}
             currentPage={currentPage}
