@@ -2744,6 +2744,109 @@ function SummaryMiniList({ title, items, renderItem, tone = 'normal', onViewAll 
   );
 }
 
+function VehicleQuickFieldDialog({ vehicle, drivers = [], field, label, trigger, onSaved }) {
+  const { addToast } = useToast();
+  const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [value, setValue] = useState('');
+  const [formError, setFormError] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    setFormError('');
+    setValue(vehicle?.[field] ?? '');
+  }, [field, open, vehicle]);
+
+  const handleSave = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+    setFormError('');
+
+    const result = await equipmentLogService.saveVehicle({
+      ...vehicle,
+      [field]: value || '',
+    });
+
+    setSaving(false);
+    if (result.success) {
+      addToast(result.message || 'Vehículo actualizado.', 'success');
+      setOpen(false);
+      onSaved?.();
+    } else {
+      setFormError(result.error || 'No se pudo actualizar el dato.');
+    }
+  };
+
+  const driverOptions = field === 'assigned_driver_profile_id'
+    ? driverOptionsForSelection(drivers, value)
+    : [];
+
+  const control = field === 'assigned_driver_profile_id' ? (
+    <select className={inputClass} value={value || ''} onChange={(event) => setValue(event.target.value)}>
+      <option value="">Sin chofer asignado</option>
+      {driverOptions.map((driver) => (
+        <option key={driver.id} value={driver.id}>{driverOptionLabel(driver)}</option>
+      ))}
+    </select>
+  ) : field === 'status' ? (
+    <select className={inputClass} value={value || 'activo'} onChange={(event) => setValue(event.target.value)}>
+      {VEHICLE_STATUS.map((status) => (
+        <option key={status} value={status}>{statusLabels[status]}</option>
+      ))}
+    </select>
+  ) : field === 'mileage_end' ? (
+    <input
+      className={inputClass}
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      maxLength={VEHICLE_MILEAGE_MAX_DIGITS}
+      value={value ?? ''}
+      onBeforeInput={preventInvalidLimitedInput({ pattern: /^\d+$/, maxLength: VEHICLE_MILEAGE_MAX_DIGITS })}
+      onPaste={pasteLimitedValue({ formatter: mileageDigits, maxLength: VEHICLE_MILEAGE_MAX_DIGITS, onValue: setValue })}
+      onChange={(event) => setValue(mileageDigits(event.target.value))}
+      placeholder="Kilometraje actual"
+    />
+  ) : (
+    <input
+      className={inputClass}
+      type="date"
+      value={value || ''}
+      onChange={(event) => setValue(event.target.value)}
+    />
+  );
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent className="max-w-md bg-white text-gray-900 dark:bg-slate-900 dark:text-slate-50">
+        <DialogHeader>
+          <DialogTitle>{label}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSave} className="space-y-4">
+          <div>
+            <p className="mb-2 text-sm font-semibold text-gray-700 dark:text-slate-200">
+              {vehicle?.license_plate} · {vehicle?.name || vehicleTypeLabels[vehicle?.vehicle_type] || 'Vehículo'}
+            </p>
+            {control}
+          </div>
+          {formError ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200">
+              {formError}
+            </div>
+          ) : null}
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+            <Button type="submit" disabled={saving} className="bg-[#1e3a8a] text-white hover:bg-blue-900">
+              {saving ? 'Guardando...' : 'Guardar'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function VehicleExpirationPills({ vehicle, compact = false }) {
   const expirations = [
     { key: 'registration', label: 'Registro', value: vehicle.registration_expires_at },
@@ -2958,13 +3061,79 @@ function VehicleDetail({
             <p className="text-xs font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-200">Detalle del vehículo seleccionado</p>
             <h3 className="mt-1 text-xl font-bold text-gray-900 dark:text-slate-50">{vehicle.license_plate}</h3>
             <p className="text-sm text-gray-700 dark:text-slate-200">{[vehicle.name || vehicleTypeLabels[vehicle.vehicle_type], vehicle.brand, vehicle.model, vehicle.year].filter(Boolean).join(' - ') || 'Vehículo'}</p>
-            <div className="mt-3 grid gap-2 text-sm text-gray-700 dark:text-slate-200 sm:grid-cols-2 lg:grid-cols-4">
-              <p><span className="font-semibold">Chofer:</span> {vehicleDriverLabel(vehicle)}</p>
-              <p><span className="font-semibold">Estado:</span> {statusLabels[vehicle.status] || vehicle.status}</p>
-              <p><span className="font-semibold">Km actual:</span> {vehicle.mileage_end ?? vehicle.mileage_start ?? '-'}</p>
-              <p><span className="font-semibold">Seguro:</span> {vehicle.insurance_expires_at ? formatDate(vehicle.insurance_expires_at) : '-'}</p>
-              <p><span className="font-semibold">VTV/RTO:</span> {vehicle.inspection_expires_at ? formatDate(vehicle.inspection_expires_at) : '-'}</p>
-              <p><span className="font-semibold">Registro:</span> {vehicle.registration_expires_at ? formatDate(vehicle.registration_expires_at) : '-'}</p>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  key: 'assigned_driver_profile_id',
+                  label: 'Chofer',
+                  value: vehicleDriverLabel(vehicle),
+                  hasValue: Boolean(vehicle.assigned_driver_profile_id),
+                },
+                {
+                  key: 'status',
+                  label: 'Estado',
+                  value: statusLabels[vehicle.status] || vehicle.status || '-',
+                  hasValue: Boolean(vehicle.status),
+                },
+                {
+                  key: 'mileage_end',
+                  label: 'Km actual',
+                  value: vehicle.mileage_end ?? vehicle.mileage_start ?? '-',
+                  hasValue: vehicle.mileage_end !== null && vehicle.mileage_end !== undefined && vehicle.mileage_end !== '',
+                },
+                {
+                  key: 'insurance_expires_at',
+                  label: 'Seguro',
+                  value: vehicle.insurance_expires_at ? formatDate(vehicle.insurance_expires_at) : 'Sin fecha',
+                  hasValue: Boolean(vehicle.insurance_expires_at),
+                },
+                {
+                  key: 'inspection_expires_at',
+                  label: 'VTV/RTO',
+                  value: vehicle.inspection_expires_at ? formatDate(vehicle.inspection_expires_at) : 'Sin fecha',
+                  hasValue: Boolean(vehicle.inspection_expires_at),
+                },
+                {
+                  key: 'registration_expires_at',
+                  label: 'Registro / cédula',
+                  value: vehicle.registration_expires_at ? formatDate(vehicle.registration_expires_at) : 'Sin fecha',
+                  hasValue: Boolean(vehicle.registration_expires_at),
+                },
+              ].map((item) => (
+                <div
+                  key={item.key}
+                  className="flex min-h-[74px] items-center justify-between gap-3 rounded-xl border border-blue-100 bg-white/80 px-3 py-2.5 dark:border-blue-900/40 dark:bg-slate-900/70"
+                >
+                  <div className="min-w-0">
+                    <span className="block text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                      {item.label}
+                    </span>
+                    <span className="mt-0.5 block truncate text-sm font-bold text-gray-900 dark:text-slate-50">
+                      {item.value}
+                    </span>
+                  </div>
+                  {canEdit ? (
+                    <VehicleQuickFieldDialog
+                      vehicle={vehicle}
+                      drivers={drivers}
+                      field={item.key}
+                      label={`${item.hasValue ? 'Editar' : 'Agregar'} ${item.label.toLowerCase()}`}
+                      onSaved={onSaved}
+                      trigger={
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-8 shrink-0 gap-1.5 px-2.5 text-xs font-bold"
+                        >
+                          {item.hasValue ? <Edit2 className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+                          {item.hasValue ? 'Editar' : 'Agregar'}
+                        </Button>
+                      }
+                    />
+                  ) : null}
+                </div>
+              ))}
             </div>
           </div>
           {canEdit && (
@@ -2973,7 +3142,7 @@ function VehicleDetail({
                 vehicle={vehicle}
                 drivers={drivers}
                 onSaved={onSaved}
-                trigger={<Button variant="outline"><Edit2 className="mr-2 h-4 w-4" /> Editar</Button>}
+                trigger={<Button variant="outline"><Edit2 className="mr-2 h-4 w-4" /> Editar ficha completa</Button>}
               />
               <ConfirmationModal
                 title="¿Eliminar vehículo del listado activo?"
