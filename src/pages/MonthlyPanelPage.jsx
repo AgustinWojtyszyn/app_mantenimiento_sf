@@ -9,12 +9,11 @@ import { useOnboardingTour } from '@/hooks/useOnboardingTour';
 import { formatDate, formatCurrency } from '@/utils/formatters';
 import { getMonthStart, getMonthEnd } from '@/utils/dates';
 import { getJobStatusBadgeClass, getJobStatusLabel, normalizeJobStatus } from '@/utils/jobStatus';
-import { Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, MoreHorizontal } from 'lucide-react';
+import './monthlyDashboard.css';
+import { Activity, Briefcase, Clock3, CheckCircle2, TrendingUp, Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, MoreHorizontal } from 'lucide-react';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ExcelExportButton from '@/components/common/ExcelExportButton';
 import JobFilters from '@/components/jobs/JobFilters';
-import QuickFilterChips from '@/components/jobs/QuickFilterChips';
-import LocationCombobox from '@/components/jobs/LocationCombobox';
 import { useFilters } from '@/hooks/useFilters';
 import { Button } from '@/components/ui/button';
 import { exportService } from '@/services/export.service';
@@ -27,7 +26,6 @@ import {
   buildMonthlyLocationOptions,
   buildMonthlyPeriodSummary,
   createLatestRequestGuard,
-  getMonthlyUnknownLocations,
   getPreviousDateRange,
   normalizeDateOnly,
   paginateMonthlyJobs,
@@ -222,15 +220,6 @@ export default function MonthlyPanelPage() {
     });
   }, [user, role, resumeTourIfNeeded]);
 
-  const groupOptions = useMemo(() => (
-    jobs.reduce((acc, job) => {
-      if (!job?.group_id) return acc;
-      if (!acc.some((g) => g.id === job.group_id)) {
-        acc.push({ id: job.group_id, name: job.groups?.name || job.group_id });
-      }
-      return acc;
-    }, [])
-  ), [jobs]);
   const workerOptions = useMemo(() => (
     jobs.reduce((acc, job) => {
       if (!job?.worker_id) return acc;
@@ -262,14 +251,39 @@ export default function MonthlyPanelPage() {
       { key: 'all', label: isEn ? 'Total jobs' : 'Total de trabajos', value: summary.current.total, delta: summary.current.total - summary.previous.total, unit: 'trabajos', isPositiveGood: true },
       { key: 'pending', label: isEn ? 'Pending' : 'Pendientes', value: summary.current.pending, delta: summary.current.pending - summary.previous.pending, unit: 'trabajos', isPositiveGood: false },
       { key: 'completed', label: isEn ? 'Completed' : 'Completados', value: summary.current.completed, delta: summary.current.completed - summary.previous.completed, unit: 'trabajos', isPositiveGood: true },
-      { key: 'compliance', label: isEn ? 'Compliance' : 'Cumplimiento', value: `${summary.current.completionRate.toFixed(1)}%`, delta: summary.current.complianceDelta, unit: 'puntos', isPositiveGood: true, asPercent: true },
-      { key: 'workers', label: isEn ? 'Workers involved' : 'Trabajadores involucrados', value: summary.current.workers, delta: summary.current.workersDelta, unit: 'trabajadores', isPositiveGood: true },
-      { key: 'locations', label: isEn ? 'Places served' : 'Lugares atendidos', value: summary.current.locations, delta: summary.current.locationsDelta, unit: 'lugares', isPositiveGood: true },
-      { key: 'balance', label: isEn ? 'Estimated balance' : 'Balance estimado', value: formatCurrency(summary.current.balance), delta: summary.current.balanceDelta, unit: 'pesos', isPositiveGood: true, isCurrency: true, detail: { amountToCharge: summary.current.amountToCharge, workerCost: summary.current.workerCost, difference: summary.current.difference, previousDifference: summary.previous.difference } },
+      { key: 'compliance', label: isEn ? 'Compliance' : 'Cumplimiento', value: `${summary.current.completionRate.toLocaleString(isEn ? 'en-GB' : 'es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, delta: summary.current.complianceDelta, unit: 'puntos', isPositiveGood: true, asPercent: true },
     ];
   }, [isEn, summary]);
+  const periodLabel = useMemo(() => {
+    const start = new Date(`${filters.startDate}T12:00:00`);
+    const end = new Date(`${filters.endDate}T12:00:00`);
+    if (!filters.startDate || !filters.endDate || !Number.isFinite(+start) || !Number.isFinite(+end) || start > end) return isEn ? 'Select a date range' : 'Seleccioná un rango de fechas';
+    const formatter = new Intl.DateTimeFormat(isEn ? 'en-GB' : 'es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
+    return isEn ? `Operational summary for ${formatter.formatRange(start, end)}` : `Resumen operativo del ${formatter.formatRange(start, end).replace('–', ' al ')}`;
+  }, [filters.startDate, filters.endDate, isEn]);
+  const trend = useMemo(() => {
+    const start = normalizeDateOnly(filters.startDate);
+    const end = normalizeDateOnly(filters.endDate);
+    if (!start || !end || start > end) return [];
+    const counts = new Map();
+    filteredJobs.forEach(job => {
+      const date = normalizeDateOnly(job.date || job.fecha);
+      if (date >= start && date <= end) counts.set(date, (counts.get(date) || 0) + 1);
+    });
+    const points = [];
+    const cursor = new Date(`${start}T00:00:00Z`);
+    const last = new Date(`${end}T00:00:00Z`);
+    while (cursor <= last) {
+      const date = cursor.toISOString().slice(0, 10);
+      points.push({ date, count: counts.get(date) || 0 });
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+    return points;
+  }, [filteredJobs, filters.startDate, filters.endDate]);
+  const trendMax = trend.reduce((max, point) => Math.max(max, point.count), 1);
+  const [activeTrendIndex, setActiveTrendIndex] = useState(null);
+  const activeTrend = trend[activeTrendIndex];
   const locationOptions = useMemo(() => buildMonthlyLocationOptions(jobs), [jobs]);
-  const unknownLocationOptions = useMemo(() => getMonthlyUnknownLocations(jobs), [jobs]);
   const pagination = useMemo(
     () => paginateMonthlyJobs(filteredJobs, currentPage, rowsPerPage),
     [filteredJobs, currentPage, rowsPerPage]
@@ -484,23 +498,19 @@ export default function MonthlyPanelPage() {
   };
 
   return (
-    <div className="maintenance-page space-y-5 animate-in fade-in duration-500">
-      <div className="maintenance-page-heading flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:flex-row md:items-center md:justify-between md:p-5">
+    <div className="monthly-dashboard">
+      <div className="monthly-header">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight text-[#082b59] dark:text-slate-50 md:text-3xl">{t('monthlyPage.title')}</h1>
-          <div className="mt-1 flex flex-col gap-1 text-sm text-gray-500 dark:text-slate-300 sm:flex-row sm:items-center sm:gap-3">
-            <span>{t('monthlyPage.subtitle')}</span>
-            <span className="hidden h-1 w-1 rounded-full bg-gray-300 dark:bg-slate-600 sm:block" aria-hidden="true" />
-            <span className="font-medium text-gray-700 dark:text-slate-200">{filters.startDate} – {filters.endDate}</span>
-          </div>
+          <p>{periodLabel}</p>
         </div>
 
-        <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-end md:w-auto">
+        <div className="monthly-actions">
           <Button
             variant="default"
             onClick={handleShare}
             disabled={!hasJobs || loading}
-            className="h-10 w-full gap-2 bg-[#25D366] px-4 text-sm font-semibold text-white shadow-sm hover:bg-[#1ebe5a] sm:w-auto"
+            className="monthly-share"
           >
             <MessageCircle className="h-4 w-4" />
             {isEn ? 'Share WhatsApp' : 'Compartir WhatsApp'}
@@ -571,302 +581,74 @@ export default function MonthlyPanelPage() {
       </div>
 
       <div data-tour="panel-mensual-filtros">
-        <JobFilters filters={filters} onChange={handleFilterChange} />
-        <div className="maintenance-panel mt-3 rounded-xl border border-gray-100 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
-            <div className="shrink-0">
-              <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">Lugar</p>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Empresa o ubicación registrada.</p>
-            </div>
-            <div className="w-full lg:max-w-sm">
-              <LocationCombobox
-                value={filters.location}
-                options={locationOptions}
-                onChange={(value) => handleFilterChange('location', value)}
-              />
-            </div>
-          </div>
-          {unknownLocationOptions.length > 0 ? (
-            <p className="text-xs text-amber-700 dark:text-amber-300">
-              Lugares adicionales detectados: {unknownLocationOptions.join(', ')}
-            </p>
-          ) : null}
-        </div>
+        <JobFilters compact filters={filters} onChange={handleFilterChange} workers={workerOptions} locations={locationOptions} isEn={isEn} />
       </div>
-      <QuickFilterChips
-        filters={filters}
-        onChange={handleFilterChange}
-        groups={groupOptions}
-        workers={workerOptions}
-      />
-
-      <section className="maintenance-panel rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Summary of the period' : 'Resumen del período'}</h2>
-          <span className="text-sm text-gray-500 dark:text-slate-400">{filters.startDate} – {filters.endDate}</span>
-        </div>
-        {summaryLoading ? (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="h-24 animate-pulse rounded-lg border border-gray-200 bg-gray-50 dark:border-slate-800 dark:bg-slate-950/40" />
-            ))}
+      <section className="monthly-summary" aria-label={isEn ? 'Period summary' : 'Resumen del período'}>
+        <div className="monthly-section-heading"><h2>{isEn ? 'Period summary' : 'Resumen del período'}</h2><span>{isEn ? 'Compared with the previous period · all statuses' : 'Comparado con el período anterior · todos los estados'}</span></div>
+        {summaryLoading ? <div className="monthly-kpis" role="status" aria-label={isEn ? 'Loading summary' : 'Cargando resumen'}>{[0,1,2,3].map(i => <div key={i} className="monthly-kpi monthly-skeleton" />)}</div> : summaryError ? (
+          <div className="monthly-empty" role="alert"><p>{summaryError}</p><Button variant="outline" size="sm" onClick={handleRetrySummary}>{isEn ? 'Retry' : 'Reintentar'}</Button></div>
+        ) : summary && <>
+          <div className="monthly-kpis">
+            {summaryCards.map((card, index) => {
+              const Icon = [Briefcase, Clock3, CheckCircle2, TrendingUp][index];
+              const delta = new Intl.NumberFormat(isEn ? 'en-GB' : 'es-AR', { maximumFractionDigits: 1, signDisplay: 'exceptZero' }).format(card.delta);
+              return <div key={card.key} className={`monthly-kpi monthly-kpi--${card.key}`}>
+                <Icon size={18} aria-hidden="true" /><span>{card.label}</span><strong>{card.value}</strong>
+                <small>{card.delta === 0 ? (isEn ? 'Unchanged from previous period' : 'Sin cambios frente al período anterior') : `${delta}${card.asPercent ? (isEn ? ' pts' : ' puntos') : ''} ${isEn ? 'vs. previous period' : 'vs. período anterior'}`}</small>
+                {card.asPercent && <div className="monthly-compliance" aria-hidden="true"><span style={{ width: `${summary.current.completionRate}%` }} /></div>}
+              </div>;
+            })}
           </div>
-        ) : summaryError ? (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/20 dark:text-red-200">
-            <div className="font-semibold">{isEn ? 'Summary unavailable' : 'Resumen no disponible'}</div>
-            <p className="mt-1">{summaryError}</p>
-            <Button type="button" variant="outline" size="sm" onClick={handleRetrySummary} className="mt-3">
-              {isEn ? 'Retry' : 'Reintentar'}
-            </Button>
+          <div className="monthly-secondary">
+            <div><span>{isEn ? 'Workers involved' : 'Trabajadores involucrados'}</span><strong>{summary.current.workers}</strong></div>
+            <div><span>{isEn ? 'Places served' : 'Lugares atendidos'}</span><strong>{summary.current.locations}</strong></div>
+            <div className="monthly-balance"><h3>{isEn ? 'Estimated balance' : 'Balance estimado'}</h3><div>{[[isEn ? 'Charge' : 'A cobrar', summary.current.amountToCharge], [isEn ? 'Worker cost' : 'Costo trabajadores', summary.current.workerCost], [isEn ? 'Difference' : 'Diferencia', summary.current.difference]].map(([label,value]) => <span key={label}>{label}<strong>{formatCurrency(value)}</strong></span>)}</div></div>
           </div>
-        ) : summary ? (
-          showNoSummaryData ? (
-            <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-600 dark:border-slate-700 dark:bg-slate-950/30 dark:text-slate-300">
-              {isEn ? 'No jobs matched the current filters for this period.' : 'No hay trabajos que coincidan con los filtros para este período.'}
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-              {summaryCards.map((card) => {
-                const isDeltaPositive = card.delta > 0;
-                const isDeltaNegative = card.delta < 0;
-                const isNeutral = card.delta === 0;
-                const isActive = filters.status === 'all' ? card.key === 'all' : card.key === filters.status;
-                const isBalanceCard = card.key === 'balance';
-                const statusFilterValue = card.key === 'all' ? 'all' : card.key === 'pending' ? 'pending' : card.key === 'completed' ? 'completed' : null;
-                const changeLabel = card.asPercent
-                  ? `${Math.abs(card.delta).toFixed(1)} puntos ${card.delta >= 0 ? 'más' : 'menos'} que el período anterior`
-                  : card.delta === 0
-                    ? 'Sin cambios'
-                    : `${Math.abs(card.delta)} ${card.delta > 0 ? 'más' : 'menos'} que el período anterior`;
-                const tone = isNeutral ? 'text-gray-600 dark:text-slate-300' : (card.isPositiveGood ? (isDeltaPositive ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300') : (isDeltaNegative ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'));
-                const icon = isNeutral ? '•' : (card.isPositiveGood ? (isDeltaPositive ? '↑' : '↓') : (isDeltaNegative ? '↑' : '↓'));
-                return (
-                  <div key={card.key} className={`rounded-lg border p-3 shadow-sm ${isBalanceCard ? 'xl:col-span-2' : ''} ${isActive ? 'border-[#1e3a8a] bg-blue-50/50 dark:border-blue-500 dark:bg-blue-950/20' : 'border-gray-200 bg-gray-50 dark:border-slate-800 dark:bg-slate-950/40'}`}>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-semibold text-gray-700 dark:text-slate-200">{card.label}</span>
-                      {statusFilterValue ? (
-                        <button
-                          type="button"
-                          aria-pressed={isActive}
-                          onClick={() => handleFilterChange('status', statusFilterValue)}
-                          className="rounded-full border border-transparent px-2 py-1 text-xs font-semibold text-[#1e3a8a] hover:border-[#1e3a8a]/20 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1e3a8a] focus-visible:ring-offset-2 dark:text-blue-200 dark:hover:bg-slate-800"
-                        >
-                          {isActive ? (isEn ? 'Active' : 'Activo') : (isEn ? 'View' : 'Ver')}
-                        </button>
-                      ) : null}
-                    </div>
-                    <div className="mt-3 text-2xl font-bold text-gray-900 dark:text-slate-50">{card.value}</div>
-                    {card.key === 'balance' && card.detail ? (
-                      <div className="mt-2 space-y-1 text-xs text-gray-600 dark:text-slate-300">
-                        <div className="flex items-center justify-between gap-2">
-                          <span>{isEn ? 'To charge' : 'A cobrar'}</span>
-                          <span className="font-semibold">{formatCurrency(card.detail.amountToCharge)}</span>
-                        </div>
-                        <div className="flex items-center justify-between gap-2">
-                          <span>{isEn ? 'Worker cost' : 'Costo de trabajadores'}</span>
-                          <span className="font-semibold">{formatCurrency(card.detail.workerCost)}</span>
-                        </div>
-                        <div className="flex items-center justify-between gap-2">
-                          <span>{isEn ? 'Difference' : 'Diferencia'}</span>
-                          <span className="font-semibold">{formatCurrency(card.detail.difference)}</span>
-                        </div>
-                      </div>
-                    ) : null}
-                    <div className={`mt-2 flex items-center gap-1 text-sm font-medium ${tone}`} aria-label={`${card.label}: ${changeLabel}`}>
-                      <span>{icon}</span>
-                      <span>{changeLabel}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-              <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-200">
-                <div className="font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Operational reading' : 'Lectura operativa'}</div>
-                <p className="mt-1">{summary.conclusion}</p>
-              </div>
-            </>
-          )
-        ) : null}
+          <div className="monthly-insight"><Activity size={18} aria-hidden="true" /><div><strong>{isEn ? 'Period insight' : 'Lectura del período'}</strong><p>{showNoSummaryData ? (isEn ? 'No jobs were found for this period.' : 'No hay trabajos suficientes para evaluar este período.') : summary.conclusion}</p></div></div>
+        </>}
+        {!summary && !summaryLoading && !summaryError && <p className="monthly-empty">{isEn ? 'Select a complete date range to load the summary.' : 'Seleccioná un rango completo para cargar el resumen.'}</p>}
       </section>
+      {trend.length > 0 && <section className="monthly-trend">
+        <div className="monthly-section-heading"><h2>{isEn ? 'Job trend' : 'Tendencia de trabajos'}</h2><span>{isEn ? 'Jobs per day · active filters' : 'Trabajos por día · filtros activos'}</span></div>
+        {loading ? <p className="monthly-empty" role="status">{isEn ? 'Loading trend…' : 'Cargando tendencia…'}</p> : filteredJobs.length === 0 ? <p className="monthly-empty">{isEn ? 'No jobs to plot with these filters.' : 'No hay trabajos para graficar con estos filtros.'}</p> : <>
+          <div className="monthly-chart-readout" aria-live="polite">{activeTrend ? `${formatDate(activeTrend.date)} · ${activeTrend.count} ${isEn ? 'jobs' : 'trabajos'}` : (isEn ? 'Explore the chart to see each day' : 'Explorá el gráfico para ver cada día')}</div>
+          <div className="monthly-chart-plot">
+          <div className="monthly-chart-scale" aria-hidden="true"><span>{trendMax}</span><span>{Number((trendMax / 2).toFixed(1))}</span><span>0</span></div>
+          <svg className="monthly-chart" viewBox="0 0 1000 150" preserveAspectRatio="none" role="img" aria-label={isEn ? 'Number of jobs per day in the selected period' : 'Cantidad de trabajos por día del período seleccionado'}>
+            {[0, 0.5, 1].map(fraction => <g key={fraction}><line x1="30" x2="990" y1={126 - fraction * 112} y2={126 - fraction * 112} /></g>)}
+            <polyline points={trend.map((point,index) => `${30 + (index / Math.max(1, trend.length - 1)) * 960},${126 - (point.count / trendMax) * 112}`).join(' ')} />
+            {trend.map((point,index) => <circle key={point.date} cx={30 + (index / Math.max(1,trend.length - 1)) * 960} cy={126 - (point.count / trendMax) * 112} r={trend.length > 90 ? 2 : 4} tabIndex={0} onFocus={() => setActiveTrendIndex(index)} onMouseEnter={() => setActiveTrendIndex(index)} onBlur={() => setActiveTrendIndex(null)} onMouseLeave={() => setActiveTrendIndex(null)} aria-label={`${formatDate(point.date)}: ${point.count}`}><title>{formatDate(point.date)}: {point.count}</title></circle>)}
+          </svg>
+          </div>
+          <div className="monthly-chart-dates"><span>{formatDate(filters.startDate)}</span><span>{formatDate(filters.endDate)}</span></div>
+        </>}
+      </section>}
 
-      {/* Tabla consolidada */}
-      <div className="maintenance-table-shell overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900" data-tour="panel-mensual-tabla">
-        <div className="px-4 md:px-6 py-4 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
-          <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Summary table' : 'Tabla resumen'}</h2>
-          <span className="text-sm md:text-base text-gray-500 dark:text-slate-300">{filteredJobs.length} {isEn ? 'records' : 'registros'}</span>
-        </div>
-        <div className="md:hidden">
-          {filteredJobs.length === 0 ? (
-            <div className="px-4 py-6 text-center text-gray-500 dark:text-slate-300 text-sm">
-              {t('monthlyPage.emptyDesc')}
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-100 dark:divide-slate-800">
-              {paginatedJobs.map((job) => (
-                <div key={job.id} className="p-4 flex flex-col gap-2">
-                  {(() => {
-                    const statusMeta = getStatusMeta(job);
-                    return (
-                      <>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-slate-50 truncate">
-                        {job.title || job.description}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-slate-300">
-                        {formatDate(job.date)}
-                      </p>
-                    </div>
-                    <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold whitespace-nowrap ${statusMeta.badgeClass}`}>
-                      {statusMeta.label}
-                    </span>
+      <section className="monthly-table-panel" data-tour="panel-mensual-tabla">
+        <div className="monthly-section-heading"><h2>{isEn ? 'Summary table' : 'Tabla resumen'}</h2><span>{filteredJobs.length} {isEn ? 'records' : 'registros'}</span></div>
+        <table className="monthly-table">
+          <thead><tr>{[isEn ? 'Date' : 'Fecha', isEn ? 'Description' : 'Descripción', isEn ? 'Created by' : 'Creado por', isEn ? 'Status' : 'Estado', isEn ? 'Actions' : 'Acciones'].map(label => <th key={label}>{label}</th>)}</tr></thead>
+          <tbody>{paginatedJobs.length === 0 ? <tr><td colSpan={5} className="monthly-empty">{loading ? (isEn ? 'Loading jobs…' : 'Cargando trabajos…') : t('monthlyPage.emptyDesc')}</td></tr> : paginatedJobs.map(job => {
+            const statusMeta = getStatusMeta(job);
+            const worker = job.workers?.display_name || job.workers?.alias;
+            return <tr key={job.id}>
+              <td data-label={isEn ? 'Date' : 'Fecha'}>{formatDate(job.date)}</td>
+              <td data-label={isEn ? 'Description' : 'Descripción'}><strong>{job.title || job.description}</strong><small>{[job.location, job.groups?.name].filter(Boolean).join(' · ') || '—'}</small></td>
+              <td data-label={isEn ? 'Created by' : 'Creado por'}><span>{job.creator?.full_name || job.creator?.email || '—'}</span>{worker && <small>{worker}</small>}</td>
+              <td data-label={isEn ? 'Status' : 'Estado'}><span className={`monthly-status ${statusMeta.badgeClass}`}>{statusMeta.label}</span></td>
+              <td data-label={isEn ? 'Actions' : 'Acciones'}><div className="monthly-row-actions">
+                <button type="button" aria-label={`${isEn ? 'View details' : 'Ver detalle'}: ${job.title || job.description}`} title={isEn ? 'View details' : 'Ver detalle'} onClick={() => navigate(`/app/jobs/${job.id}`)}><Eye size={17} /></button>
+                <details className="monthly-row-menu" onKeyDown={e => { if (e.key === 'Escape') { e.currentTarget.open = false; e.currentTarget.querySelector('summary').focus(); } }}>
+                  <summary aria-label={`${isEn ? 'Actions' : 'Acciones'}: ${job.title || job.description}`}><MoreHorizontal size={18} /></summary>
+                  <div className="monthly-menu-items">
+                    <button type="button" onClick={(e) => { e.currentTarget.closest('details').open = false; setEditingJob(job); }}><Edit2 size={15} />{isEn ? 'Edit' : 'Editar'}</button>
+                    <ConfirmationModal title={isEn ? 'Delete request?' : '¿Eliminar solicitud?'} description={isEn ? 'This will delete the selected request.' : 'Se eliminará la solicitud seleccionada.'} confirmLabel={isEn ? 'Delete' : 'Eliminar'} onConfirm={() => handleDeleteJob(job.id)} trigger={<button type="button" className="monthly-delete" disabled={deletingJobId === job.id}><Trash2 size={15} />{deletingJobId === job.id ? (isEn ? 'Deleting…' : 'Eliminando…') : (isEn ? 'Delete' : 'Eliminar')}</button>} />
                   </div>
-                  <div className="flex flex-wrap gap-2 text-xs text-gray-600 dark:text-slate-300">
-                    <span className="bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-full">
-                      {job.location || '-'}
-                    </span>
-                    <span className="bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-full">
-                      {job.workers?.display_name || job.workers?.alias || '-'}
-                    </span>
-                    <span className="bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-full">
-                      {job.groups?.name || '-'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-gray-600 dark:text-slate-300">
-                    <span>{formatCurrency(job.cost_spent)}</span>
-                    <span>{formatCurrency(job.amount_to_charge)}</span>
-                  </div>
-                  <div className="flex gap-2 pt-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/app/jobs/${job.id}`)}
-                      className="h-8 px-3 rounded-full text-[#1e3a8a] border-blue-200 text-xs font-semibold shadow-sm"
-                    >
-                      <Eye className="w-4 h-4 mr-1" /> {isEn ? 'View' : 'Detalle'}
-                    </Button>
-	                    <Button
-	                      variant="outline"
-	                      size="sm"
-	                      onClick={() => setEditingJob(job)}
-	                      className="h-8 px-3 rounded-full bg-[#1e3a8a] hover:bg-blue-900 text-white text-xs font-semibold shadow-sm"
-	                    >
-	                      <Edit2 className="w-4 h-4 mr-1" /> {isEn ? 'Edit' : 'Editar'}
-	                    </Button>
-	                    <ConfirmationModal
-	                      title={isEn ? 'Delete request?' : '¿Eliminar solicitud?'}
-	                      description={isEn ? 'This will delete the selected request.' : 'Se eliminará la solicitud seleccionada.'}
-	                      confirmLabel={isEn ? 'Delete' : 'Eliminar'}
-	                      onConfirm={() => handleDeleteJob(job.id)}
-	                      trigger={
-	                        <Button
-	                          type="button"
-	                          variant="outline"
-	                          size="sm"
-	                          disabled={deletingJobId === job.id}
-	                          className="h-8 px-3 rounded-full border-red-200 text-red-700 hover:bg-red-50 text-xs font-semibold shadow-sm"
-	                        >
-	                          <Trash2 className="w-4 h-4 mr-1" /> {deletingJobId === job.id ? (isEn ? 'Deleting...' : 'Eliminando...') : (isEn ? 'Delete' : 'Eliminar')}
-	                        </Button>
-	                      }
-	                    />
-	                  </div>
-	                </>
-                    );
-                  })()}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="hidden md:block">
-          <table className="w-full text-xs md:text-sm text-left table-fixed">
-            <thead className="bg-gray-50 dark:bg-slate-800 text-gray-700 dark:text-slate-100 uppercase font-semibold border-b border-gray-200 dark:border-slate-700">
-              <tr>
-                <th className="px-3 md:px-4 py-3 w-28">{t('monthlyPage.columns.date')}</th>
-                <th className="px-3 md:px-4 py-3 w-[46%]">{t('monthlyPage.columns.description')}</th>
-                <th className="px-3 md:px-4 py-3 w-[22%]">{t('monthlyPage.columns.creator')}</th>
-                <th className="px-3 md:px-4 py-3 text-center w-24">{t('monthlyPage.columns.status')}</th>
-                <th className="px-3 md:px-4 py-3 text-center w-28">{isEn ? 'Actions' : 'Acciones'}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
-              {filteredJobs.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-3 md:px-4 py-6 text-center text-gray-500 dark:text-slate-300 text-sm md:text-base">
-                    {t('monthlyPage.emptyDesc')}
-                  </td>
-                </tr>
-              ) : paginatedJobs.map((job) => (
-                <tr key={job.id} className="hover:bg-gray-50/70 dark:hover:bg-slate-800/60 transition-colors">
-                  {(() => {
-                    const statusMeta = getStatusMeta(job);
-                    return (
-                      <>
-                  <td className="px-3 md:px-4 py-3 text-gray-800 dark:text-slate-50 whitespace-nowrap">{formatDate(job.date)}</td>
-                  <td className="px-3 md:px-4 py-3 text-gray-900 dark:text-slate-50">
-                    <div className="font-semibold truncate">{job.title || job.description}</div>
-                    <div className="text-xs text-gray-500 dark:text-slate-300 mt-1 truncate">
-                      {(job.location || '-') + ' · ' + (job.groups?.name || '-') + ' · ' + (job.job_type || job.type || '-')}
-                    </div>
-                  </td>
-                  <td className="px-3 md:px-4 py-3 text-gray-700 dark:text-slate-200">
-                    <div className="truncate">{job.creator?.full_name || job.creator?.email || '-'}</div>
-                    <div className="text-xs text-gray-500 dark:text-slate-300 mt-1 truncate">
-                      {job.workers?.display_name || job.workers?.alias || '-'}
-                    </div>
-                  </td>
-                  <td className="px-3 md:px-4 py-3 text-center">
-                    <span className={`text-[10px] md:text-xs px-3 py-1.5 rounded-full font-semibold ${statusMeta.badgeClass}`}>
-                      {statusMeta.label}
-                    </span>
-                  </td>
-                  <td className="px-3 md:px-4 py-3 text-center">
-                    <div className="flex justify-center gap-3 flex-wrap">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate(`/app/jobs/${job.id}`)}
-                        className="h-9 px-3 rounded-full text-[#1e3a8a] border-blue-200 text-xs md:text-sm font-semibold shadow-sm"
-                      >
-                        <Eye className="w-4 h-4 mr-1" /> {isEn ? 'View' : 'Detalle'}
-                      </Button>
-	                      <Button
-	                        variant="outline"
-	                        size="sm"
-	                        onClick={() => setEditingJob(job)}
-	                        className="h-9 px-3 rounded-full bg-[#1e3a8a] hover:bg-blue-900 text-white text-xs md:text-sm font-semibold shadow-sm"
-	                      >
-	                        <Edit2 className="w-4 h-4 mr-1" /> {isEn ? 'Edit' : 'Editar'}
-	                      </Button>
-	                      <ConfirmationModal
-	                        title={isEn ? 'Delete request?' : '¿Eliminar solicitud?'}
-	                        description={isEn ? 'This will delete the selected request.' : 'Se eliminará la solicitud seleccionada.'}
-	                        confirmLabel={isEn ? 'Delete' : 'Eliminar'}
-	                        onConfirm={() => handleDeleteJob(job.id)}
-	                        trigger={
-	                          <Button
-	                            type="button"
-	                            variant="outline"
-	                            size="sm"
-	                            disabled={deletingJobId === job.id}
-	                            className="h-9 px-3 rounded-full border-red-200 text-red-700 hover:bg-red-50 text-xs md:text-sm font-semibold shadow-sm"
-	                          >
-	                            <Trash2 className="w-4 h-4 mr-1" /> {deletingJobId === job.id ? (isEn ? 'Deleting...' : 'Eliminando...') : (isEn ? 'Delete' : 'Eliminar')}
-	                          </Button>
-	                        }
-	                      />
-	                    </div>
-	                  </td>
-                </>
-                    );
-                  })()}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                </details>
+              </div></td>
+            </tr>;
+          })}</tbody>
+        </table>
         <div className="border-t border-gray-100 px-4 py-4 dark:border-slate-800 md:px-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-2 text-sm text-gray-600 dark:text-slate-300 sm:flex-row sm:items-center sm:gap-4">
@@ -878,9 +660,8 @@ export default function MonthlyPanelPage() {
                   className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#1e3a8a] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50"
                   aria-label="Filas por página"
                 >
-                  <option value={5}>5</option>
                   <option value={10}>10</option>
-                  <option value={30}>30</option>
+                  <option value={25}>25</option>
                   <option value={50}>50</option>
                 </select>
               </label>
@@ -940,7 +721,7 @@ export default function MonthlyPanelPage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {loading ? <LoadingSpinner /> : null}
       {editingJob && (

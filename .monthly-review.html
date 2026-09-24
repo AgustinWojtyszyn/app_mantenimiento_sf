@@ -1,0 +1,14 @@
+<html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="root" class="maintenance-app"></div><script type="module">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter,Routes,Route } from 'react-router-dom';
+import { AuthProvider } from '/src/contexts/SupabaseAuthContext.jsx';
+import { ToastProvider } from '/src/contexts/ToastContext.jsx';
+import { LanguageProvider } from '/src/contexts/LanguageContext.jsx';
+import { ThemeProvider } from '/src/contexts/ThemeContext.jsx';
+import AppLayout from '/src/components/layout/AppLayout.jsx';
+import MonthlyPanelPage from '/src/pages/MonthlyPanelPage.jsx';
+import '/src/index.css';
+const h=React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h(LanguageProvider,null,h(ThemeProvider,null,h(ToastProvider,null,h(AuthProvider,null,h(BrowserRouter,null,h(Routes,null,h(Route,{element:h(AppLayout)},h(Route,{path:'*',element:h(MonthlyPanelPage)})))))))));
+</script></body></html>
