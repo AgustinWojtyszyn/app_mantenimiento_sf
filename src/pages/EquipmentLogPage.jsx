@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AlertCircle, Ban, BookOpen, Building2, CalendarClock, Car, ChevronDown, ClipboardList, Edit2, FileSpreadsheet, Fuel, Menu, Plus, RotateCcw, Search, ShieldCheck, Trash2, UserCog, Wrench } from 'lucide-react';
+import { AlertCircle, Ban, BookOpen, Building2, CalendarClock, Car, ClipboardList, Edit2, FileSpreadsheet, Fuel, Plus, RotateCcw, Search, ShieldCheck, Trash2, UserCog, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -1809,8 +1809,6 @@ export default function EquipmentLogPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
-  const [openNavGroup, setOpenNavGroup] = useState('');
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const isDriver = userRole === 'chofer';
   const canManageMasterData = isAdmin;
@@ -2001,14 +1999,10 @@ export default function EquipmentLogPage() {
     { key: 'plant', label: 'Planta', icon: Building2, tabs: ['plant', 'operation', 'incidents', 'checks'] },
   ]), []);
 
-  useEffect(() => {
-    const activeGroup = navGroups.find((group) => group.tabs.includes(activeTab));
-    setOpenNavGroup(activeGroup?.key || '');
-  }, [activeTab, navGroups]);
+  const activeNavGroup = navGroups.find((group) => group.tabs.includes(activeTab)) || null;
 
   const handleTabSelect = (key) => {
     setActiveTab(key);
-    setMobileNavOpen(false);
     scrollEquipmentMainContentIntoView();
   };
 
@@ -2266,108 +2260,67 @@ export default function EquipmentLogPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[250px,1fr]">
-        <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <div className="mb-2 grid grid-cols-2 gap-2 lg:hidden">
-            {[
-              { key: 'vehicles', label: 'Vehículos', icon: Car },
-              { key: 'plant', label: 'Planta', icon: Building2 },
-            ].map((item) => {
-              const Icon = item.icon;
-              const active = activeTab === item.key;
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => handleTabSelect(item.key)}
-                  className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-bold transition ${
-                    active
-                      ? 'border-[#1e3a8a] bg-[#1e3a8a] text-white shadow-sm'
-                      : 'border-gray-200 bg-white text-gray-700 hover:bg-blue-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-          <button
-            type="button"
-            onClick={() => setMobileNavOpen((open) => !open)}
-            className="mb-2 flex w-full items-center justify-between rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-800 transition hover:bg-blue-50 dark:border-slate-800 dark:text-slate-100 dark:hover:bg-slate-800 lg:hidden"
-          >
-            <span className="flex items-center gap-2">
-              <Menu className="h-4 w-4" />
-              Secciones
-            </span>
-            <ChevronDown className={`h-4 w-4 transition-transform ${mobileNavOpen ? 'rotate-180' : ''}`} />
-          </button>
-          <div className={`${mobileNavOpen ? 'grid' : 'hidden'} gap-2 lg:grid`}>
+      <div className="space-y-3">
+        <div className="rounded-2xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="flex gap-2 overflow-x-auto pb-0.5">
             <button
               type="button"
               onClick={() => handleTabSelect('summary')}
-              className={`flex items-center justify-start gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+              className={`flex h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold transition ${
                 activeTab === 'summary'
                   ? 'bg-[#1e3a8a] text-white shadow-sm'
                   : 'text-gray-700 hover:bg-blue-50 dark:text-slate-200 dark:hover:bg-slate-800'
               }`}
             >
-              <ClipboardList className="h-5 w-5" />
+              <ClipboardList className="h-4 w-4" />
               Resumen
             </button>
             {navGroups.map((group) => {
               const GroupIcon = group.icon;
-              const open = openNavGroup === group.key;
               const groupActive = group.tabs.includes(activeTab);
               return (
-                <div key={group.key} className="rounded-xl border border-gray-100 dark:border-slate-800">
-                  <button
-                    type="button"
-                    onClick={() => setOpenNavGroup(open ? '' : group.key)}
-                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-bold transition ${
-                      groupActive
-                        ? 'text-[#1e3a8a] dark:text-blue-200'
-                        : 'text-gray-700 hover:bg-blue-50 dark:text-slate-200 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <GroupIcon className="h-5 w-5" />
-                      {group.label}
-                    </span>
-                    <ChevronDown className={`h-4 w-4 transition-transform duration-150 ${open ? 'rotate-180' : ''}`} />
-                  </button>
-                  <div className={`grid overflow-hidden transition-[grid-template-rows] duration-150 ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-                    <div className="min-h-0">
-                      <div className="space-y-1 px-2 pb-2">
-                        {group.tabs.map((key) => {
-                          const tab = tabByKey[key];
-                          if (!tab) return null;
-                          const Icon = tab.icon;
-                          const active = activeTab === key;
-                          return (
-                            <button
-                              key={key}
-                              type="button"
-                              onClick={() => handleTabSelect(key)}
-                              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${
-                                active
-                                  ? 'bg-[#1e3a8a] text-white shadow-sm'
-                                  : 'text-gray-600 hover:bg-blue-50 dark:text-slate-300 dark:hover:bg-slate-800'
-                              }`}
-                            >
-                              <Icon className="h-4 w-4" />
-                              {tabTitles[key] || tab.label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <button
+                  key={group.key}
+                  type="button"
+                  onClick={() => handleTabSelect(group.tabs[0])}
+                  className={`flex h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold transition ${
+                    groupActive
+                      ? 'bg-[#1e3a8a] text-white shadow-sm'
+                      : 'text-gray-700 hover:bg-blue-50 dark:text-slate-200 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <GroupIcon className="h-4 w-4" />
+                  {group.label}
+                </button>
               );
             })}
           </div>
+
+          {activeNavGroup ? (
+            <div className="mt-2 flex gap-1.5 overflow-x-auto border-t border-gray-100 pt-2 dark:border-slate-800">
+              {activeNavGroup.tabs.map((key) => {
+                const tab = tabByKey[key];
+                if (!tab) return null;
+                const Icon = tab.icon;
+                const active = activeTab === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => handleTabSelect(key)}
+                    className={`flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition sm:text-sm ${
+                      active
+                        ? 'border-[#1e3a8a]/30 bg-blue-50 text-[#1e3a8a] dark:border-blue-500/40 dark:bg-blue-950/30 dark:text-blue-100'
+                        : 'border-transparent text-gray-600 hover:border-gray-200 hover:bg-gray-50 dark:text-slate-300 dark:hover:border-slate-700 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
 
         <div className="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900" data-equipment-main-content>
