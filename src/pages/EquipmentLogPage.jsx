@@ -2245,7 +2245,7 @@ export default function EquipmentLogPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-[#1e3a8a] dark:bg-blue-900/40 dark:text-blue-100">
@@ -2268,6 +2268,30 @@ export default function EquipmentLogPage() {
 
       <div className="grid gap-4 lg:grid-cols-[250px,1fr]">
         <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="mb-2 grid grid-cols-2 gap-2 lg:hidden">
+            {[
+              { key: 'vehicles', label: 'Vehículos', icon: Car },
+              { key: 'plant', label: 'Planta', icon: Building2 },
+            ].map((item) => {
+              const Icon = item.icon;
+              const active = activeTab === item.key;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={() => handleTabSelect(item.key)}
+                  className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-bold transition ${
+                    active
+                      ? 'border-[#1e3a8a] bg-[#1e3a8a] text-white shadow-sm'
+                      : 'border-gray-200 bg-white text-gray-700 hover:bg-blue-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
           <button
             type="button"
             onClick={() => setMobileNavOpen((open) => !open)}
@@ -2578,7 +2602,7 @@ function EquipmentSummaryCards({ vehicles, maintenanceLogs, plantAssets, vehicle
   };
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-3 2xl:grid-cols-6">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
@@ -2591,8 +2615,8 @@ function EquipmentSummaryCards({ vehicles, maintenanceLogs, plantAssets, vehicle
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase text-gray-600 dark:text-slate-300">{card.label}</p>
-                <p className="mt-0.5 text-2xl font-bold leading-tight text-gray-900 dark:text-slate-50">{card.value}</p>
+                <p className="text-[11px] font-semibold uppercase leading-tight text-gray-600 dark:text-slate-300 sm:text-xs">{card.label}</p>
+                <p className="mt-1 text-xl font-bold leading-tight text-gray-900 dark:text-slate-50 sm:text-2xl">{card.value}</p>
                 <p className="mt-0.5 text-xs leading-snug text-gray-500 dark:text-slate-400">{card.detail}</p>
               </div>
               <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${iconClass[card.tone]}`}>
@@ -2720,6 +2744,39 @@ function SummaryMiniList({ title, items, renderItem, tone = 'normal', onViewAll 
   );
 }
 
+function VehicleExpirationPills({ vehicle, compact = false }) {
+  const expirations = [
+    { key: 'registration', label: 'Registro', value: vehicle.registration_expires_at },
+    { key: 'insurance', label: 'Seguro', value: vehicle.insurance_expires_at },
+    { key: 'inspection', label: 'VTV/RTO', value: vehicle.inspection_expires_at },
+  ];
+
+  return (
+    <div className={`flex flex-wrap gap-1.5 ${compact ? 'mt-2' : ''}`}>
+      {expirations.map((item) => {
+        const remaining = daysUntil(item.value);
+        const statusClass = !item.value
+          ? 'border-gray-200 bg-gray-50 text-gray-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+          : remaining < 0
+            ? 'border-red-200 bg-red-50 text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200'
+            : remaining <= 30
+              ? 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200'
+              : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-200';
+
+        return (
+          <span
+            key={item.key}
+            className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] font-semibold ${statusClass}`}
+          >
+            <span>{item.label}</span>
+            <span className="font-bold">{item.value ? formatDate(item.value) : 'Sin fecha'}</span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
 function VehiclesList({
   vehicles,
   fuelLoads,
@@ -2751,13 +2808,55 @@ function VehiclesList({
   return (
     <div className="divide-y divide-gray-100 dark:divide-slate-800">
       {vehicles.length === 0 ? (
-        <div className="p-10 text-center">
+        <div className="p-6 text-center md:p-10">
           <p className="text-base font-semibold text-gray-900 dark:text-slate-50">Todavía no hay vehículos registrados.</p>
           <p className="mt-1 text-sm text-gray-600 dark:text-slate-300">Agregá el primero para comenzar a cargar combustible, mantenimiento y vencimientos.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+        <>
+          <div className="grid gap-3 p-3 md:hidden">
+            {vehicles.map((vehicle) => {
+              const selected = selectedVehicleId === vehicle.id;
+              return (
+                <button
+                  key={vehicle.id}
+                  type="button"
+                  onClick={() => onSelectVehicle(vehicle.id)}
+                  className={`rounded-xl border p-4 text-left shadow-sm transition ${
+                    selected
+                      ? 'border-[#1e3a8a] bg-blue-50 ring-2 ring-[#1e3a8a]/15 dark:border-blue-500 dark:bg-blue-950/30'
+                      : 'border-gray-200 bg-white hover:border-blue-300 dark:border-slate-800 dark:bg-slate-900'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-base font-bold text-gray-900 dark:text-slate-50">{vehicle.license_plate}</p>
+                      <p className="mt-0.5 truncate text-sm font-semibold text-gray-700 dark:text-slate-200">
+                        {vehicle.name || vehicleTypeLabels[vehicle.vehicle_type] || 'Vehículo'}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">
+                        {[vehicle.brand, vehicle.model, vehicle.year].filter(Boolean).join(' ') || 'Sin detalle'}
+                      </p>
+                    </div>
+                    <Badge value={vehicle.status}>{statusLabels[vehicle.status]}</Badge>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-slate-300">
+                    <div>
+                      <span className="block text-[11px] font-semibold uppercase text-gray-400">Chofer</span>
+                      <span className="font-semibold text-gray-800 dark:text-slate-100">{vehicleDriverLabel(vehicle)}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[11px] font-semibold uppercase text-gray-400">Km actual</span>
+                      <span className="font-semibold text-gray-800 dark:text-slate-100">{vehicle.mileage_end ?? vehicle.mileage_start ?? '-'}</span>
+                    </div>
+                  </div>
+                  <VehicleExpirationPills vehicle={vehicle} compact />
+                </button>
+              );
+            })}
+          </div>
+          <div className="hidden overflow-x-auto md:block">
+          <table className="w-full min-w-[980px] text-left text-sm">
             <thead className="bg-gray-50 text-gray-700 dark:bg-slate-800 dark:text-slate-200">
               <tr>
                 <th className="px-5 py-3">Patente</th>
@@ -2787,15 +2886,14 @@ function VehiclesList({
                     <p className="text-xs text-gray-500 dark:text-slate-400">Inicio: {vehicle.mileage_start ?? '-'} | Cierre: {vehicle.mileage_end ?? '-'}</p>
                   </td>
                   <td className="px-5 py-4 text-gray-700 dark:text-slate-200">
-                    <p>Registro: {vehicle.registration_expires_at ? formatDate(vehicle.registration_expires_at) : '-'}</p>
-                    <p>Seguro: {vehicle.insurance_expires_at ? formatDate(vehicle.insurance_expires_at) : '-'}</p>
-                    <p>VTV/RTO: {vehicle.inspection_expires_at ? formatDate(vehicle.inspection_expires_at) : '-'}</p>
+                    <VehicleExpirationPills vehicle={vehicle} />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+          </div>
+        </>
       )}
 
       {selectedVehicle && (
@@ -2850,6 +2948,8 @@ function VehicleDetail({
   onDeleteFuelLoad,
   onDeleteMaintenanceLog,
 }) {
+  const [mobileSection, setMobileSection] = useState('fuel');
+
   return (
     <div className="space-y-5 p-4">
       <div className="rounded-lg border border-blue-100 bg-blue-50/70 p-4 dark:border-blue-900/50 dark:bg-blue-950/20">
@@ -2886,7 +2986,28 @@ function VehicleDetail({
           )}
         </div>
       </div>
-      <FuelLoadsSection
+      <div className="grid grid-cols-3 gap-2 md:hidden">
+        {[
+          ['fuel', 'Combustible'],
+          ['maintenance', 'Mantenimiento'],
+          ['history', 'Historial'],
+        ].map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setMobileSection(key)}
+            className={`rounded-lg border px-2 py-2 text-xs font-bold transition ${
+              mobileSection === key
+                ? 'border-[#1e3a8a] bg-[#1e3a8a] text-white'
+                : 'border-gray-200 bg-white text-gray-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      <div className={`${mobileSection === 'fuel' ? 'block' : 'hidden'} md:block`}>
+        <FuelLoadsSection
         vehicles={vehicles}
         selectedVehicle={vehicle}
         fuelLoads={fuelLoads}
@@ -2896,8 +3017,10 @@ function VehicleDetail({
         canEditMileage={canEditMileage}
         onSaved={onSaved}
         onDelete={onDeleteFuelLoad}
-      />
-      <MaintenanceLogsSection
+        />
+      </div>
+      <div className={`${mobileSection === 'maintenance' ? 'block' : 'hidden'} md:block`}>
+        <MaintenanceLogsSection
         vehicles={vehicles}
         selectedVehicle={vehicle}
         maintenanceLogs={maintenanceLogs}
@@ -2907,8 +3030,11 @@ function VehicleDetail({
         canEditMileage={canEditMileage}
         onSaved={onSaved}
         onDelete={onDeleteMaintenanceLog}
-      />
-      <VehicleHistorySection vehicle={vehicle} history={history} routes={vehicleRoutes} maintenanceRequests={maintenanceRequests} />
+        />
+      </div>
+      <div className={`${mobileSection === 'history' ? 'block' : 'hidden'} md:block`}>
+        <VehicleHistorySection vehicle={vehicle} history={history} routes={vehicleRoutes} maintenanceRequests={maintenanceRequests} />
+      </div>
     </div>
   );
 }
