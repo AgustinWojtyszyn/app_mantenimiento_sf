@@ -2880,6 +2880,90 @@ function VehicleExpirationPills({ vehicle, compact = false }) {
   );
 }
 
+function VehicleTableFieldAction({ vehicle, drivers, field, label, onSaved, children }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="min-w-0 flex-1">{children}</div>
+      <VehicleQuickFieldDialog
+        vehicle={vehicle}
+        drivers={drivers}
+        field={field}
+        label={`Editar ${label.toLowerCase()}`}
+        onSaved={onSaved}
+        trigger={
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={(event) => event.stopPropagation()}
+            className="h-7 shrink-0 gap-1 px-2 text-[11px] font-bold text-[#1e3a8a] hover:bg-blue-50 dark:text-blue-200 dark:hover:bg-blue-950/30"
+          >
+            <Edit2 className="h-3.5 w-3.5" />
+            Editar
+          </Button>
+        }
+      />
+    </div>
+  );
+}
+
+function VehicleExpirationTableEditor({ vehicle, drivers, canEdit, onSaved }) {
+  const expirations = [
+    { field: 'registration_expires_at', label: 'Registro', value: vehicle.registration_expires_at },
+    { field: 'insurance_expires_at', label: 'Seguro', value: vehicle.insurance_expires_at },
+    { field: 'inspection_expires_at', label: 'VTV/RTO', value: vehicle.inspection_expires_at },
+  ];
+
+  return (
+    <div className="min-w-[255px] space-y-1.5">
+      {expirations.map((item) => {
+        const remaining = daysUntil(item.value);
+        const statusClass = !item.value
+          ? 'border-gray-200 bg-gray-50 text-gray-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+          : remaining < 0
+            ? 'border-red-200 bg-red-50 text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200'
+            : remaining <= 30
+              ? 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200'
+              : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-200';
+
+        return (
+          <div key={item.field} className="flex items-center justify-between gap-2">
+            <span className={`inline-flex min-w-0 flex-1 items-center justify-between gap-2 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold ${statusClass}`}>
+              <span>{item.label}</span>
+              <span className="font-bold">{item.value ? formatDate(item.value) : 'Sin fecha'}</span>
+            </span>
+            {canEdit ? (
+              <VehicleQuickFieldDialog
+                vehicle={vehicle}
+                drivers={drivers}
+                field={item.field}
+                label={`${item.value ? 'Editar' : 'Agregar'} ${item.label.toLowerCase()}`}
+                onSaved={onSaved}
+                trigger={
+                  <Button
+                    type="button"
+                    variant={item.value ? 'ghost' : 'outline'}
+                    size="sm"
+                    onClick={(event) => event.stopPropagation()}
+                    className={`h-7 shrink-0 gap-1 px-2 text-[11px] font-bold ${
+                      item.value
+                        ? 'text-[#1e3a8a] hover:bg-blue-50 dark:text-blue-200 dark:hover:bg-blue-950/30'
+                        : 'border-[#1e3a8a]/25 text-[#1e3a8a] hover:bg-blue-50 dark:border-blue-500/40 dark:text-blue-200 dark:hover:bg-blue-950/30'
+                    }`}
+                  >
+                    {item.value ? <Edit2 className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+                    {item.value ? 'Editar' : 'Agregar'}
+                  </Button>
+                }
+              />
+            ) : null}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function VehiclesList({
   vehicles,
   fuelLoads,
@@ -2959,7 +3043,7 @@ function VehiclesList({
             })}
           </div>
           <div className="hidden overflow-x-auto md:block">
-          <table className="w-full min-w-[980px] text-left text-sm">
+          <table className="w-full min-w-[1220px] text-left text-sm">
             <thead className="bg-gray-50 text-gray-700 dark:bg-slate-800 dark:text-slate-200">
               <tr>
                 <th className="px-5 py-3">Patente</th>
@@ -2968,6 +3052,7 @@ function VehiclesList({
                 <th className="px-5 py-3">Estado</th>
                 <th className="px-5 py-3">Kilometraje actual</th>
                 <th className="px-5 py-3">Vencimientos</th>
+                {canEdit && <th className="px-5 py-3 text-right">Acciones</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
@@ -2982,15 +3067,82 @@ function VehiclesList({
                     <p className="font-semibold">{vehicle.name || vehicleTypeLabels[vehicle.vehicle_type] || 'Vehículo'}</p>
                     <p>{[vehicle.brand, vehicle.model, vehicle.year].filter(Boolean).join(' ') || '-'}</p>
                   </td>
-                  <td className="px-5 py-4 text-gray-700 dark:text-slate-200">{vehicleDriverLabel(vehicle)}</td>
-                  <td className="px-5 py-4"><Badge value={vehicle.status}>{statusLabels[vehicle.status]}</Badge></td>
                   <td className="px-5 py-4 text-gray-700 dark:text-slate-200">
-                    <p className="font-semibold text-gray-900 dark:text-slate-50">{vehicle.mileage_end ?? vehicle.mileage_start ?? '-'}</p>
-                    <p className="text-xs text-gray-500 dark:text-slate-400">Inicio: {vehicle.mileage_start ?? '-'} | Cierre: {vehicle.mileage_end ?? '-'}</p>
+                    {canEdit ? (
+                      <VehicleTableFieldAction
+                        vehicle={vehicle}
+                        drivers={drivers}
+                        field="assigned_driver_profile_id"
+                        label="Chofer"
+                        onSaved={onSaved}
+                      >
+                        <span className="block max-w-[150px] truncate font-medium">{vehicleDriverLabel(vehicle)}</span>
+                      </VehicleTableFieldAction>
+                    ) : vehicleDriverLabel(vehicle)}
+                  </td>
+                  <td className="px-5 py-4">
+                    {canEdit ? (
+                      <VehicleTableFieldAction
+                        vehicle={vehicle}
+                        drivers={drivers}
+                        field="status"
+                        label="Estado"
+                        onSaved={onSaved}
+                      >
+                        <Badge value={vehicle.status}>{statusLabels[vehicle.status]}</Badge>
+                      </VehicleTableFieldAction>
+                    ) : (
+                      <Badge value={vehicle.status}>{statusLabels[vehicle.status]}</Badge>
+                    )}
                   </td>
                   <td className="px-5 py-4 text-gray-700 dark:text-slate-200">
-                    <VehicleExpirationPills vehicle={vehicle} />
+                    {canEdit ? (
+                      <VehicleTableFieldAction
+                        vehicle={vehicle}
+                        drivers={drivers}
+                        field="mileage_end"
+                        label="Kilometraje actual"
+                        onSaved={onSaved}
+                      >
+                        <p className="font-semibold text-gray-900 dark:text-slate-50">{vehicle.mileage_end ?? vehicle.mileage_start ?? '-'}</p>
+                        <p className="text-xs text-gray-500 dark:text-slate-400">Inicio: {vehicle.mileage_start ?? '-'} | Cierre: {vehicle.mileage_end ?? '-'}</p>
+                      </VehicleTableFieldAction>
+                    ) : (
+                      <>
+                        <p className="font-semibold text-gray-900 dark:text-slate-50">{vehicle.mileage_end ?? vehicle.mileage_start ?? '-'}</p>
+                        <p className="text-xs text-gray-500 dark:text-slate-400">Inicio: {vehicle.mileage_start ?? '-'} | Cierre: {vehicle.mileage_end ?? '-'}</p>
+                      </>
+                    )}
                   </td>
+                  <td className="px-5 py-4 text-gray-700 dark:text-slate-200">
+                    <VehicleExpirationTableEditor
+                      vehicle={vehicle}
+                      drivers={drivers}
+                      canEdit={canEdit}
+                      onSaved={onSaved}
+                    />
+                  </td>
+                  {canEdit && (
+                    <td className="px-5 py-4 text-right">
+                      <VehicleFormDialog
+                        vehicle={vehicle}
+                        drivers={drivers}
+                        onSaved={onSaved}
+                        trigger={
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(event) => event.stopPropagation()}
+                            className="h-8 gap-1.5 whitespace-nowrap text-xs font-bold"
+                          >
+                            <Edit2 className="h-3.5 w-3.5" />
+                            Editar ficha
+                          </Button>
+                        }
+                      />
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
