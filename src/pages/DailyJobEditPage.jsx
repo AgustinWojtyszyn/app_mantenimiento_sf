@@ -75,7 +75,7 @@ export default function DailyJobEditPage() {
   return (
     <div className="maintenance-page w-full">
       <div className="max-w-[1200px] mx-auto space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="orders-page-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <Button
               type="button"
