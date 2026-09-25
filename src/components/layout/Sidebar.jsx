@@ -1,14 +1,22 @@
-
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageToggle from '@/components/layout/LanguageToggle';
 import ThemeToggle from '@/components/layout/ThemeToggle';
 import { isOnboardingInProgress, markManualNavNow, clearOnboardingState } from '@/onboarding/onboardingStorage';
-import { 
-  Calendar, CalendarDays, Users, UserCog, BookOpen,
-  ClipboardList, ShieldAlert, LogOut, Menu, X
+import {
+  Calendar,
+  CalendarDays,
+  Users,
+  UserCog,
+  BookOpen,
+  ClipboardList,
+  ShieldAlert,
+  LogOut,
+  Menu,
+  X,
+  Wrench,
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -16,130 +24,172 @@ export default function Sidebar() {
   const { profile, user, signOut, isAdmin } = useAuth();
   const { t } = useLanguage();
   const location = useLocation();
+
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email || 'Usuario';
   const displayEmail = profile?.email || user?.email || '';
   const displayRole = profile?.role || '';
 
-  const baseNavItems = [
+  const operationItems = useMemo(() => ([
     { label: t('nav.daily'), path: '/app/trabajos-diarios', icon: Calendar },
-    { label: t('nav.monthly'), path: '/app/panel-mensual', icon: CalendarDays },
     { label: t('nav.workers'), path: '/app/trabajadores', icon: UserCog },
-    { label: t('nav.groups'), path: '/app/grupos', icon: Users, adminOnly: true },
     { label: t('nav.equipmentLog'), path: '/app/equipment-log', icon: ClipboardList },
-    { label: t('nav.admin'), path: '/app/admin', icon: ShieldAlert, adminOnly: true },
-    { label: t('nav.tutorial'), path: '/app/tutorial', icon: BookOpen },
-  ];
+  ]), [t]);
 
-  const navItems = baseNavItems.filter((item) => (item.adminOnly ? isAdmin : true));
-  const activeItem = navItems.find((item) => location.pathname === item.path);
+  const reportItems = useMemo(() => ([
+    { label: t('nav.monthly'), path: '/app/panel-mensual', icon: CalendarDays },
+  ]), [t]);
+
+  const administrationItems = useMemo(() => ([
+    { label: t('nav.groups'), path: '/app/grupos', icon: Users, adminOnly: true },
+    { label: t('nav.admin'), path: '/app/admin', icon: ShieldAlert, adminOnly: true },
+  ].filter((item) => (item.adminOnly ? isAdmin : true))), [t, isAdmin]);
+
+  const menuSections = [
+    { label: 'Operación', items: operationItems },
+    { label: 'Reportes y análisis', items: reportItems },
+    { label: 'Administración', items: administrationItems },
+  ].filter((section) => section.items.length > 0);
+
+  const allItems = [...operationItems, ...reportItems, ...administrationItems];
+  const activeItem = allItems.find((item) => location.pathname === item.path);
   const currentLabel = activeItem?.label ?? t('nav.daily');
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleSidebar = () => setIsOpen((value) => !value);
+
   const handleNavClick = () => {
     markManualNavNow();
-    if (isOnboardingInProgress()) {
-      clearOnboardingState();
-    }
+    if (isOnboardingInProgress()) clearOnboardingState();
     setIsOpen(false);
+  };
+
+  const itemClass = (active) => [
+    'flex min-h-11 items-center rounded-xl px-3 py-2.5 text-sm font-bold transition-colors duration-150',
+    active
+      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
+      : 'text-slate-700 hover:bg-blue-50 hover:text-blue-700',
+  ].join(' ');
+
+  const renderItem = (item) => {
+    const Icon = item.icon;
+    const active = location.pathname === item.path;
+    return (
+      <li key={item.path}>
+        <Link to={item.path} onClick={handleNavClick} className={itemClass(active)}>
+          <Icon className="mr-3 h-5 w-5 shrink-0" />
+          <span className="min-w-0 flex-1 leading-tight">{item.label}</span>
+        </Link>
+      </li>
+    );
   };
 
   return (
     <>
-      {/* Mobile Toggle */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-12 bg-primary text-primary-foreground flex items-center justify-between px-4 z-50 shadow-md">
-        <div className="flex items-center gap-3 min-w-0">
-          <button
-            onClick={toggleSidebar}
-            className="inline-flex items-center justify-center rounded-md p-1.5"
-            aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-          <span className="min-w-0 truncate text-sm font-semibold max-w-[58vw]">
-            <span className="text-blue-100">ServiFood</span>
-            <span className="mx-1.5 text-blue-300/70">·</span>
-            <span>{currentLabel}</span>
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <LanguageToggle className="h-9 px-3 text-xs bg-background/20 border border-white/20 text-white hover:text-white hover:bg-white/15" />
-          <ThemeToggle className="h-9 w-9 border border-white/20 bg-background/20 text-white hover:text-white hover:bg-white/15" />
-        </div>
-      </div>
-
-      {/* Overlay */}
-      {isOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsOpen(false)} />
+      {!isOpen && (
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          className="fixed left-4 top-4 z-[60] rounded-md bg-blue-900/95 p-2 text-white shadow-lg transition-colors hover:bg-blue-900 md:hidden"
+          aria-label="Abrir menú"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
       )}
 
-      {/* Sidebar Content */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       <aside className={`
-        sidebar fixed lg:static inset-y-0 left-0 z-50 w-72 lg:w-56 bg-[#082b59] text-white transform transition-transform duration-200 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        pt-12 lg:pt-0 shadow-xl
+        sidebar orders-sidebar fixed left-0 top-0 z-50 flex h-dvh w-[min(85vw,320px)] flex-col
+        border-r-4 border-orange-500 bg-white shadow-2xl transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        md:sticky md:top-0 md:w-64 md:translate-x-0
       `}>
-        <div className="sidebar-brand flex items-center gap-3 border-b border-white/10 px-4 py-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10">
-            <img
-              src="/servifood_logo_white_text_HQ.png"
-              alt="ServiFood"
-              className="h-9 w-9 object-contain"
-            />
-          </div>
-          <div className="min-w-0 leading-tight">
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-200">
-              ServiFood
-            </p>
-            <p className="mt-0.5 truncate text-base font-semibold text-white">
+        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4">
+          <Link to="/app/trabajos-diarios" onClick={handleNavClick} className="min-w-0">
+            <div className="leading-none">
+              <span className="text-[2rem] font-black tracking-[-0.05em] text-blue-600">Servi</span>
+              <span className="text-[2rem] font-black tracking-[-0.05em] text-orange-500">Food</span>
+            </div>
+            <div className="mt-0.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
+              <Wrench className="h-3 w-3" />
               Mantenimiento
+            </div>
+          </Link>
+          <button
+            type="button"
+            className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 md:hidden"
+            onClick={() => setIsOpen(false)}
+            aria-label="Cerrar menú"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-white px-3 pb-4 pt-4">
+          <div className="flex-1 space-y-5">
+            {menuSections.map((section) => (
+              <section key={section.label} aria-label={section.label}>
+                <p className="mb-1.5 px-3 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
+                  {section.label}
+                </p>
+                <ul className="space-y-1">
+                  {section.items.map(renderItem)}
+                </ul>
+              </section>
+            ))}
+          </div>
+
+          <section aria-label="Cuenta y ayuda" className="mt-5 border-t border-slate-200 pt-4">
+            <p className="mb-1.5 px-3 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
+              Cuenta y ayuda
             </p>
-          </div>
-        </div>
 
-        <nav className="sidebar-nav text-nav-lg">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={handleNavClick}
-                className={`
-                  sidebar-item flex items-center font-semibold rounded-xl transition-all duration-200 text-base lg:text-sm xl:text-base
-                  ${isActive ? "bg-white/12 text-white shadow-sm ring-1 ring-white/10 translate-x-1" : "text-blue-100 hover:bg-white/8 hover:text-white hover:translate-x-1"}
-                `}
-              >
-                <Icon className="h-6 w-6 shrink-0 mr-3" />
-                {item.label}
-              </Link>
-            );
-          })}
+            <div className="mb-3 rounded-xl bg-slate-50 px-3 py-3">
+              <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>
+              {displayEmail ? <p className="mt-0.5 truncate text-xs text-slate-500">{displayEmail}</p> : null}
+              {displayRole ? <p className="mt-1 text-[10px] font-black uppercase tracking-[0.12em] text-blue-600">{displayRole}</p> : null}
+            </div>
+
+            <ul className="space-y-1">
+              <li>
+                <Link
+                  to="/app/tutorial"
+                  onClick={handleNavClick}
+                  className={itemClass(location.pathname === '/app/tutorial')}
+                >
+                  <BookOpen className="mr-3 h-5 w-5 shrink-0" />
+                  <span>{t('nav.tutorial')}</span>
+                </Link>
+              </li>
+              <li>
+                <div className="flex items-center gap-2 px-1 py-1">
+                  <LanguageToggle className="flex-1 border-slate-200 bg-white text-slate-700 hover:bg-blue-50 hover:text-blue-700" />
+                  <ThemeToggle className="border-slate-200 bg-white text-slate-700 hover:bg-blue-50 hover:text-blue-700" />
+                </div>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={signOut}
+                  className="flex min-h-11 w-full items-center rounded-xl px-3 py-2.5 text-sm font-bold text-red-700 transition-colors hover:bg-red-50"
+                >
+                  <LogOut className="mr-3 h-5 w-5 shrink-0" />
+                  <span>{t('nav.logout')}</span>
+                </button>
+              </li>
+            </ul>
+          </section>
         </nav>
-
-        <div className="sidebar-user mt-auto border-t border-white/10 bg-[#061f43]">
-          <div className="mb-4 px-1 min-w-0">
-            <p className="text-sm xl:text-base font-semibold leading-snug whitespace-normal break-words">{displayName}</p>
-            {displayEmail && (
-              <p className="mt-1 text-xs sm:text-sm text-blue-200 leading-snug truncate">{displayEmail}</p>
-            )}
-            {displayRole && (
-              <p className="mt-1 text-xs uppercase tracking-wide text-blue-300">{displayRole}</p>
-            )}
-          </div>
-
-          <div className="sidebar-user-actions">
-            <button
-              type="button"
-              onClick={signOut}
-              className="flex w-full items-center justify-center gap-2 text-sm font-medium text-blue-100 hover:text-white hover:bg-white/10 rounded-md transition-colors"
-            >
-              <LogOut className="w-5 h-5 flex-shrink-0" />
-              <span className="truncate">{t('nav.logout')}</span>
-            </button>
-          </div>
-        </div>
       </aside>
+
+      <div className="pointer-events-none fixed left-16 top-4 z-50 rounded-lg bg-blue-950/70 px-3 py-2 text-xs font-bold text-white shadow-md backdrop-blur md:hidden">
+        {currentLabel}
+      </div>
     </>
   );
 }
