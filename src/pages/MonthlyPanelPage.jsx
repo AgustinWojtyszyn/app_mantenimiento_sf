@@ -1,26 +1,47 @@
-
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useJobs } from '@/hooks/useJobs';
-import { useAuth } from '@/contexts/SupabaseAuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useToast } from '@/contexts/ToastContext';
-import { useOnboardingTour } from '@/hooks/useOnboardingTour';
-import { formatDate, formatCurrency } from '@/utils/formatters';
-import { getMonthStart, getMonthEnd } from '@/utils/dates';
-import { getJobStatusBadgeClass, getJobStatusLabel, normalizeJobStatus } from '@/utils/jobStatus';
-import './monthlyDashboard.css';
-import { Activity, Briefcase, Clock3, CheckCircle2, TrendingUp, Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, MoreHorizontal } from 'lucide-react';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
-import ExcelExportButton from '@/components/common/ExcelExportButton';
-import JobFilters from '@/components/jobs/JobFilters';
-import { useFilters } from '@/hooks/useFilters';
-import { Button } from '@/components/ui/button';
-import { exportService } from '@/services/export.service';
-import { jobsService } from '@/services/jobs.service';
-import { onboardingService } from '@/services/onboarding.service';
-import ConfirmationModal from '@/components/common/ConfirmationModal';
-import JobForm from '@/components/jobs/JobForm';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  useCallback,
+} from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useJobs } from "@/hooks/useJobs";
+import { useAuth } from "@/contexts/SupabaseAuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/contexts/ToastContext";
+import { useOnboardingTour } from "@/hooks/useOnboardingTour";
+import { formatDate, formatCurrency } from "@/utils/formatters";
+import { getMonthStart, getMonthEnd } from "@/utils/dates";
+import {
+  getJobStatusBadgeClass,
+  getJobStatusLabel,
+  normalizeJobStatus,
+} from "@/utils/jobStatus";
+import "./monthlyDashboard.css";
+import {
+  Activity,
+  Briefcase,
+  Clock3,
+  CheckCircle2,
+  TrendingUp,
+  Trash2,
+  MessageCircle,
+  FileSpreadsheet,
+  Eye,
+  Edit2,
+  MoreHorizontal,
+} from "lucide-react";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import ExcelExportButton from "@/components/common/ExcelExportButton";
+import JobFilters from "@/components/jobs/JobFilters";
+import { useFilters } from "@/hooks/useFilters";
+import { Button } from "@/components/ui/button";
+import { exportService } from "@/services/export.service";
+import { jobsService } from "@/services/jobs.service";
+import { onboardingService } from "@/services/onboarding.service";
+import ConfirmationModal from "@/components/common/ConfirmationModal";
+import JobForm from "@/components/jobs/JobForm";
 import {
   applyMonthlyPanelFilters,
   buildMonthlyLocationOptions,
@@ -29,8 +50,8 @@ import {
   getPreviousDateRange,
   normalizeDateOnly,
   paginateMonthlyJobs,
-  shouldApplyMonthlyJobsResult
-} from '@/pages/monthlyPanel.helpers';
+  shouldApplyMonthlyJobsResult,
+} from "@/pages/monthlyPanel.helpers";
 
 const DEBUG_MAINTENANCE = false;
 
@@ -42,10 +63,14 @@ export default function MonthlyPanelPage() {
   const { t, language } = useLanguage();
   const { addToast } = useToast();
   const { resumeTourIfNeeded } = useOnboardingTour();
-  const isEn = language === 'en';
-  const role = ['admin', 'solicitante', 'trabajador', 'chofer'].includes(userRole)
+  const isEn = language === "en";
+  const role = ["admin", "solicitante", "trabajador", "chofer"].includes(
+    userRole,
+  )
     ? userRole
-    : (isAdmin ? 'admin' : 'solicitante');
+    : isAdmin
+      ? "admin"
+      : "solicitante";
   const [jobs, setJobs] = useState([]);
   const [clearing, setClearing] = useState(false);
   const [clearingPending, setClearingPending] = useState(false);
@@ -56,41 +81,45 @@ export default function MonthlyPanelPage() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [summary, setSummary] = useState(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
-  const [summaryError, setSummaryError] = useState('');
+  const [summaryError, setSummaryError] = useState("");
   const appliedIncomingFiltersRef = useRef(false);
   const mountedRef = useRef(false);
   const requestGuardRef = useRef(createLatestRequestGuard());
   const summaryRequestGuardRef = useRef(createLatestRequestGuard());
-  
+
   // Use filter hook for state management
   const { filters, setFilter } = useFilters({
-      startDate: getMonthStart(),
-      endDate: getMonthEnd(),
-      status: 'all',
-      groupId: 'all',
-      workerId: 'all',
-      requestedBy: '',
-      location: 'all',
-      search: ''
+    startDate: getMonthStart(),
+    endDate: getMonthEnd(),
+    status: "all",
+    groupId: "all",
+    workerId: "all",
+    requestedBy: "",
+    location: "all",
+    search: "",
   });
 
-  const handleFilterChange = useCallback((key, value) => {
-    setCurrentPage(1);
-    setFilter(key, value);
-  }, [setFilter]);
+  const handleFilterChange = useCallback(
+    (key, value) => {
+      setCurrentPage(1);
+      setFilter(key, value);
+    },
+    [setFilter],
+  );
 
   useEffect(() => {
     const incomingState = location.state;
-    if (!incomingState?.fromWorkerActivity || appliedIncomingFiltersRef.current) return;
+    if (!incomingState?.fromWorkerActivity || appliedIncomingFiltersRef.current)
+      return;
 
     const nextStartDate = incomingState.startDate || filters.startDate;
     const nextEndDate = incomingState.endDate || filters.endDate;
-    const nextWorkerId = incomingState.workerId || 'all';
+    const nextWorkerId = incomingState.workerId || "all";
 
     setCurrentPage(1);
-    setFilter('startDate', nextStartDate);
-    setFilter('endDate', nextEndDate);
-    setFilter('workerId', nextWorkerId);
+    setFilter("startDate", nextStartDate);
+    setFilter("endDate", nextEndDate);
+    setFilter("workerId", nextWorkerId);
     appliedIncomingFiltersRef.current = true;
   }, [location.state, filters.startDate, filters.endDate, setFilter]);
 
@@ -113,41 +142,51 @@ export default function MonthlyPanelPage() {
       currentUserId: user?.id,
       requestedBy: filters.requestedBy,
     };
-    const result = await getJobsByDateRange(filters.startDate, filters.endDate, queryFilters);
-    if (!shouldApplyMonthlyJobsResult({
-      isMounted: mountedRef.current,
-      isLatest: requestGuardRef.current.isLatest(requestId)
-    })) return;
+    const result = await getJobsByDateRange(
+      filters.startDate,
+      filters.endDate,
+      queryFilters,
+    );
+    if (
+      !shouldApplyMonthlyJobsResult({
+        isMounted: mountedRef.current,
+        isLatest: requestGuardRef.current.isLatest(requestId),
+      })
+    )
+      return;
     if (result.success) setJobs(result.data);
   }, [
     filters.startDate,
     filters.endDate,
     filters.requestedBy,
     user?.id,
-    getJobsByDateRange
+    getJobsByDateRange,
   ]);
 
   const fetchMonthlySummary = useCallback(async () => {
     if (!user || !filters.startDate || !filters.endDate) {
       setSummary(null);
-      setSummaryError('');
+      setSummaryError("");
       return;
     }
 
     const requestId = summaryRequestGuardRef.current.next();
     setSummaryLoading(true);
-    setSummaryError('');
+    setSummaryError("");
 
-    const previousRange = getPreviousDateRange(filters.startDate, filters.endDate);
+    const previousRange = getPreviousDateRange(
+      filters.startDate,
+      filters.endDate,
+    );
     const currentQueryFilters = {
       startDate: filters.startDate,
       endDate: filters.endDate,
       currentUserId: user?.id,
-      status: 'all',
-      groupId: filters.groupId === 'all' ? null : filters.groupId,
-      workerId: filters.workerId === 'all' ? null : filters.workerId,
+      status: "all",
+      groupId: filters.groupId === "all" ? null : filters.groupId,
+      workerId: filters.workerId === "all" ? null : filters.workerId,
       requestedBy: filters.requestedBy,
-      location: filters.location === 'all' ? null : filters.location,
+      location: filters.location === "all" ? null : filters.location,
       search: filters.search,
     };
     const previousQueryFilters = {
@@ -158,16 +197,31 @@ export default function MonthlyPanelPage() {
 
     try {
       const [currentResult, previousResult] = await Promise.all([
-        getJobsByDateRange(filters.startDate, filters.endDate, currentQueryFilters),
-        getJobsByDateRange(previousRange.startDate, previousRange.endDate, previousQueryFilters),
+        getJobsByDateRange(
+          filters.startDate,
+          filters.endDate,
+          currentQueryFilters,
+        ),
+        getJobsByDateRange(
+          previousRange.startDate,
+          previousRange.endDate,
+          previousQueryFilters,
+        ),
       ]);
-      if (!shouldApplyMonthlyJobsResult({
-        isMounted: mountedRef.current,
-        isLatest: summaryRequestGuardRef.current.isLatest(requestId)
-      })) return;
+      if (
+        !shouldApplyMonthlyJobsResult({
+          isMounted: mountedRef.current,
+          isLatest: summaryRequestGuardRef.current.isLatest(requestId),
+        })
+      )
+        return;
 
       if (!currentResult.success || !previousResult.success) {
-        throw new Error(currentResult.error || previousResult.error || 'No se pudo cargar el resumen.');
+        throw new Error(
+          currentResult.error ||
+            previousResult.error ||
+            "No se pudo cargar el resumen.",
+        );
       }
 
       const nextSummary = buildMonthlyPeriodSummary({
@@ -178,21 +232,42 @@ export default function MonthlyPanelPage() {
       });
       setSummary(nextSummary);
     } catch (error) {
-      if (!shouldApplyMonthlyJobsResult({
-        isMounted: mountedRef.current,
-        isLatest: summaryRequestGuardRef.current.isLatest(requestId)
-      })) return;
+      if (
+        !shouldApplyMonthlyJobsResult({
+          isMounted: mountedRef.current,
+          isLatest: summaryRequestGuardRef.current.isLatest(requestId),
+        })
+      )
+        return;
       setSummary(null);
-      setSummaryError(error?.message || (isEn ? 'The summary could not be loaded.' : 'No se pudo cargar el resumen.'));
+      setSummaryError(
+        error?.message ||
+          (isEn
+            ? "The summary could not be loaded."
+            : "No se pudo cargar el resumen."),
+      );
     } finally {
-      if (shouldApplyMonthlyJobsResult({
-        isMounted: mountedRef.current,
-        isLatest: summaryRequestGuardRef.current.isLatest(requestId)
-      })) {
+      if (
+        shouldApplyMonthlyJobsResult({
+          isMounted: mountedRef.current,
+          isLatest: summaryRequestGuardRef.current.isLatest(requestId),
+        })
+      ) {
         setSummaryLoading(false);
       }
     }
-  }, [filters.startDate, filters.endDate, filters.groupId, filters.workerId, filters.requestedBy, filters.location, filters.search, user?.id, getJobsByDateRange, isEn]);
+  }, [
+    filters.startDate,
+    filters.endDate,
+    filters.groupId,
+    filters.workerId,
+    filters.requestedBy,
+    filters.location,
+    filters.search,
+    user?.id,
+    getJobsByDateRange,
+    isEn,
+  ]);
 
   useEffect(() => {
     if (user && filters.startDate && filters.endDate) {
@@ -207,32 +282,48 @@ export default function MonthlyPanelPage() {
     summaryRequestGuardRef.current.next();
     setJobs([]);
     setSummary(null);
-    setSummaryError('');
+    setSummaryError("");
     setSummaryLoading(false);
     setCurrentPage(1);
-  }, [user, filters.startDate, filters.endDate, filters.groupId, filters.workerId, filters.requestedBy, filters.location, filters.search, fetchJobs, fetchMonthlySummary]);
+  }, [
+    user,
+    filters.startDate,
+    filters.endDate,
+    filters.groupId,
+    filters.workerId,
+    filters.requestedBy,
+    filters.location,
+    filters.search,
+    fetchJobs,
+    fetchMonthlySummary,
+  ]);
 
   useEffect(() => {
     if (!user) return;
     resumeTourIfNeeded({
       role,
-      onComplete: () => onboardingService.setOnboardingCompleted(user.id, role)
+      onComplete: () => onboardingService.setOnboardingCompleted(user.id, role),
     });
   }, [user, role, resumeTourIfNeeded]);
 
-  const workerOptions = useMemo(() => (
-    jobs.reduce((acc, job) => {
-      if (!job?.worker_id) return acc;
-      if (!acc.some((w) => w.id === job.worker_id)) {
-        const label = job.workers?.display_name || job.workers?.alias || job.worker_id;
-        acc.push({ id: job.worker_id, name: label });
-      }
-      return acc;
-    }, [])
-  ), [jobs]);
+  const workerOptions = useMemo(
+    () =>
+      jobs.reduce((acc, job) => {
+        if (!job?.worker_id) return acc;
+        if (!acc.some((w) => w.id === job.worker_id)) {
+          const label =
+            job.workers?.display_name || job.workers?.alias || job.worker_id;
+          acc.push({ id: job.worker_id, name: label });
+        }
+        return acc;
+      }, []),
+    [jobs],
+  );
 
-  const normalizeStatusValue = (record) => normalizeJobStatus(record?.estado || record?.status);
-  const getRawStatusValue = (record) => String(record?.estado ?? record?.status ?? '');
+  const normalizeStatusValue = (record) =>
+    normalizeJobStatus(record?.estado || record?.status);
+  const getRawStatusValue = (record) =>
+    String(record?.estado ?? record?.status ?? "");
   const isWithinSelectedRange = (record) => {
     const recordDate = normalizeDateOnly(record?.date || record?.fecha);
     const start = normalizeDateOnly(filters.startDate);
@@ -242,33 +333,82 @@ export default function MonthlyPanelPage() {
   };
   const filteredJobs = useMemo(
     () => applyMonthlyPanelFilters(jobs, filters, normalizeStatusValue),
-    [jobs, filters]
+    [jobs, filters],
   );
-  const showNoSummaryData = Boolean(summary && summary.current && summary.previous && summary.current.total === 0 && summary.previous.total === 0);
+  const showNoSummaryData = Boolean(
+    summary &&
+      summary.current &&
+      summary.previous &&
+      summary.current.total === 0 &&
+      summary.previous.total === 0,
+  );
   const summaryCards = useMemo(() => {
     if (!summary?.current) return [];
     return [
-      { key: 'all', label: isEn ? 'Total jobs' : 'Total de trabajos', value: summary.current.total, delta: summary.current.total - summary.previous.total, unit: 'trabajos', isPositiveGood: true },
-      { key: 'pending', label: isEn ? 'Pending' : 'Pendientes', value: summary.current.pending, delta: summary.current.pending - summary.previous.pending, unit: 'trabajos', isPositiveGood: false },
-      { key: 'completed', label: isEn ? 'Completed' : 'Completados', value: summary.current.completed, delta: summary.current.completed - summary.previous.completed, unit: 'trabajos', isPositiveGood: true },
-      { key: 'compliance', label: isEn ? 'Compliance' : 'Cumplimiento', value: `${summary.current.completionRate.toLocaleString(isEn ? 'en-GB' : 'es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, delta: summary.current.complianceDelta, unit: 'puntos', isPositiveGood: true, asPercent: true },
+      {
+        key: "all",
+        label: isEn ? "Total jobs" : "Total de trabajos",
+        value: summary.current.total,
+        delta: summary.current.total - summary.previous.total,
+        unit: "trabajos",
+        isPositiveGood: true,
+      },
+      {
+        key: "pending",
+        label: isEn ? "Pending" : "Pendientes",
+        value: summary.current.pending,
+        delta: summary.current.pending - summary.previous.pending,
+        unit: "trabajos",
+        isPositiveGood: false,
+      },
+      {
+        key: "completed",
+        label: isEn ? "Completed" : "Completados",
+        value: summary.current.completed,
+        delta: summary.current.completed - summary.previous.completed,
+        unit: "trabajos",
+        isPositiveGood: true,
+      },
+      {
+        key: "compliance",
+        label: isEn ? "Compliance" : "Cumplimiento",
+        value: `${summary.current.completionRate.toLocaleString(isEn ? "en-GB" : "es-AR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`,
+        delta: summary.current.complianceDelta,
+        unit: "puntos",
+        isPositiveGood: true,
+        asPercent: true,
+      },
     ];
   }, [isEn, summary]);
   const periodLabel = useMemo(() => {
     const start = new Date(`${filters.startDate}T12:00:00`);
     const end = new Date(`${filters.endDate}T12:00:00`);
-    if (!filters.startDate || !filters.endDate || !Number.isFinite(+start) || !Number.isFinite(+end) || start > end) return isEn ? 'Select a date range' : 'Seleccioná un rango de fechas';
-    const formatter = new Intl.DateTimeFormat(isEn ? 'en-GB' : 'es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
-    return isEn ? `Operational summary for ${formatter.formatRange(start, end)}` : `Resumen operativo del ${formatter.formatRange(start, end).replace('–', ' al ')}`;
+    if (
+      !filters.startDate ||
+      !filters.endDate ||
+      !Number.isFinite(+start) ||
+      !Number.isFinite(+end) ||
+      start > end
+    )
+      return isEn ? "Select a date range" : "Seleccioná un rango de fechas";
+    const formatter = new Intl.DateTimeFormat(isEn ? "en-GB" : "es-AR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    return isEn
+      ? `Operational summary for ${formatter.formatRange(start, end)}`
+      : `Resumen operativo del ${formatter.formatRange(start, end).replace("–", " al ")}`;
   }, [filters.startDate, filters.endDate, isEn]);
   const trend = useMemo(() => {
     const start = normalizeDateOnly(filters.startDate);
     const end = normalizeDateOnly(filters.endDate);
     if (!start || !end || start > end) return [];
     const counts = new Map();
-    filteredJobs.forEach(job => {
+    filteredJobs.forEach((job) => {
       const date = normalizeDateOnly(job.date || job.fecha);
-      if (date >= start && date <= end) counts.set(date, (counts.get(date) || 0) + 1);
+      if (date >= start && date <= end)
+        counts.set(date, (counts.get(date) || 0) + 1);
     });
     const points = [];
     const cursor = new Date(`${start}T00:00:00Z`);
@@ -283,10 +423,13 @@ export default function MonthlyPanelPage() {
   const trendMax = trend.reduce((max, point) => Math.max(max, point.count), 1);
   const [activeTrendIndex, setActiveTrendIndex] = useState(null);
   const activeTrend = trend[activeTrendIndex];
-  const locationOptions = useMemo(() => buildMonthlyLocationOptions(jobs), [jobs]);
+  const locationOptions = useMemo(
+    () => buildMonthlyLocationOptions(jobs),
+    [jobs],
+  );
   const pagination = useMemo(
     () => paginateMonthlyJobs(filteredJobs, currentPage, rowsPerPage),
-    [filteredJobs, currentPage, rowsPerPage]
+    [filteredJobs, currentPage, rowsPerPage],
   );
   const paginatedJobs = pagination.records;
   const hasJobs = filteredJobs.length > 0;
@@ -307,7 +450,8 @@ export default function MonthlyPanelPage() {
   const visiblePageNumbers = useMemo(() => {
     const total = pagination.totalPages;
     const current = pagination.currentPage;
-    if (total <= 7) return Array.from({ length: total }, (_, index) => index + 1);
+    if (total <= 7)
+      return Array.from({ length: total }, (_, index) => index + 1);
 
     const pages = new Set([1, total, current - 1, current, current + 1]);
     return Array.from(pages)
@@ -317,7 +461,7 @@ export default function MonthlyPanelPage() {
 
   const isCompletedRecord = (record) => {
     const normalized = normalizeStatusValue(record);
-    return normalized === 'completed';
+    return normalized === "completed";
   };
   const getStatusMeta = (job) => {
     const normalized = normalizeStatusValue(job);
@@ -327,18 +471,28 @@ export default function MonthlyPanelPage() {
     };
   };
   const completedJobsInView = useMemo(
-    () => filteredJobs.filter((record) => isCompletedRecord(record) && isWithinSelectedRange(record)),
-    [filteredJobs, filters.startDate, filters.endDate]
+    () =>
+      filteredJobs.filter(
+        (record) => isCompletedRecord(record) && isWithinSelectedRange(record),
+      ),
+    [filteredJobs, filters.startDate, filters.endDate],
   );
   const pendingJobsInView = useMemo(
-    () => filteredJobs.filter((record) => normalizeStatusValue(record) === 'pending' && isWithinSelectedRange(record)),
-    [filteredJobs, filters.startDate, filters.endDate]
+    () =>
+      filteredJobs.filter(
+        (record) =>
+          normalizeStatusValue(record) === "pending" &&
+          isWithinSelectedRange(record),
+      ),
+    [filteredJobs, filters.startDate, filters.endDate],
   );
 
   useEffect(() => {
     const allRawStatuses = jobs.map(getRawStatusValue);
     const allStatuses = jobs.map(normalizeStatusValue).filter(Boolean);
-    const filteredStatuses = filteredJobs.map(normalizeStatusValue).filter(Boolean);
+    const filteredStatuses = filteredJobs
+      .map(normalizeStatusValue)
+      .filter(Boolean);
     const uniqueRawStatuses = Array.from(new Set(allRawStatuses)).sort();
     const uniqueStatuses = Array.from(new Set(allStatuses)).sort();
     const statusCounts = allStatuses.reduce((acc, status) => {
@@ -347,8 +501,8 @@ export default function MonthlyPanelPage() {
     }, {});
 
     if (DEBUG_MAINTENANCE) {
-      console.group('[MonthlyPanel] Diagnóstico exportación completados');
-      console.log('Filtros activos', {
+      console.group("[MonthlyPanel] Diagnóstico exportación completados");
+      console.log("Filtros activos", {
         startDate: filters.startDate,
         endDate: filters.endDate,
         status: filters.status,
@@ -356,22 +510,39 @@ export default function MonthlyPanelPage() {
         workerId: filters.workerId,
         requestedBy: filters.requestedBy,
         location: filters.location,
-        search: filters.search
+        search: filters.search,
       });
-      console.log('Total registros cargados', jobs.length);
-      console.log('Total registros filtrados en pantalla', filteredJobs.length);
-      console.log('Total registros completados (pantalla)', completedJobsInView.length);
-      const dateValues = jobs.map((job) => normalizeDateOnly(job?.date || job?.fecha)).filter(Boolean).sort();
-      console.log('Fecha desde (filtro UI/backend)', filters.startDate);
-      console.log('Fecha hasta (filtro UI/backend)', filters.endDate);
-      console.log('Fecha mínima jobs recibidos', dateValues[0] || null);
-      console.log('Fecha máxima jobs recibidos', dateValues[dateValues.length - 1] || null);
-      console.log('Estados únicos RAW (dataset cargado)', uniqueRawStatuses);
-      console.log('Estados únicos normalizados (dataset cargado)', uniqueStatuses);
-      console.log('Conteo por estado normalizado', statusCounts);
-      console.log('Estados en pantalla (muestra)', filteredStatuses.slice(0, 20));
-      if (filters.status && filters.status !== 'all') {
-        console.warn(`Filtro de estado activo: "${filters.status}". Esto limita lo exportable.`);
+      console.log("Total registros cargados", jobs.length);
+      console.log("Total registros filtrados en pantalla", filteredJobs.length);
+      console.log(
+        "Total registros completados (pantalla)",
+        completedJobsInView.length,
+      );
+      const dateValues = jobs
+        .map((job) => normalizeDateOnly(job?.date || job?.fecha))
+        .filter(Boolean)
+        .sort();
+      console.log("Fecha desde (filtro UI/backend)", filters.startDate);
+      console.log("Fecha hasta (filtro UI/backend)", filters.endDate);
+      console.log("Fecha mínima jobs recibidos", dateValues[0] || null);
+      console.log(
+        "Fecha máxima jobs recibidos",
+        dateValues[dateValues.length - 1] || null,
+      );
+      console.log("Estados únicos RAW (dataset cargado)", uniqueRawStatuses);
+      console.log(
+        "Estados únicos normalizados (dataset cargado)",
+        uniqueStatuses,
+      );
+      console.log("Conteo por estado normalizado", statusCounts);
+      console.log(
+        "Estados en pantalla (muestra)",
+        filteredStatuses.slice(0, 20),
+      );
+      if (filters.status && filters.status !== "all") {
+        console.warn(
+          `Filtro de estado activo: "${filters.status}". Esto limita lo exportable.`,
+        );
       }
       console.groupEnd();
     }
@@ -392,9 +563,9 @@ export default function MonthlyPanelPage() {
     if (completedRecords.length === 0) {
       addToast(
         isEn
-          ? 'No completed records to export with the active filters.'
-          : 'No hay registros completados para exportar con los filtros activos.',
-        'error'
+          ? "No completed records to export with the active filters."
+          : "No hay registros completados para exportar con los filtros activos.",
+        "error",
       );
       return;
     }
@@ -404,21 +575,27 @@ export default function MonthlyPanelPage() {
     setTimeout(async () => {
       if (!mountedRef.current) return;
       if (DEBUG_MAINTENANCE) {
-        console.log('[MonthlyPanel] Fechas de completados exportados', completedRecords.map((r) => ({
-          id: r.id,
-          date: r.date || r.fecha || null,
-          normalizedDate: normalizeDateOnly(r.date || r.fecha || null),
-          status: r.status || r.estado || null
-        })));
+        console.log(
+          "[MonthlyPanel] Fechas de completados exportados",
+          completedRecords.map((r) => ({
+            id: r.id,
+            date: r.date || r.fecha || null,
+            normalizedDate: normalizeDateOnly(r.date || r.fecha || null),
+            status: r.status || r.estado || null,
+          })),
+        );
       }
       try {
         await exportService.exportRecordsToExcel(
           completedRecords,
-          'mantenimiento-completados.xlsx',
-          'Completados'
+          "mantenimiento-completados.xlsx",
+          "Completados",
         );
       } catch (error) {
-        addToast(isEn ? 'Export failed.' : 'No se pudo exportar el Excel.', 'error');
+        addToast(
+          isEn ? "Export failed." : "No se pudo exportar el Excel.",
+          "error",
+        );
       } finally {
         if (mountedRef.current) setExportingCompleted(false);
       }
@@ -427,52 +604,74 @@ export default function MonthlyPanelPage() {
 
   const handleClearCompleted = async () => {
     if (!isAdmin) {
-      addToast(isEn ? 'Only administrators can clean completed jobs.' : 'Solo los administradores pueden limpiar trabajos completados.', 'error');
+      addToast(
+        isEn
+          ? "Only administrators can clean completed jobs."
+          : "Solo los administradores pueden limpiar trabajos completados.",
+        "error",
+      );
       return;
     }
     if (!mountedRef.current) return;
 
     setClearing(true);
-    const result = await jobsService.deleteJobsByIds(completedJobsInView, { actorId: user?.id || null });
+    const result = await jobsService.deleteJobsByIds(completedJobsInView, {
+      actorId: user?.id || null,
+    });
 
     if (!mountedRef.current) return;
     if (result.success) {
       const removed = result.removed || 0;
       addToast(
         removed === 0
-          ? (isEn ? 'No completed jobs match the active filters.' : 'No hay trabajos completados con los filtros activos.')
-          : (isEn ? `Removed ${removed} completed jobs.` : `Se eliminaron ${removed} trabajos completados.`),
-        'success'
+          ? isEn
+            ? "No completed jobs match the active filters."
+            : "No hay trabajos completados con los filtros activos."
+          : isEn
+            ? `Removed ${removed} completed jobs.`
+            : `Se eliminaron ${removed} trabajos completados.`,
+        "success",
       );
       await Promise.all([fetchJobs(), fetchMonthlySummary()]);
     } else {
-      addToast(result.error, 'error');
+      addToast(result.error, "error");
     }
     if (mountedRef.current) setClearing(false);
   };
 
   const handleClearPending = async () => {
     if (!isAdmin) {
-      addToast(isEn ? 'Only administrators can clean pending jobs.' : 'Solo los administradores pueden limpiar trabajos pendientes.', 'error');
+      addToast(
+        isEn
+          ? "Only administrators can clean pending jobs."
+          : "Solo los administradores pueden limpiar trabajos pendientes.",
+        "error",
+      );
       return;
     }
     if (!mountedRef.current) return;
 
     setClearingPending(true);
-    const result = await jobsService.deleteJobsByIds(pendingJobsInView, { actorId: user?.id || null });
+    const result = await jobsService.deleteJobsByIds(pendingJobsInView, {
+      actorId: user?.id || null,
+    });
 
     if (!mountedRef.current) return;
     if (result.success) {
       const removed = result.removed || 0;
       addToast(
         removed === 0
-          ? (isEn ? 'No pending jobs match the active filters.' : 'No hay trabajos pendientes con los filtros activos.')
-          : (isEn ? `Removed ${removed} pending jobs.` : `Se eliminaron ${removed} trabajos pendientes.`),
-        'success'
+          ? isEn
+            ? "No pending jobs match the active filters."
+            : "No hay trabajos pendientes con los filtros activos."
+          : isEn
+            ? `Removed ${removed} pending jobs.`
+            : `Se eliminaron ${removed} trabajos pendientes.`,
+        "success",
       );
       await Promise.all([fetchJobs(), fetchMonthlySummary()]);
     } else {
-      addToast(result.error, 'error');
+      addToast(result.error, "error");
     }
     if (mountedRef.current) setClearingPending(false);
   };
@@ -481,13 +680,20 @@ export default function MonthlyPanelPage() {
     if (!jobId || deletingJobId) return;
     if (!mountedRef.current) return;
     setDeletingJobId(jobId);
-    const result = await jobsService.deleteJob(jobId, { actorId: user?.id || null });
+    const result = await jobsService.deleteJob(jobId, {
+      actorId: user?.id || null,
+    });
     if (!mountedRef.current) return;
     addToast(
       result.success
-        ? (isEn ? 'Job deleted.' : 'Solicitud eliminada.')
-        : (result.error || (isEn ? 'Could not delete job.' : 'No se pudo eliminar la solicitud.')),
-      result.success ? 'success' : 'error'
+        ? isEn
+          ? "Job deleted."
+          : "Solicitud eliminada."
+        : result.error ||
+            (isEn
+              ? "Could not delete job."
+              : "No se pudo eliminar la solicitud."),
+      result.success ? "success" : "error",
     );
     if (result.success) {
       await fetchJobs();
@@ -501,7 +707,9 @@ export default function MonthlyPanelPage() {
     <div className="monthly-dashboard">
       <div className="monthly-header">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-[#082b59] dark:text-slate-50 md:text-3xl">{t('monthlyPage.title')}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#082b59] dark:text-slate-50 md:text-3xl">
+            {t("monthlyPage.title")}
+          </h1>
           <p>{periodLabel}</p>
         </div>
 
@@ -513,13 +721,13 @@ export default function MonthlyPanelPage() {
             className="monthly-share"
           >
             <MessageCircle className="h-4 w-4" />
-            {isEn ? 'Share WhatsApp' : 'Compartir WhatsApp'}
+            {isEn ? "Share WhatsApp" : "Compartir WhatsApp"}
           </Button>
 
           <details className="relative w-full sm:w-auto">
             <summary className="flex h-10 w-full cursor-pointer list-none items-center justify-center gap-2 rounded-md border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 sm:w-auto">
               <MoreHorizontal className="h-4 w-4" />
-              {isEn ? 'More actions' : 'Más acciones'}
+              {isEn ? "More actions" : "Más acciones"}
             </summary>
             <div className="absolute right-0 z-30 mt-2 grid w-full min-w-[250px] gap-2 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-slate-700 dark:bg-slate-900 sm:w-72">
               <ExcelExportButton
@@ -527,7 +735,7 @@ export default function MonthlyPanelPage() {
                 grouped={true}
                 startDate={filters.startDate}
                 endDate={filters.endDate}
-                label={isEn ? 'Export to Excel' : 'Exportar a Excel'}
+                label={isEn ? "Export to Excel" : "Exportar a Excel"}
                 icon={FileSpreadsheet}
                 className="h-10 w-full justify-start bg-emerald-50 text-sm font-semibold text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-200"
               />
@@ -539,12 +747,16 @@ export default function MonthlyPanelPage() {
                 className="h-10 w-full justify-start gap-2 text-sm font-semibold"
               >
                 <FileSpreadsheet className="h-4 w-4" />
-                {isEn ? 'Export completed' : 'Exportar completados'}
+                {isEn ? "Export completed" : "Exportar completados"}
               </Button>
               <ConfirmationModal
-                title={isEn ? 'Clean completed?' : '¿Limpiar completados?'}
-                description={isEn ? 'Delete completed jobs that match the active filters.' : 'Eliminar los trabajos completados que coinciden con los filtros activos.'}
-                confirmLabel={isEn ? 'Delete' : 'Eliminar'}
+                title={isEn ? "Clean completed?" : "¿Limpiar completados?"}
+                description={
+                  isEn
+                    ? "Delete completed jobs that match the active filters."
+                    : "Eliminar los trabajos completados que coinciden con los filtros activos."
+                }
+                confirmLabel={isEn ? "Delete" : "Eliminar"}
                 onConfirm={handleClearCompleted}
                 trigger={
                   <Button
@@ -554,14 +766,24 @@ export default function MonthlyPanelPage() {
                     className="h-10 w-full justify-start gap-2 text-sm font-semibold text-red-700 hover:bg-red-50 hover:text-red-800 dark:text-red-300 dark:hover:bg-red-950/30"
                   >
                     <Trash2 className="h-4 w-4" />
-                    {clearing ? (isEn ? 'Cleaning...' : 'Limpiando...') : (isEn ? 'Clear completed' : 'Limpiar completados')}
+                    {clearing
+                      ? isEn
+                        ? "Cleaning..."
+                        : "Limpiando..."
+                      : isEn
+                        ? "Clear completed"
+                        : "Limpiar completados"}
                   </Button>
                 }
               />
               <ConfirmationModal
-                title={isEn ? 'Clean pending?' : '¿Limpiar pendientes?'}
-                description={isEn ? 'Delete pending jobs that match the active filters.' : 'Eliminar los trabajos pendientes que coinciden con los filtros activos.'}
-                confirmLabel={isEn ? 'Delete pending' : 'Eliminar pendientes'}
+                title={isEn ? "Clean pending?" : "¿Limpiar pendientes?"}
+                description={
+                  isEn
+                    ? "Delete pending jobs that match the active filters."
+                    : "Eliminar los trabajos pendientes que coinciden con los filtros activos."
+                }
+                confirmLabel={isEn ? "Delete pending" : "Eliminar pendientes"}
                 onConfirm={handleClearPending}
                 trigger={
                   <Button
@@ -571,7 +793,13 @@ export default function MonthlyPanelPage() {
                     className="h-10 w-full justify-start gap-2 text-sm font-semibold text-amber-800 hover:bg-amber-50 hover:text-amber-900 dark:text-amber-200 dark:hover:bg-amber-950/30"
                   >
                     <Trash2 className="h-4 w-4" />
-                    {clearingPending ? (isEn ? 'Cleaning pending...' : 'Limpiando pendientes...') : (isEn ? 'Clear pending' : 'Limpiar pendientes')}
+                    {clearingPending
+                      ? isEn
+                        ? "Cleaning pending..."
+                        : "Limpiando pendientes..."
+                      : isEn
+                        ? "Clear pending"
+                        : "Limpiar pendientes"}
                   </Button>
                 }
               />
@@ -581,73 +809,375 @@ export default function MonthlyPanelPage() {
       </div>
 
       <div data-tour="panel-mensual-filtros">
-        <JobFilters compact filters={filters} onChange={handleFilterChange} workers={workerOptions} locations={locationOptions} isEn={isEn} />
+        <JobFilters
+          compact
+          filters={filters}
+          onChange={handleFilterChange}
+          workers={workerOptions}
+          locations={locationOptions}
+          isEn={isEn}
+        />
       </div>
-      <section className="monthly-summary" aria-label={isEn ? 'Period summary' : 'Resumen del período'}>
-        <div className="monthly-section-heading"><h2>{isEn ? 'Period summary' : 'Resumen del período'}</h2><span>{isEn ? 'Compared with the previous period · all statuses' : 'Comparado con el período anterior · todos los estados'}</span></div>
-        {summaryLoading ? <div className="monthly-kpis" role="status" aria-label={isEn ? 'Loading summary' : 'Cargando resumen'}>{[0,1,2,3].map(i => <div key={i} className="monthly-kpi monthly-skeleton" />)}</div> : summaryError ? (
-          <div className="monthly-empty" role="alert"><p>{summaryError}</p><Button variant="outline" size="sm" onClick={handleRetrySummary}>{isEn ? 'Retry' : 'Reintentar'}</Button></div>
-        ) : summary && <>
-          <div className="monthly-kpis">
-            {summaryCards.map((card, index) => {
-              const Icon = [Briefcase, Clock3, CheckCircle2, TrendingUp][index];
-              const delta = new Intl.NumberFormat(isEn ? 'en-GB' : 'es-AR', { maximumFractionDigits: 1, signDisplay: 'exceptZero' }).format(card.delta);
-              return <div key={card.key} className={`monthly-kpi monthly-kpi--${card.key}`}>
-                <Icon size={18} aria-hidden="true" /><span>{card.label}</span><strong>{card.value}</strong>
-                <small>{card.delta === 0 ? (isEn ? 'Unchanged from previous period' : 'Sin cambios frente al período anterior') : `${delta}${card.asPercent ? (isEn ? ' pts' : ' puntos') : ''} ${isEn ? 'vs. previous period' : 'vs. período anterior'}`}</small>
-                {card.asPercent && <div className="monthly-compliance" aria-hidden="true"><span style={{ width: `${summary.current.completionRate}%` }} /></div>}
-              </div>;
-            })}
+      <section
+        className="monthly-summary"
+        aria-label={isEn ? "Period summary" : "Resumen del período"}
+      >
+        <div className="monthly-section-heading">
+          <h2>{isEn ? "Period summary" : "Resumen del período"}</h2>
+          <span>
+            {isEn
+              ? "Compared with the previous period · all statuses"
+              : "Comparado con el período anterior · todos los estados"}
+          </span>
+        </div>
+        {summaryLoading ? (
+          <div
+            className="monthly-kpis"
+            role="status"
+            aria-label={isEn ? "Loading summary" : "Cargando resumen"}
+          >
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="monthly-kpi monthly-skeleton" />
+            ))}
           </div>
-          <div className="monthly-secondary">
-            <div><span>{isEn ? 'Workers involved' : 'Trabajadores involucrados'}</span><strong>{summary.current.workers}</strong></div>
-            <div><span>{isEn ? 'Places served' : 'Lugares atendidos'}</span><strong>{summary.current.locations}</strong></div>
-            <div className="monthly-balance"><h3>{isEn ? 'Estimated balance' : 'Balance estimado'}</h3><div>{[[isEn ? 'Charge' : 'A cobrar', summary.current.amountToCharge], [isEn ? 'Worker cost' : 'Costo trabajadores', summary.current.workerCost], [isEn ? 'Difference' : 'Diferencia', summary.current.difference]].map(([label,value]) => <span key={label}>{label}<strong>{formatCurrency(value)}</strong></span>)}</div></div>
+        ) : summaryError ? (
+          <div className="monthly-empty" role="alert">
+            <p>{summaryError}</p>
+            <Button variant="outline" size="sm" onClick={handleRetrySummary}>
+              {isEn ? "Retry" : "Reintentar"}
+            </Button>
           </div>
-          <div className="monthly-insight"><Activity size={18} aria-hidden="true" /><div><strong>{isEn ? 'Period insight' : 'Lectura del período'}</strong><p>{showNoSummaryData ? (isEn ? 'No jobs were found for this period.' : 'No hay trabajos suficientes para evaluar este período.') : summary.conclusion}</p></div></div>
-        </>}
-        {!summary && !summaryLoading && !summaryError && <p className="monthly-empty">{isEn ? 'Select a complete date range to load the summary.' : 'Seleccioná un rango completo para cargar el resumen.'}</p>}
+        ) : (
+          summary && (
+            <>
+              <div className="monthly-kpis">
+                {summaryCards.map((card, index) => {
+                  const Icon = [Briefcase, Clock3, CheckCircle2, TrendingUp][
+                    index
+                  ];
+                  const delta = new Intl.NumberFormat(
+                    isEn ? "en-GB" : "es-AR",
+                    { maximumFractionDigits: 1, signDisplay: "exceptZero" },
+                  ).format(card.delta);
+                  return (
+                    <div
+                      key={card.key}
+                      className={`monthly-kpi monthly-kpi--${card.key}`}
+                    >
+                      <Icon size={18} aria-hidden="true" />
+                      <span>{card.label}</span>
+                      <strong>{card.value}</strong>
+                      <small>
+                        {card.delta === 0
+                          ? isEn
+                            ? "Unchanged from previous period"
+                            : "Sin cambios frente al período anterior"
+                          : `${delta}${card.asPercent ? (isEn ? " pts" : " puntos") : ""} ${isEn ? "vs. previous period" : "vs. período anterior"}`}
+                      </small>
+                      {card.asPercent && (
+                        <div className="monthly-compliance" aria-hidden="true">
+                          <span
+                            style={{
+                              width: `${summary.current.completionRate}%`,
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="monthly-secondary">
+                <div>
+                  <span>
+                    {isEn ? "Workers involved" : "Trabajadores involucrados"}
+                  </span>
+                  <strong>{summary.current.workers}</strong>
+                </div>
+                <div>
+                  <span>{isEn ? "Places served" : "Lugares atendidos"}</span>
+                  <strong>{summary.current.locations}</strong>
+                </div>
+                <div className="monthly-balance">
+                  <h3>{isEn ? "Estimated balance" : "Balance estimado"}</h3>
+                  <div>
+                    {[
+                      [
+                        isEn ? "Charge" : "A cobrar",
+                        summary.current.amountToCharge,
+                      ],
+                      [
+                        isEn ? "Worker cost" : "Costo trabajadores",
+                        summary.current.workerCost,
+                      ],
+                      [
+                        isEn ? "Difference" : "Diferencia",
+                        summary.current.difference,
+                      ],
+                    ].map(([label, value]) => (
+                      <span key={label}>
+                        {label}
+                        <strong>{formatCurrency(value)}</strong>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="monthly-insight">
+                <Activity size={18} aria-hidden="true" />
+                <div>
+                  <strong>
+                    {isEn ? "Period insight" : "Lectura del período"}
+                  </strong>
+                  <p>
+                    {showNoSummaryData
+                      ? isEn
+                        ? "No jobs were found for this period."
+                        : "No hay trabajos suficientes para evaluar este período."
+                      : summary.conclusion}
+                  </p>
+                </div>
+              </div>
+            </>
+          )
+        )}
+        {!summary && !summaryLoading && !summaryError && (
+          <p className="monthly-empty">
+            {isEn
+              ? "Select a complete date range to load the summary."
+              : "Seleccioná un rango completo para cargar el resumen."}
+          </p>
+        )}
       </section>
-      {trend.length > 0 && <section className="monthly-trend">
-        <div className="monthly-section-heading"><h2>{isEn ? 'Job trend' : 'Tendencia de trabajos'}</h2><span>{isEn ? 'Jobs per day · active filters' : 'Trabajos por día · filtros activos'}</span></div>
-        {loading ? <p className="monthly-empty" role="status">{isEn ? 'Loading trend…' : 'Cargando tendencia…'}</p> : filteredJobs.length === 0 ? <p className="monthly-empty">{isEn ? 'No jobs to plot with these filters.' : 'No hay trabajos para graficar con estos filtros.'}</p> : <>
-          <div className="monthly-chart-readout" aria-live="polite">{activeTrend ? `${formatDate(activeTrend.date)} · ${activeTrend.count} ${isEn ? 'jobs' : 'trabajos'}` : (isEn ? 'Explore the chart to see each day' : 'Explorá el gráfico para ver cada día')}</div>
-          <div className="monthly-chart-plot">
-          <div className="monthly-chart-scale" aria-hidden="true"><span>{trendMax}</span><span>{Number((trendMax / 2).toFixed(1))}</span><span>0</span></div>
-          <svg className="monthly-chart" viewBox="0 0 1000 150" preserveAspectRatio="none" role="img" aria-label={isEn ? 'Number of jobs per day in the selected period' : 'Cantidad de trabajos por día del período seleccionado'}>
-            {[0, 0.5, 1].map(fraction => <g key={fraction}><line x1="30" x2="990" y1={126 - fraction * 112} y2={126 - fraction * 112} /></g>)}
-            <polyline points={trend.map((point,index) => `${30 + (index / Math.max(1, trend.length - 1)) * 960},${126 - (point.count / trendMax) * 112}`).join(' ')} />
-            {trend.map((point,index) => <circle key={point.date} cx={30 + (index / Math.max(1,trend.length - 1)) * 960} cy={126 - (point.count / trendMax) * 112} r={trend.length > 90 ? 2 : 4} tabIndex={0} onFocus={() => setActiveTrendIndex(index)} onMouseEnter={() => setActiveTrendIndex(index)} onBlur={() => setActiveTrendIndex(null)} onMouseLeave={() => setActiveTrendIndex(null)} aria-label={`${formatDate(point.date)}: ${point.count}`}><title>{formatDate(point.date)}: {point.count}</title></circle>)}
-          </svg>
+      {trend.length > 0 && (
+        <section className="monthly-trend">
+          <div className="monthly-section-heading">
+            <h2>{isEn ? "Job trend" : "Tendencia de trabajos"}</h2>
+            <span>
+              {isEn
+                ? "Jobs per day · active filters"
+                : "Trabajos por día · filtros activos"}
+            </span>
           </div>
-          <div className="monthly-chart-dates"><span>{formatDate(filters.startDate)}</span><span>{formatDate(filters.endDate)}</span></div>
-        </>}
-      </section>}
+          {loading ? (
+            <p className="monthly-empty" role="status">
+              {isEn ? "Loading trend…" : "Cargando tendencia…"}
+            </p>
+          ) : filteredJobs.length === 0 ? (
+            <p className="monthly-empty">
+              {isEn
+                ? "No jobs to plot with these filters."
+                : "No hay trabajos para graficar con estos filtros."}
+            </p>
+          ) : (
+            <>
+              <div className="monthly-chart-readout" aria-live="polite">
+                {activeTrend
+                  ? `${formatDate(activeTrend.date)} · ${activeTrend.count} ${isEn ? "jobs" : "trabajos"}`
+                  : isEn
+                    ? "Explore the chart to see each day"
+                    : "Explorá el gráfico para ver cada día"}
+              </div>
+              <div className="monthly-chart-plot">
+                <div className="monthly-chart-scale" aria-hidden="true">
+                  <span>{trendMax}</span>
+                  <span>{Number((trendMax / 2).toFixed(1))}</span>
+                  <span>0</span>
+                </div>
+                <svg
+                  className="monthly-chart"
+                  viewBox="0 0 1000 150"
+                  preserveAspectRatio="none"
+                  role="img"
+                  aria-label={
+                    isEn
+                      ? "Number of jobs per day in the selected period"
+                      : "Cantidad de trabajos por día del período seleccionado"
+                  }
+                >
+                  {[0, 0.5, 1].map((fraction) => (
+                    <g key={fraction}>
+                      <line
+                        x1="30"
+                        x2="990"
+                        y1={126 - fraction * 112}
+                        y2={126 - fraction * 112}
+                      />
+                    </g>
+                  ))}
+                  <polyline
+                    points={trend
+                      .map(
+                        (point, index) =>
+                          `${30 + (index / Math.max(1, trend.length - 1)) * 960},${126 - (point.count / trendMax) * 112}`,
+                      )
+                      .join(" ")}
+                  />
+                  {trend.map((point, index) => (
+                    <circle
+                      key={point.date}
+                      cx={30 + (index / Math.max(1, trend.length - 1)) * 960}
+                      cy={126 - (point.count / trendMax) * 112}
+                      r={trend.length > 90 ? 2 : 4}
+                      tabIndex={0}
+                      onFocus={() => setActiveTrendIndex(index)}
+                      onMouseEnter={() => setActiveTrendIndex(index)}
+                      onBlur={() => setActiveTrendIndex(null)}
+                      onMouseLeave={() => setActiveTrendIndex(null)}
+                      aria-label={`${formatDate(point.date)}: ${point.count}`}
+                    >
+                      <title>
+                        {formatDate(point.date)}: {point.count}
+                      </title>
+                    </circle>
+                  ))}
+                </svg>
+              </div>
+              <div className="monthly-chart-dates">
+                <span>{formatDate(filters.startDate)}</span>
+                <span>{formatDate(filters.endDate)}</span>
+              </div>
+            </>
+          )}
+        </section>
+      )}
 
       <section className="monthly-table-panel" data-tour="panel-mensual-tabla">
-        <div className="monthly-section-heading"><h2>{isEn ? 'Summary table' : 'Tabla resumen'}</h2><span>{filteredJobs.length} {isEn ? 'records' : 'registros'}</span></div>
+        <div className="monthly-section-heading">
+          <h2>{isEn ? "Summary table" : "Tabla resumen"}</h2>
+          <span>
+            {filteredJobs.length} {isEn ? "records" : "registros"}
+          </span>
+        </div>
         <table className="monthly-table">
-          <thead><tr>{[isEn ? 'Date' : 'Fecha', isEn ? 'Description' : 'Descripción', isEn ? 'Created by' : 'Creado por', isEn ? 'Status' : 'Estado', isEn ? 'Actions' : 'Acciones'].map(label => <th key={label}>{label}</th>)}</tr></thead>
-          <tbody>{paginatedJobs.length === 0 ? <tr><td colSpan={5} className="monthly-empty">{loading ? (isEn ? 'Loading jobs…' : 'Cargando trabajos…') : t('monthlyPage.emptyDesc')}</td></tr> : paginatedJobs.map(job => {
-            const statusMeta = getStatusMeta(job);
-            const worker = job.workers?.display_name || job.workers?.alias;
-            return <tr key={job.id}>
-              <td data-label={isEn ? 'Date' : 'Fecha'}>{formatDate(job.date)}</td>
-              <td data-label={isEn ? 'Description' : 'Descripción'}><strong>{job.title || job.description}</strong><small>{[job.location, job.groups?.name].filter(Boolean).join(' · ') || '—'}</small></td>
-              <td data-label={isEn ? 'Created by' : 'Creado por'}><span>{job.creator?.full_name || job.creator?.email || '—'}</span>{worker && <small>{worker}</small>}</td>
-              <td data-label={isEn ? 'Status' : 'Estado'}><span className={`monthly-status ${statusMeta.badgeClass}`}>{statusMeta.label}</span></td>
-              <td data-label={isEn ? 'Actions' : 'Acciones'}><div className="monthly-row-actions">
-                <button type="button" aria-label={`${isEn ? 'View details' : 'Ver detalle'}: ${job.title || job.description}`} title={isEn ? 'View details' : 'Ver detalle'} onClick={() => navigate(`/app/jobs/${job.id}`)}><Eye size={17} /></button>
-                <details className="monthly-row-menu" onKeyDown={e => { if (e.key === 'Escape') { e.currentTarget.open = false; e.currentTarget.querySelector('summary').focus(); } }}>
-                  <summary aria-label={`${isEn ? 'Actions' : 'Acciones'}: ${job.title || job.description}`}><MoreHorizontal size={18} /></summary>
-                  <div className="monthly-menu-items">
-                    <button type="button" onClick={(e) => { e.currentTarget.closest('details').open = false; setEditingJob(job); }}><Edit2 size={15} />{isEn ? 'Edit' : 'Editar'}</button>
-                    <ConfirmationModal title={isEn ? 'Delete request?' : '¿Eliminar solicitud?'} description={isEn ? 'This will delete the selected request.' : 'Se eliminará la solicitud seleccionada.'} confirmLabel={isEn ? 'Delete' : 'Eliminar'} onConfirm={() => handleDeleteJob(job.id)} trigger={<button type="button" className="monthly-delete" disabled={deletingJobId === job.id}><Trash2 size={15} />{deletingJobId === job.id ? (isEn ? 'Deleting…' : 'Eliminando…') : (isEn ? 'Delete' : 'Eliminar')}</button>} />
-                  </div>
-                </details>
-              </div></td>
-            </tr>;
-          })}</tbody>
+          <thead>
+            <tr>
+              {[
+                isEn ? "Date" : "Fecha",
+                isEn ? "Description" : "Descripción",
+                isEn ? "Created by" : "Creado por",
+                isEn ? "Status" : "Estado",
+                isEn ? "Actions" : "Acciones",
+              ].map((label) => (
+                <th key={label}>{label}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedJobs.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="monthly-empty">
+                  {loading
+                    ? isEn
+                      ? "Loading jobs…"
+                      : "Cargando trabajos…"
+                    : t("monthlyPage.emptyDesc")}
+                </td>
+              </tr>
+            ) : (
+              paginatedJobs.map((job) => {
+                const statusMeta = getStatusMeta(job);
+                const worker = job.workers?.display_name || job.workers?.alias;
+                return (
+                  <tr key={job.id}>
+                    <td data-label={isEn ? "Date" : "Fecha"}>
+                      {formatDate(job.date)}
+                    </td>
+                    <td data-label={isEn ? "Description" : "Descripción"}>
+                      <strong>{job.title || job.description}</strong>
+                      <small>
+                        {[job.location, job.groups?.name]
+                          .filter(Boolean)
+                          .join(" · ") || "—"}
+                      </small>
+                    </td>
+                    <td data-label={isEn ? "Created by" : "Creado por"}>
+                      <span>
+                        {job.creator?.full_name || job.creator?.email || "—"}
+                      </span>
+                      {worker && <small>{worker}</small>}
+                    </td>
+                    <td data-label={isEn ? "Status" : "Estado"}>
+                      <span
+                        className={`monthly-status ${statusMeta.badgeClass}`}
+                      >
+                        {statusMeta.label}
+                      </span>
+                    </td>
+                    <td data-label={isEn ? "Actions" : "Acciones"}>
+                      <div className="monthly-row-actions">
+                        <button
+                          type="button"
+                          aria-label={`${isEn ? "View details" : "Ver detalle"}: ${job.title || job.description}`}
+                          title={isEn ? "View details" : "Ver detalle"}
+                          onClick={() => navigate(`/app/jobs/${job.id}`)}
+                        >
+                          <Eye size={17} />
+                        </button>
+                        <details
+                          className="monthly-row-menu"
+                          onKeyDown={(e) => {
+                            if (e.key === "Escape") {
+                              e.currentTarget.open = false;
+                              e.currentTarget.querySelector("summary").focus();
+                            }
+                          }}
+                        >
+                          <summary
+                            aria-label={`${isEn ? "Actions" : "Acciones"}: ${job.title || job.description}`}
+                          >
+                            <MoreHorizontal size={18} />
+                          </summary>
+                          <div className="monthly-menu-items">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.currentTarget.closest("details").open = false;
+                                setEditingJob(job);
+                              }}
+                            >
+                              <Edit2 size={15} />
+                              {isEn ? "Edit" : "Editar"}
+                            </button>
+                            <ConfirmationModal
+                              title={
+                                isEn
+                                  ? "Delete request?"
+                                  : "¿Eliminar solicitud?"
+                              }
+                              description={
+                                isEn
+                                  ? "This will delete the selected request."
+                                  : "Se eliminará la solicitud seleccionada."
+                              }
+                              confirmLabel={isEn ? "Delete" : "Eliminar"}
+                              onConfirm={() => handleDeleteJob(job.id)}
+                              trigger={
+                                <button
+                                  type="button"
+                                  className="monthly-delete"
+                                  disabled={deletingJobId === job.id}
+                                >
+                                  <Trash2 size={15} />
+                                  {deletingJobId === job.id
+                                    ? isEn
+                                      ? "Deleting…"
+                                      : "Eliminando…"
+                                    : isEn
+                                      ? "Delete"
+                                      : "Eliminar"}
+                                </button>
+                              }
+                            />
+                          </div>
+                        </details>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
         </table>
         <div className="border-t border-gray-100 px-4 py-4 dark:border-slate-800 md:px-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -667,7 +1197,7 @@ export default function MonthlyPanelPage() {
               </label>
               <span>
                 {filteredJobs.length === 0
-                  ? 'Mostrando 0 de 0 registros'
+                  ? "Mostrando 0 de 0 registros"
                   : `Mostrando ${pagination.startIndex + 1}-${pagination.endIndex} de ${filteredJobs.length} registros`}
               </span>
               <span>
@@ -692,16 +1222,25 @@ export default function MonthlyPanelPage() {
                 return (
                   <React.Fragment key={page}>
                     {showGap ? (
-                      <span className="px-1 text-sm text-gray-400" aria-hidden="true">...</span>
+                      <span
+                        className="px-1 text-sm text-gray-400"
+                        aria-hidden="true"
+                      >
+                        ...
+                      </span>
                     ) : null}
                     <Button
                       type="button"
-                      variant={page === pagination.currentPage ? 'default' : 'outline'}
+                      variant={
+                        page === pagination.currentPage ? "default" : "outline"
+                      }
                       size="sm"
                       onClick={() => setCurrentPage(page)}
                       className="h-9 w-9 px-0"
                       aria-label={`Ir a página ${page}`}
-                      aria-current={page === pagination.currentPage ? 'page' : undefined}
+                      aria-current={
+                        page === pagination.currentPage ? "page" : undefined
+                      }
                     >
                       {page}
                     </Button>
@@ -712,7 +1251,11 @@ export default function MonthlyPanelPage() {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage((page) => Math.min(pagination.totalPages, page + 1))}
+                onClick={() =>
+                  setCurrentPage((page) =>
+                    Math.min(pagination.totalPages, page + 1),
+                  )
+                }
                 disabled={pagination.currentPage === pagination.totalPages}
                 className="w-auto"
               >
