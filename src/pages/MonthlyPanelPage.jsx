@@ -244,7 +244,6 @@ export default function MonthlyPanelPage() {
     () => applyMonthlyPanelFilters(jobs, filters, normalizeStatusValue),
     [jobs, filters]
   );
-  const showNoSummaryData = Boolean(summary && summary.current && summary.previous && summary.current.total === 0 && summary.previous.total === 0);
   const summaryCards = useMemo(() => {
     if (!summary?.current) return [];
     return [
