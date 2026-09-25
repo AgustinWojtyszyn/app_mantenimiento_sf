@@ -7,7 +7,7 @@ const source = readFileSync(resolve(process.cwd(), 'src/pages/DailyJobsPage.jsx'
 describe('DailyJobsPage summary status wiring', () => {
   it('recarga el resumen cuando cambia el filtro de estado', () => {
     expect(source).toMatch(
-      /useEffect\(\(\) => \{\s*if \(user\) fetchSummary\(\);\s*\}, \[user, date, selectedLocation, selectedStatus, debouncedSearchTerm\]\);/
+      /useEffect\(\(\) => \{\s*if \(user\) fetchSummary\(\);\s*\}, \[user, date, selectedLocation, selectedStatus, debouncedRequestedBy, debouncedSearchTerm\]\);/
     );
   });
 
