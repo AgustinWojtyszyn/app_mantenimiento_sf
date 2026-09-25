@@ -594,40 +594,62 @@ export default function DailyJobsPage() {
           <Button
             type="button"
             onClick={() => navigate('/app/trabajos-diarios/nuevo')}
-            className="h-11 w-full bg-[#1e3a8a] px-4 text-sm font-semibold text-white hover:bg-blue-900 sm:w-auto md:min-w-[170px] md:text-base"
+            className="h-10 w-full bg-white px-4 text-sm font-bold text-blue-700 shadow-sm hover:bg-blue-50 sm:w-auto"
             data-tour="nuevo-trabajo"
           >
             <Plus className="mr-2 h-4 w-4" />
             {isEn ? 'New Job' : 'Nuevo Trabajo'}
-          </Button>
-          <Button
-            variant="outline"
-            className="h-10 w-full gap-2 whitespace-nowrap border-emerald-200 bg-emerald-50 text-sm font-semibold text-emerald-800 hover:bg-emerald-100 sm:w-auto md:min-w-[160px]"
-            onClick={handleExportExcel}
-            disabled={loading || exporting || sharing}
-          >
-            <FileSpreadsheet className="h-4 w-4" /> {exporting ? (isEn ? 'Preparing...' : 'Preparando...') : (isEn ? 'Export to Excel' : 'Exportar a Excel')}
-          </Button>
-          <Button
-            variant="outline"
-            className="h-10 w-full gap-2 whitespace-nowrap border-green-200 bg-white text-sm font-semibold text-green-700 hover:bg-green-50 sm:w-auto md:min-w-[165px]"
-            onClick={handleShare}
-            disabled={loading || sharing || exporting}
-          >
-            <MessageCircle className="h-4 w-4" /> {sharing ? (isEn ? 'Preparing...' : 'Preparando...') : (isEn ? 'Share WhatsApp' : 'Compartir WhatsApp')}
           </Button>
           <div className="relative w-full sm:w-auto">
             <Button
               type="button"
               variant="outline"
               onClick={() => setMoreActionsOpen((open) => !open)}
-              className="h-10 w-full gap-2 whitespace-nowrap text-sm font-semibold text-gray-700 dark:text-slate-200 sm:w-auto"
+              className="h-10 w-full gap-2 whitespace-nowrap border-white/30 bg-white/10 text-sm font-semibold text-white hover:bg-white/20 hover:text-white sm:w-auto"
             >
               <MoreHorizontal className="h-4 w-4" />
-              {isEn ? 'More actions' : 'Más acciones'}
+              {isEn ? 'Actions' : 'Acciones'}
             </Button>
             {moreActionsOpen && (
-              <div className="absolute right-0 z-20 mt-2 grid w-full min-w-[230px] gap-2 rounded-lg border border-gray-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:w-64">
+              <div className="absolute right-0 z-20 mt-2 grid w-full min-w-[250px] gap-1 rounded-xl border border-gray-200 bg-white p-2 text-slate-800 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 sm:w-72">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-10 w-full justify-start gap-2 text-sm font-semibold"
+                  onClick={() => {
+                    setMoreActionsOpen(false);
+                    handleExportExcel();
+                  }}
+                  disabled={loading || exporting || sharing}
+                >
+                  <FileSpreadsheet className="h-4 w-4" />
+                  {exporting ? (isEn ? 'Preparing…' : 'Preparando…') : (isEn ? 'Export to Excel' : 'Exportar a Excel')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-10 w-full justify-start gap-2 text-sm font-semibold"
+                  onClick={() => {
+                    setMoreActionsOpen(false);
+                    handleShare();
+                  }}
+                  disabled={loading || sharing || exporting}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  {sharing ? (isEn ? 'Preparing…' : 'Preparando…') : (isEn ? 'Share WhatsApp' : 'Compartir WhatsApp')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-10 w-full justify-start gap-2 text-sm font-semibold text-blue-700 hover:bg-blue-50 hover:text-blue-800 dark:text-blue-200 dark:hover:bg-blue-950/40"
+                  onClick={() => {
+                    setMoreActionsOpen(false);
+                    setCopyJobsDialogOpen(true);
+                  }}
+                >
+                  <Copy className="h-4 w-4" /> {isEn ? 'Copy jobs from another day' : 'Copiar trabajos de otro día'}
+                </Button>
+                <div className="my-1 border-t border-slate-200 dark:border-slate-700" />
                 <ConfirmationModal
                   title={isEn ? 'Clean completed?' : '¿Limpiar completados?'}
                   description={
@@ -641,10 +663,10 @@ export default function DailyJobsPage() {
                     <Button
                       type="button"
                       variant="ghost"
-                      className="h-9 w-full justify-start gap-2 text-sm font-semibold text-red-700 hover:bg-red-50 hover:text-red-800 dark:text-red-300 dark:hover:bg-red-950/40"
+                      className="h-10 w-full justify-start gap-2 text-sm font-semibold text-red-700 hover:bg-red-50 hover:text-red-800 dark:text-red-300 dark:hover:bg-red-950/40"
                       disabled={clearDisabled}
                     >
-                      <Trash2 className="h-4 w-4" /> {clearing ? (isEn ? 'Cleaning...' : 'Limpiando...') : (isEn ? 'Clear completed' : 'Limpiar completados')}
+                      <Trash2 className="h-4 w-4" /> {clearing ? (isEn ? 'Cleaning…' : 'Limpiando…') : (isEn ? 'Clear completed' : 'Limpiar completados')}
                     </Button>
                   }
                 />
@@ -661,24 +683,13 @@ export default function DailyJobsPage() {
                     <Button
                       type="button"
                       variant="ghost"
-                      className="h-9 w-full justify-start gap-2 text-sm font-semibold text-amber-800 hover:bg-amber-50 hover:text-amber-900 dark:text-amber-200 dark:hover:bg-amber-950/40"
+                      className="h-10 w-full justify-start gap-2 text-sm font-semibold text-amber-800 hover:bg-amber-50 hover:text-amber-900 dark:text-amber-200 dark:hover:bg-amber-950/40"
                       disabled={clearPendingDisabled}
                     >
-                      <Trash2 className="h-4 w-4" /> {clearingPending ? (isEn ? 'Cleaning pending...' : 'Limpiando pendientes...') : (isEn ? 'Clear pending' : 'Limpiar pendientes')}
+                      <Trash2 className="h-4 w-4" /> {clearingPending ? (isEn ? 'Cleaning pending…' : 'Limpiando pendientes…') : (isEn ? 'Clear pending' : 'Limpiar pendientes')}
                     </Button>
                   }
                 />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="h-9 w-full justify-start gap-2 text-sm font-semibold text-[#1e3a8a] hover:bg-blue-50 hover:text-blue-900 dark:text-blue-200 dark:hover:bg-blue-950/40"
-                  onClick={() => {
-                    setMoreActionsOpen(false);
-                    setCopyJobsDialogOpen(true);
-                  }}
-                >
-                  <Copy className="h-4 w-4" /> Copiar trabajos de otro día
-                </Button>
               </div>
             )}
           </div>
@@ -709,7 +720,7 @@ export default function DailyJobsPage() {
 
       <div className="dashboard-panel dashboard-table-panel" data-tour="tabla-trabajos">
         <div className="px-4 md:px-6 py-3 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
-          <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Summary table' : 'Tabla resumen'}</h2>
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-slate-50">{isEn ? 'Jobs' : 'Trabajos'}</h2>
           <span className="text-sm md:text-base text-gray-500 dark:text-slate-300">{totalCount} {isEn ? 'jobs' : 'trabajos'}</span>
         </div>
         <div>
