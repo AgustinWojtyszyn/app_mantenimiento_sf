@@ -152,7 +152,7 @@ export default function LoginPage() {
               transition={{ delay: 0.3 }}
               className="pt-2"
             >
-              <Button type="submit" disabled={loading} className="h-12 w-full bg-[#082b59] text-base font-bold text-white shadow-lg shadow-blue-950/10 hover:bg-[#0a376d]">
+              <Button type="submit" disabled={loading} className="h-12 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-base font-bold text-white shadow-lg hover:from-orange-600 hover:to-orange-700 hover:shadow-xl">
                 {loading ? "Iniciando sesión..." : "Ingresar"}
               </Button>
             </motion.div>
