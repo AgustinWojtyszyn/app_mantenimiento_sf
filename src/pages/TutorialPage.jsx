@@ -196,8 +196,8 @@ export default function TutorialPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto py-8 space-y-8" data-tour="tutorial-hub">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+    <div className="mx-auto max-w-5xl space-y-6" data-tour="tutorial-hub">
+      <div className="orders-page-header flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-slate-50">
             {isEn ? 'Quick tutorial' : 'Tutorial rápido'}
