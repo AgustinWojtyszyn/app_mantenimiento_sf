@@ -22,13 +22,13 @@
 .monthly-dashboard :is(button, input, select, summary):focus-visible { outline: 2px solid #6989ba; outline-offset: 3px; }
 .monthly-dashboard :is(input, select) { color-scheme: light; }
 .dark .monthly-dashboard :is(input, select) { color-scheme: dark; }
-.monthly-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 8px 0; }
-.monthly-header h1 { font-size: clamp(26px, 2.4vw, 34px); line-height: 1.2; letter-spacing: -.035em; font-weight: 750; color: var(--monthly-ink); }
-.monthly-header p { margin-top: 8px; color: var(--monthly-muted); font-size: 14px; }
+.monthly-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 16px 20px; border: 1px solid rgb(191 219 254 / .28); border-radius: 16px; background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%); color: #fff; box-shadow: 0 14px 30px rgb(30 64 175 / .22); }
+.monthly-header h1 { font-size: clamp(28px, 2.6vw, 38px); line-height: 1.1; letter-spacing: -.035em; font-weight: 800; color: #fff !important; }
+.monthly-header p { margin-top: 6px; color: #dbeafe; font-size: 14px; font-weight: 600; }
 .monthly-actions { display: flex; align-items: center; gap: 8px; }
-.monthly-actions > button, .monthly-actions > details > summary { height: 40px; min-width: 0; width: auto; padding: 0 12px; border: 1px solid var(--monthly-line); border-radius: 8px; background: var(--monthly-surface); color: var(--monthly-ink); box-shadow: none; font-size: 14px; gap: 8px; }
+.monthly-actions > button, .monthly-actions > details > summary { height: 40px; min-width: 0; width: auto; padding: 0 12px; border: 1px solid rgb(255 255 255 / .30); border-radius: 10px; background: rgb(255 255 255 / .10); color: #fff; box-shadow: none; font-size: 14px; gap: 8px; }
 .monthly-actions > details { width: auto; }
-.monthly-actions > button:hover { background: var(--monthly-soft); }
+.monthly-actions > button:hover, .monthly-actions > details > summary:hover { background: rgb(255 255 255 / .18); color: #fff; }
 .monthly-filters { padding: 12px; background: var(--monthly-soft); border-radius: 12px; }
 .monthly-filter-primary {
   display: grid;
