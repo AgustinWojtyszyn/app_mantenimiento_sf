@@ -85,7 +85,7 @@ export default function JobDetailPage() {
 
   return (
     <div className="maintenance-page space-y-4">
-      <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
+      <section className="orders-page-header">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">
             <div className="mb-2 flex flex-wrap items-center gap-2">
