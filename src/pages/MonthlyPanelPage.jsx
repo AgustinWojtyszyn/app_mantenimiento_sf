@@ -10,7 +10,7 @@ import { formatDate, formatCurrency } from '@/utils/formatters';
 import { getMonthStart, getMonthEnd } from '@/utils/dates';
 import { getJobStatusBadgeClass, getJobStatusLabel, normalizeJobStatus } from '@/utils/jobStatus';
 import './monthlyDashboard.css';
-import { Activity, Briefcase, Clock3, CheckCircle2, TrendingUp, Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, MoreHorizontal } from 'lucide-react';
+import { Briefcase, Clock3, CheckCircle2, TrendingUp, Trash2, MessageCircle, FileSpreadsheet, Eye, Edit2, MoreHorizontal } from 'lucide-react';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ExcelExportButton from '@/components/common/ExcelExportButton';
 import JobFilters from '@/components/jobs/JobFilters';
@@ -248,10 +248,9 @@ export default function MonthlyPanelPage() {
   const summaryCards = useMemo(() => {
     if (!summary?.current) return [];
     return [
-      { key: 'all', label: isEn ? 'Total jobs' : 'Total de trabajos', value: summary.current.total, delta: summary.current.total - summary.previous.total, unit: 'trabajos', isPositiveGood: true },
-      { key: 'pending', label: isEn ? 'Pending' : 'Pendientes', value: summary.current.pending, delta: summary.current.pending - summary.previous.pending, unit: 'trabajos', isPositiveGood: false },
-      { key: 'completed', label: isEn ? 'Completed' : 'Completados', value: summary.current.completed, delta: summary.current.completed - summary.previous.completed, unit: 'trabajos', isPositiveGood: true },
-      { key: 'compliance', label: isEn ? 'Compliance' : 'Cumplimiento', value: `${summary.current.completionRate.toLocaleString(isEn ? 'en-GB' : 'es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`, delta: summary.current.complianceDelta, unit: 'puntos', isPositiveGood: true, asPercent: true },
+      { key: 'all', label: isEn ? 'Total jobs' : 'Total de trabajos', value: summary.current.total, delta: summary.current.total - summary.previous.total },
+      { key: 'pending', label: isEn ? 'Pending' : 'Pendientes', value: summary.current.pending, delta: summary.current.pending - summary.previous.pending },
+      { key: 'completed', label: isEn ? 'Completed' : 'Completados', value: summary.current.completed, delta: summary.current.completed - summary.previous.completed },
     ];
   }, [isEn, summary]);
   const periodLabel = useMemo(() => {
@@ -506,22 +505,22 @@ export default function MonthlyPanelPage() {
         </div>
 
         <div className="monthly-actions">
-          <Button
-            variant="default"
-            onClick={handleShare}
-            disabled={!hasJobs || loading}
-            className="monthly-share"
-          >
-            <MessageCircle className="h-4 w-4" />
-            {isEn ? 'Share WhatsApp' : 'Compartir WhatsApp'}
-          </Button>
-
           <details className="relative w-full sm:w-auto">
             <summary className="flex h-10 w-full cursor-pointer list-none items-center justify-center gap-2 rounded-md border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 sm:w-auto">
               <MoreHorizontal className="h-4 w-4" />
-              {isEn ? 'More actions' : 'Más acciones'}
+              {isEn ? 'Actions' : 'Acciones'}
             </summary>
             <div className="absolute right-0 z-30 mt-2 grid w-full min-w-[250px] gap-2 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-slate-700 dark:bg-slate-900 sm:w-72">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handleShare}
+                disabled={!hasJobs || loading}
+                className="h-10 w-full justify-start gap-2 text-sm font-semibold"
+              >
+                <MessageCircle className="h-4 w-4" />
+                {isEn ? 'Share WhatsApp' : 'Compartir WhatsApp'}
+              </Button>
               <ExcelExportButton
                 jobs={filteredJobs}
                 grouped={true}
@@ -584,48 +583,125 @@ export default function MonthlyPanelPage() {
         <JobFilters compact filters={filters} onChange={handleFilterChange} workers={workerOptions} locations={locationOptions} isEn={isEn} />
       </div>
       <section className="monthly-summary" aria-label={isEn ? 'Period summary' : 'Resumen del período'}>
-        <div className="monthly-section-heading"><h2>{isEn ? 'Period summary' : 'Resumen del período'}</h2><span>{isEn ? 'Compared with the previous period · all statuses' : 'Comparado con el período anterior · todos los estados'}</span></div>
-        {summaryLoading ? <div className="monthly-kpis" role="status" aria-label={isEn ? 'Loading summary' : 'Cargando resumen'}>{[0,1,2,3].map(i => <div key={i} className="monthly-kpi monthly-skeleton" />)}</div> : summaryError ? (
-          <div className="monthly-empty" role="alert"><p>{summaryError}</p><Button variant="outline" size="sm" onClick={handleRetrySummary}>{isEn ? 'Retry' : 'Reintentar'}</Button></div>
-        ) : summary && <>
-          <div className="monthly-kpis">
-            {summaryCards.map((card, index) => {
-              const Icon = [Briefcase, Clock3, CheckCircle2, TrendingUp][index];
-              const delta = new Intl.NumberFormat(isEn ? 'en-GB' : 'es-AR', { maximumFractionDigits: 1, signDisplay: 'exceptZero' }).format(card.delta);
-              return <div key={card.key} className={`monthly-kpi monthly-kpi--${card.key}`}>
-                <Icon size={18} aria-hidden="true" /><span>{card.label}</span><strong>{card.value}</strong>
-                <small>{card.delta === 0 ? (isEn ? 'Unchanged from previous period' : 'Sin cambios frente al período anterior') : `${delta}${card.asPercent ? (isEn ? ' pts' : ' puntos') : ''} ${isEn ? 'vs. previous period' : 'vs. período anterior'}`}</small>
-                {card.asPercent && <div className="monthly-compliance" aria-hidden="true"><span style={{ width: `${summary.current.completionRate}%` }} /></div>}
-              </div>;
-            })}
+        <div className="monthly-section-heading">
+          <h2>{isEn ? 'Period summary' : 'Resumen del período'}</h2>
+          <span>{isEn ? 'Essential indicators · comparison with the previous period' : 'Indicadores esenciales · comparación con el período anterior'}</span>
+        </div>
+
+        {summaryLoading ? (
+          <div className="monthly-kpis" role="status" aria-label={isEn ? 'Loading summary' : 'Cargando resumen'}>
+            {[0, 1, 2].map((i) => <div key={i} className="monthly-kpi monthly-skeleton" />)}
           </div>
-          <div className="monthly-secondary">
-            <div><span>{isEn ? 'Workers involved' : 'Trabajadores involucrados'}</span><strong>{summary.current.workers}</strong></div>
-            <div><span>{isEn ? 'Places served' : 'Lugares atendidos'}</span><strong>{summary.current.locations}</strong></div>
-            <div className="monthly-balance"><h3>{isEn ? 'Estimated balance' : 'Balance estimado'}</h3><div>{[[isEn ? 'Charge' : 'A cobrar', summary.current.amountToCharge], [isEn ? 'Worker cost' : 'Costo trabajadores', summary.current.workerCost], [isEn ? 'Difference' : 'Diferencia', summary.current.difference]].map(([label,value]) => <span key={label}>{label}<strong>{formatCurrency(value)}</strong></span>)}</div></div>
+        ) : summaryError ? (
+          <div className="monthly-empty" role="alert">
+            <p>{summaryError}</p>
+            <Button variant="outline" size="sm" onClick={handleRetrySummary}>{isEn ? 'Retry' : 'Reintentar'}</Button>
           </div>
-          <div className="monthly-insight"><Activity size={18} aria-hidden="true" /><div><strong>{isEn ? 'Period insight' : 'Lectura del período'}</strong><p>{showNoSummaryData ? (isEn ? 'No jobs were found for this period.' : 'No hay trabajos suficientes para evaluar este período.') : summary.conclusion}</p></div></div>
-        </>}
-        {!summary && !summaryLoading && !summaryError && <p className="monthly-empty">{isEn ? 'Select a complete date range to load the summary.' : 'Seleccioná un rango completo para cargar el resumen.'}</p>}
+        ) : summary ? (
+          <>
+            <div className="monthly-kpis">
+              {summaryCards.map((card, index) => {
+                const Icon = [Briefcase, Clock3, CheckCircle2][index];
+                const delta = new Intl.NumberFormat(isEn ? 'en-GB' : 'es-AR', { maximumFractionDigits: 1, signDisplay: 'exceptZero' }).format(card.delta);
+                return (
+                  <div key={card.key} className={`monthly-kpi monthly-kpi--${card.key}`}>
+                    <Icon size={18} aria-hidden="true" />
+                    <span>{card.label}</span>
+                    <strong>{card.value}</strong>
+                    <small>
+                      {card.delta === 0
+                        ? (isEn ? 'No change from previous period' : 'Sin cambios frente al período anterior')
+                        : `${delta} ${isEn ? 'vs. previous period' : 'vs. período anterior'}`}
+                    </small>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="monthly-summary-line">
+              <span>
+                {isEn ? 'Compliance' : 'Cumplimiento'}
+                <strong>{summary.current.completionRate.toLocaleString(isEn ? 'en-GB' : 'es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%</strong>
+                {summary.current.complianceDelta !== 0 ? (
+                  <small>
+                    {new Intl.NumberFormat(isEn ? 'en-GB' : 'es-AR', { maximumFractionDigits: 1, signDisplay: 'exceptZero' }).format(summary.current.complianceDelta)} {isEn ? 'pts' : 'puntos'}
+                  </small>
+                ) : null}
+              </span>
+              <span>{isEn ? 'Workers' : 'Trabajadores'} <strong>{summary.current.workers}</strong></span>
+              <span>{isEn ? 'Places' : 'Lugares'} <strong>{summary.current.locations}</strong></span>
+            </div>
+
+            <div className="monthly-finance-strip">
+              {[
+                [isEn ? 'To charge' : 'A cobrar', summary.current.amountToCharge],
+                [isEn ? 'Worker cost' : 'Costo trabajadores', summary.current.workerCost],
+                [isEn ? 'Difference' : 'Diferencia', summary.current.difference],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <span>{label}</span>
+                  <strong>{formatCurrency(value)}</strong>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="monthly-empty">{isEn ? 'Select a complete date range to load the summary.' : 'Seleccioná un rango completo para cargar el resumen.'}</p>
+        )}
       </section>
-      {trend.length > 0 && <section className="monthly-trend">
-        <div className="monthly-section-heading"><h2>{isEn ? 'Job trend' : 'Tendencia de trabajos'}</h2><span>{isEn ? 'Jobs per day · active filters' : 'Trabajos por día · filtros activos'}</span></div>
-        {loading ? <p className="monthly-empty" role="status">{isEn ? 'Loading trend…' : 'Cargando tendencia…'}</p> : filteredJobs.length === 0 ? <p className="monthly-empty">{isEn ? 'No jobs to plot with these filters.' : 'No hay trabajos para graficar con estos filtros.'}</p> : <>
-          <div className="monthly-chart-readout" aria-live="polite">{activeTrend ? `${formatDate(activeTrend.date)} · ${activeTrend.count} ${isEn ? 'jobs' : 'trabajos'}` : (isEn ? 'Explore the chart to see each day' : 'Explorá el gráfico para ver cada día')}</div>
-          <div className="monthly-chart-plot">
-          <div className="monthly-chart-scale" aria-hidden="true"><span>{trendMax}</span><span>{Number((trendMax / 2).toFixed(1))}</span><span>0</span></div>
-          <svg className="monthly-chart" viewBox="0 0 1000 150" preserveAspectRatio="none" role="img" aria-label={isEn ? 'Number of jobs per day in the selected period' : 'Cantidad de trabajos por día del período seleccionado'}>
-            {[0, 0.5, 1].map(fraction => <g key={fraction}><line x1="30" x2="990" y1={126 - fraction * 112} y2={126 - fraction * 112} /></g>)}
-            <polyline points={trend.map((point,index) => `${30 + (index / Math.max(1, trend.length - 1)) * 960},${126 - (point.count / trendMax) * 112}`).join(' ')} />
-            {trend.map((point,index) => <circle key={point.date} cx={30 + (index / Math.max(1,trend.length - 1)) * 960} cy={126 - (point.count / trendMax) * 112} r={trend.length > 90 ? 2 : 4} tabIndex={0} onFocus={() => setActiveTrendIndex(index)} onMouseEnter={() => setActiveTrendIndex(index)} onBlur={() => setActiveTrendIndex(null)} onMouseLeave={() => setActiveTrendIndex(null)} aria-label={`${formatDate(point.date)}: ${point.count}`}><title>{formatDate(point.date)}: {point.count}</title></circle>)}
-          </svg>
-          </div>
-          <div className="monthly-chart-dates"><span>{formatDate(filters.startDate)}</span><span>{formatDate(filters.endDate)}</span></div>
-        </>}
-      </section>}
+
+      {trend.length > 0 ? (
+        <details className="monthly-trend-details">
+          <summary>
+            <span><TrendingUp size={17} aria-hidden="true" />{isEn ? 'Daily trend' : 'Tendencia diaria'}</span>
+            <small>{isEn ? 'Open chart' : 'Ver gráfico'}</small>
+          </summary>
+          <section className="monthly-trend" aria-label={isEn ? 'Daily job trend' : 'Tendencia diaria de trabajos'}>
+            {loading ? (
+              <p className="monthly-empty" role="status">{isEn ? 'Loading trend…' : 'Cargando tendencia…'}</p>
+            ) : filteredJobs.length === 0 ? (
+              <p className="monthly-empty">{isEn ? 'No jobs to plot with these filters.' : 'No hay trabajos para graficar con estos filtros.'}</p>
+            ) : (
+              <>
+                <div className="monthly-chart-readout" aria-live="polite">
+                  {activeTrend
+                    ? `${formatDate(activeTrend.date)} · ${activeTrend.count} ${isEn ? 'jobs' : 'trabajos'}`
+                    : (isEn ? 'Explore the chart to see each day' : 'Explorá el gráfico para ver cada día')}
+                </div>
+                <div className="monthly-chart-plot">
+                  <div className="monthly-chart-scale" aria-hidden="true">
+                    <span>{trendMax}</span><span>{Number((trendMax / 2).toFixed(1))}</span><span>0</span>
+                  </div>
+                  <svg className="monthly-chart" viewBox="0 0 1000 150" preserveAspectRatio="none" role="img" aria-label={isEn ? 'Number of jobs per day in the selected period' : 'Cantidad de trabajos por día del período seleccionado'}>
+                    {[0, 0.5, 1].map((fraction) => <g key={fraction}><line x1="30" x2="990" y1={126 - fraction * 112} y2={126 - fraction * 112} /></g>)}
+                    <polyline points={trend.map((point, index) => `${30 + (index / Math.max(1, trend.length - 1)) * 960},${126 - (point.count / trendMax) * 112}`).join(' ')} />
+                    {trend.map((point, index) => (
+                      <circle
+                        key={point.date}
+                        cx={30 + (index / Math.max(1, trend.length - 1)) * 960}
+                        cy={126 - (point.count / trendMax) * 112}
+                        r={trend.length > 90 ? 2 : 4}
+                        tabIndex={0}
+                        onFocus={() => setActiveTrendIndex(index)}
+                        onMouseEnter={() => setActiveTrendIndex(index)}
+                        onBlur={() => setActiveTrendIndex(null)}
+                        onMouseLeave={() => setActiveTrendIndex(null)}
+                        aria-label={`${formatDate(point.date)}: ${point.count}`}
+                      >
+                        <title>{formatDate(point.date)}: {point.count}</title>
+                      </circle>
+                    ))}
+                  </svg>
+                </div>
+                <div className="monthly-chart-dates"><span>{formatDate(filters.startDate)}</span><span>{formatDate(filters.endDate)}</span></div>
+              </>
+            )}
+          </section>
+        </details>
+      ) : null}
 
       <section className="monthly-table-panel" data-tour="panel-mensual-tabla">
-        <div className="monthly-section-heading"><h2>{isEn ? 'Summary table' : 'Tabla resumen'}</h2><span>{filteredJobs.length} {isEn ? 'records' : 'registros'}</span></div>
+        <div className="monthly-section-heading"><h2>{isEn ? 'Period jobs' : 'Trabajos del período'}</h2><span>{filteredJobs.length} {isEn ? 'records' : 'registros'}</span></div>
         <table className="monthly-table">
           <thead><tr>{[isEn ? 'Date' : 'Fecha', isEn ? 'Description' : 'Descripción', isEn ? 'Created by' : 'Creado por', isEn ? 'Status' : 'Estado', isEn ? 'Actions' : 'Acciones'].map(label => <th key={label}>{label}</th>)}</tr></thead>
           <tbody>{paginatedJobs.length === 0 ? <tr><td colSpan={5} className="monthly-empty">{loading ? (isEn ? 'Loading jobs…' : 'Cargando trabajos…') : t('monthlyPage.emptyDesc')}</td></tr> : paginatedJobs.map(job => {
