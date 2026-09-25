@@ -55,7 +55,11 @@ export default function Sidebar() {
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-          <span className="text-sm font-semibold truncate max-w-[50vw]">{currentLabel}</span>
+          <span className="min-w-0 truncate text-sm font-semibold max-w-[58vw]">
+            <span className="text-blue-100">ServiFood</span>
+            <span className="mx-1.5 text-blue-300/70">·</span>
+            <span>{currentLabel}</span>
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <LanguageToggle className="h-9 px-3 text-xs bg-background/20 border border-white/20 text-white hover:text-white hover:bg-white/15" />
@@ -74,7 +78,25 @@ export default function Sidebar() {
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         pt-12 lg:pt-0 shadow-xl
       `}>
-        <nav className="sidebar-nav text-nav-lg pt-5">
+        <div className="sidebar-brand flex items-center gap-3 border-b border-white/10 px-4 py-4">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10">
+            <img
+              src="/servifood_logo_white_text_HQ.png"
+              alt="ServiFood"
+              className="h-9 w-9 object-contain"
+            />
+          </div>
+          <div className="min-w-0 leading-tight">
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-200">
+              ServiFood
+            </p>
+            <p className="mt-0.5 truncate text-base font-semibold text-white">
+              Mantenimiento
+            </p>
+          </div>
+        </div>
+
+        <nav className="sidebar-nav text-nav-lg">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
