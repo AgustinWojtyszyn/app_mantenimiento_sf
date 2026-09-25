@@ -1,672 +1,378 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 import {
-  ArrowRight,
   ArrowUpRight,
+  ArrowRight,
+  ArrowDown,
   Check,
   CheckCircle2,
+  Calendar,
   ClipboardList,
-  Download,
-  FileSpreadsheet,
+  Clock3,
+  ShieldCheck,
+  Smartphone,
+  ChevronRight,
   MapPin,
-  Plus,
-  Users,
   Wrench,
-} from "lucide-react";
-import { Helmet } from "react-helmet";
-import ThemeToggle from "@/components/layout/ThemeToggle";
-import LanguageToggle from "@/components/layout/LanguageToggle";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useTheme } from "@/contexts/ThemeContext";
-import "./LandingPage.css";
+  Users,
+} from 'lucide-react';
+import { Helmet } from 'react-helmet';
+import LanguageToggle from '@/components/layout/LanguageToggle';
+import { useLanguage } from '@/contexts/LanguageContext';
+import './LandingPage.css';
 
-export default function LandingPage() {
-  const { language } = useLanguage();
-  const { theme } = useTheme();
-  const isEn = language === "en";
-  const t = (es, en) => (isEn ? en : es);
-  const jobs = [
-    [
-      t("Revisión de cámara de frío", "Cold room inspection"),
-      t("Cocina central", "Central kitchen"),
-      t("En curso", "In progress"),
-      "active",
-    ],
-    [
-      t("Mantenimiento de horno", "Oven maintenance"),
-      t("Planta de producción", "Production facility"),
-      t("Completado", "Completed"),
-      "done",
-    ],
-    [
-      t("Control de extracción", "Extraction inspection"),
-      t("Comedor corporativo", "Corporate dining"),
-      t("Pendiente", "Pending"),
-      "pending",
-    ],
-  ];
+const buildSteps = (t) => [
+  {
+    number: '01',
+    icon: ClipboardList,
+    title: t('Registrá el trabajo', 'Register the job'),
+    text: t('Cargá fecha, ubicación, detalle y la información operativa necesaria.', 'Add date, location, details and the operational information you need.'),
+  },
+  {
+    number: '02',
+    icon: Users,
+    title: t('Asigná responsables', 'Assign owners'),
+    text: t('Vinculá trabajadores y grupos para que cada tarea tenga un responsable claro.', 'Link workers and groups so every task has a clear owner.'),
+  },
+  {
+    number: '03',
+    icon: CheckCircle2,
+    title: t('Seguí el avance', 'Track progress'),
+    text: t('Consultá estados, costos, equipos y reportes desde un mismo lugar.', 'Review status, costs, equipment and reports from one place.'),
+  },
+];
+
+function AccessLinks({ t }) {
   return (
-    <div className={`tracking-landing ${theme === "dark" ? "tracking-theme-dark" : "tracking-theme-light"}`}>
-      <Helmet>
-        <title>
-          {t(
-            "Mantenimiento · ServiFood | Control de tu operación",
-            "Maintenance · ServiFood | Your operation under control",
-          )}
-        </title>
-        <meta
-          name="description"
-          content={t(
-            "Trabajos, costos, equipos y reportes en un solo lugar. Conocé Mantenimiento, la herramienta de gestión operativa de ServiFood.",
-            "Jobs, costs, teams and reports in one place. Discover Maintenance by ServiFood.",
-          )}
-        />
-      </Helmet>
-      <a className="tracking-skip" href="#contenido">
-        {t("Ir al contenido", "Skip to content")}
-      </a>
-      <header className="tracking-header">
-        <nav
-          className="tracking-container tracking-nav"
-          aria-label={t("Navegación principal", "Main navigation")}
-        >
-          <a
-            href="#"
-            className="tracking-brand"
-            aria-label={t("ServiFood Mantenimiento", "ServiFood Maintenance")}
-          >
-            <img
-              src="/servifood_logo_white_text_HQ.png"
-              alt="ServiFood"
-              width="180"
-              height="230"
-              decoding="async"
-              fetchPriority="high"
-            />
-            <span>{t("MANTENIMIENTO", "MAINTENANCE")}</span>
-          </a>
-          <div className="tracking-nav-sections">
-            <a href="#plataforma">{t("Plataforma", "Platform")}</a>
-            <a href="#flujo">{t("Cómo funciona", "How it works")}</a>
-          </div>
-          <div className="tracking-nav-actions">
-            <LanguageToggle className="tracking-toggle" />
-            <ThemeToggle className="tracking-toggle tracking-theme" />
-            <Link className="tracking-signin" to="/login">
-              {t("Ingresar", "Sign in")}
-              <ArrowUpRight size={15} />
-            </Link>
-          </div>
-        </nav>
-      </header>
-      <main id="contenido">
-        <section className="tracking-hero">
-          <div className="tracking-container tracking-hero-grid">
-            <div className="tracking-hero-copy">
-              <div className="tracking-eyebrow">
-                <span className="tracking-dot" />
-                {t(
-                  "GESTIÓN OPERATIVA · SERVIFOOD",
-                  "OPERATIONS MANAGEMENT · SERVIFOOD",
-                )}
-              </div>
-              <h1>
-                {t("Cada trabajo.", "Every job.")}
-                <br />
-                {t("Cada detalle.", "Every detail.")}
-                <br />
-                <em>{t("Bajo control.", "Under control.")}</em>
-              </h1>
-              <p>
-                {t(
-                  "Conectá lo que pasa en campo con las decisiones de tu operación. Trabajos, costos y equipos, con el seguimiento que necesitás.",
-                  "Connect work in the field with your operational decisions. Jobs, costs and teams, with the follow-up you need.",
-                )}
-              </p>
-              <div className="tracking-hero-actions">
-                <Link
-                  to="/register"
-                  className="tracking-button tracking-button-accent"
-                >
-                  {t("Crear mi cuenta", "Create my account")}
-                  <ArrowRight size={18} />
-                </Link>
-                <a href="#plataforma" className="tracking-text-link">
-                  {t("Explorar la plataforma", "Explore the platform")}
-                  <ArrowDownIcon />
-                </a>
-              </div>
-              <div className="tracking-hero-note">
-                <Check size={14} />
-                {t(
-                  "Del primer registro al reporte final.",
-                  "From the first entry to the final report.",
-                )}
-              </div>
-            </div>
-            <div className="tracking-hero-visual">
-              <span className="tracking-photo-index" aria-hidden="true">
-                SF / 01
-              </span>
-              <div className="tracking-photo-frame">
-                <img
-                  className="tracking-operation-photo"
-                  src="/images/servifood-produccion.webp"
-                  width="640"
-                  height="800"
-                  alt={t(
-                    "Operación de producción de ServiFood",
-                    "ServiFood production operations",
-                  )}
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                />
-                <div className="tracking-photo-caption">
-                  <span className="tracking-photo-caption-index">
-                    01 / {t("PRODUCCIÓN", "PRODUCTION")}
-                  </span>
-                  <span className="tracking-photo-caption-copy">
-                    {t("Donde el trabajo sucede.", "Where work happens.")}
-                  </span>
-                </div>
-              </div>
-              <div className="tracking-job-card">
-                <div className="tracking-job-card-top">
-                  <span className="tracking-icon-box">
-                    <Wrench size={19} />
-                  </span>
-                  <span className="tracking-status active">
-                    {t("En curso", "In progress")}
-                  </span>
-                </div>
-                <small>{t("SEGUIMIENTO DE TRABAJO", "MAINTENANCE JOB")}</small>
-                <h3>
-                  {t("Mantenimiento preventivo", "Preventive maintenance")}
-                </h3>
-                <p>
-                  <MapPin size={13} />
-                  {t(
-                    "Cocina central · Equipo de frío",
-                    "Central kitchen · Cooling equipment",
-                  )}
-                </p>
-                <div className="tracking-job-progress">
-                  <span />
-                </div>
-                <div className="tracking-job-card-bottom">
-                  <span>
-                    <span className="tracking-avatar">ML</span>
-                    {t("Responsable asignado", "Owner assigned")}
-                  </span>
-                  <CheckCircle2 size={17} />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="tracking-container tracking-capabilities">
-            {[
-              [ClipboardList, t("Trabajos organizados", "Organized jobs")],
-              [Users, t("Equipos conectados", "Connected teams")],
-              [Wrench, t("Operación visible", "Visible operations")],
-              [FileSpreadsheet, t("Reportes claros", "Clear reports")],
-            ].map(([Icon, label]) => (
-              <div key={label}>
-                <Icon size={18} />
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-        <section id="plataforma" className="tracking-platform tracking-section">
-          <div className="tracking-container">
-            <div className="tracking-section-heading">
-              <div>
-                <div className="tracking-eyebrow">
-                  {t(
-                    "VISIBILIDAD PARA DECIDIR",
-                    "VISIBILITY TO MAKE DECISIONS",
-                  )}
-                </div>
-                <h2>
-                  {t("Toda la operación.", "Your entire operation.")}
-                  <br />
-                  <span>{t("Una mirada clara.", "One clear view.")}</span>
-                </h2>
-              </div>
-              <p>
-                {t(
-                  "Menos información dispersa. Más contexto para saber qué se hizo, quién lo hizo y cuánto costó.",
-                  "Less scattered information. More context to know what was done, who did it and what it cost.",
-                )}
-              </p>
-            </div>
-            <div className="tracking-workspace">
-              <aside className="tracking-workspace-sidebar" aria-hidden="true">
-                <span className="tracking-mini-brand">
-                  S<span>F</span>
-                  <i />
-                </span>
-                <ClipboardList size={21} />
-                <Users size={21} />
-                <FileSpreadsheet size={21} />
-                <Wrench size={21} />
-              </aside>
-              <div className="tracking-workspace-main">
-                <div className="tracking-workspace-top">
-                  <div>
-                    <small>WORKSPACE / {t("OPERACIÓN", "OPERATIONS")}</small>
-                    <h3>{t("Resumen de trabajos", "Job overview")}</h3>
-                  </div>
-                  <span className="tracking-preview-label">
-                    {t("Vista ilustrativa", "Illustrative preview")}
-                  </span>
-                </div>
-                <div className="tracking-kpis">
-                  {[
-                    ["12", t("Trabajos registrados", "Registered jobs")],
-                    ["04", t("En curso", "In progress")],
-                    ["08", t("Completados", "Completed")],
-                  ].map(([value, label]) => (
-                    <div key={label}>
-                      <span>{label}</span>
-                      <strong>{value}</strong>
-                      <span className="tracking-kpi-line" />
-                    </div>
-                  ))}
-                </div>
-                <div className="tracking-job-table">
-                  <div className="tracking-table-heading">
-                    <span>{t("TRABAJO / UBICACIÓN", "JOB / LOCATION")}</span>
-                    <span>{t("ESTADO", "STATUS")}</span>
-                  </div>
-                  {jobs.map(([name, location, status, kind]) => (
-                    <div className="tracking-table-row" key={name}>
-                      <div className="tracking-table-job">
-                        <span className="tracking-table-icon">
-                          <Wrench size={16} />
-                        </span>
-                        <div>
-                          <strong>{name}</strong>
-                          <small>{location}</small>
-                        </div>
-                      </div>
-                      <span className={`tracking-status ${kind}`}>
-                        {status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="tracking-workspace-callout">
-                <span className="tracking-eyebrow">
-                  {t("DEL DATO A LA ACCIÓN", "FROM DATA TO ACTION")}
-                </span>
-                <h3>
-                  {t(
-                    "El detalle hace la diferencia.",
-                    "The details make the difference.",
-                  )}
-                </h3>
-                <p>
-                  {t(
-                    "Horas, ubicaciones, responsables y notas. Cada registro suma contexto para tu próximo paso.",
-                    "Hours, locations, owners and notes. Every entry adds context for your next step.",
-                  )}
-                </p>
-                <a href="#flujo">
-                  {t("Conocé el flujo de trabajo", "Discover the workflow")}
-                  <ArrowUpRight size={19} />
-                </a>
-                <div className="tracking-record">
-                  <CheckCircle2 size={24} />
-                  <div>
-                    <strong>
-                      {t("Información conectada", "Connected information")}
-                    </strong>
-                    <small>
-                      {t(
-                        "Un mismo lugar para todo el equipo",
-                        "One place for the whole team",
-                      )}
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          className="tracking-editorial"
-          aria-labelledby="operation-heading"
-        >
-          <div className="tracking-container tracking-editorial-grid">
-            <div className="tracking-editorial-photo">
-              <img
-                src="/images/servifood-planta.webp"
-                width="480"
-                height="600"
-                loading="lazy"
-                decoding="async"
-                alt={t("Planta de ServiFood", "ServiFood facility")}
-              />
-              <div className="tracking-site-label">
-                <span className="tracking-dot" /> SERVIFOOD{" "}
-                <span>02 / {t("PLANTA", "FACILITY")}</span>
-              </div>
-              <div className="tracking-photo-signal">
-                <span className="tracking-signal-pulse" />
-                <span>{t("REGISTRO ACTIVO", "ACTIVE RECORD")}</span>
-                <strong>08:42</strong>
-              </div>
-              <div className="tracking-photo-coordinate" aria-hidden="true">
-                <Plus size={28} />
-                <span>
-                  {t("OPERACIÓN / CONTINUIDAD", "OPERATIONS / CONTINUITY")}
-                </span>
-              </div>
-            </div>
-            <div className="tracking-editorial-copy">
-              <div className="tracking-eyebrow">
-                {t(
-                  "EL TRABAJO REAL ES EL PUNTO DE PARTIDA",
-                  "REAL WORK IS THE STARTING POINT",
-                )}
-              </div>
-              <h2 id="operation-heading">
-                {t("La operación", "Operations")}
-                <br />
-                {t("no se detiene.", "never stop.")}
-                <br />
-                <em>
-                  {t("El mantenimiento, tampoco.", "Neither does maintenance.")}
-                </em>
-              </h2>
-              <p>
-                {t(
-                  "Detrás de cada jornada hay instalaciones, equipos y personas. Mantenimiento conecta ese trabajo con un registro claro para que el próximo paso tenga contexto.",
-                  "Behind every working day are facilities, equipment and people. Maintenance connects that work with clear records, giving context to the next step.",
-                )}
-              </p>
-              <div className="tracking-operation-chain">
-                <div>
-                  <MapPin size={19} />
-                  <span>{t("En planta", "On site")}</span>
-                </div>
-                <ArrowRight size={16} />
-                <div>
-                  <ClipboardList size={19} />
-                  <span>{t("En el registro", "On record")}</span>
-                </div>
-                <ArrowRight size={16} />
-                <div>
-                  <FileSpreadsheet size={19} />
-                  <span>{t("En tus decisiones", "In your decisions")}</span>
-                </div>
-              </div>
-              <div className="tracking-field-note">
-                <span>01—02</span>
-                <p>
-                  {t(
-                    "Del lugar donde sucede al lugar donde decidís.",
-                    "From where it happens to where you decide.",
-                  )}
-                </p>
-                <ArrowUpRight size={28} />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="tracking-details tracking-section">
-          <div className="tracking-container">
-            <div className="tracking-details-heading">
-              <div className="tracking-eyebrow">
-                {t("CADA PARTE, CONECTADA", "EVERY PART, CONNECTED")}
-              </div>
-              <h2>
-                {t("El control está", "Control is")}{" "}
-                <em>{t("en los detalles.", "in the details.")}</em>
-              </h2>
-            </div>
-            <div className="tracking-benefits">
-              <article className="tracking-benefit tracking-benefit-costs">
-                <div className="tracking-finance-visual" aria-hidden="true">
-                  <div className="tracking-cost-orbit">
-                    <span>
-                      <Wrench size={26} />
-                      <strong>{t("Cada trabajo", "Every job")}</strong>
-                      <small>{t("TIENE SU CONTEXTO", "HAS ITS CONTEXT")}</small>
-                    </span>
-                  </div>
-                  <div>
-                    <small>
-                      {t("DISTRIBUCIÓN DE COSTOS", "COST BREAKDOWN")}
-                    </small>
-                    <div className="tracking-cost-bar">
-                      <i />
-                      <i />
-                      <i />
-                    </div>
-                    <div className="tracking-cost-legend">
-                      <span>{t("Materiales", "Materials")}</span>
-                      <span>{t("Mano de obra", "Labor")}</span>
-                      <span>{t("Otros", "Other")}</span>
-                    </div>
-                  </div>
-                </div>
-                <span className="tracking-card-number">
-                  01 / {t("COSTOS", "COSTS")}
-                </span>
-                <h3>
-                  {t("Cada costo, en contexto.", "Every cost, in context.")}
-                </h3>
-                <p>
-                  {t(
-                    "Relacioná ingresos y gastos con tus trabajos. Entendé tus números sin reconstruir planillas.",
-                    "Connect income and expenses to your jobs. Understand your numbers without rebuilding spreadsheets.",
-                  )}
-                </p>
-              </article>
-              <article className="tracking-benefit">
-                <div className="tracking-team-visual" aria-hidden="true">
-                  <div className="tracking-team-avatars">
-                    <span>ML</span>
-                    <span>JR</span>
-                    <span>AC</span>
-                    <span>
-                      <Plus size={18} />
-                    </span>
-                  </div>
-                  <div className="tracking-team-line">
-                    <span />
-                    <CheckCircle2 size={20} />
-                    <span />
-                  </div>
-                  <small>
-                    {t(
-                      "UN EQUIPO. LA MISMA INFORMACIÓN.",
-                      "ONE TEAM. THE SAME INFORMATION.",
-                    )}
-                  </small>
-                </div>
-                <span className="tracking-card-number">
-                  02 / {t("EQUIPOS", "TEAMS")}
-                </span>
-                <h3>
-                  {t("Responsabilidades claras.", "Clear responsibilities.")}
-                </h3>
-                <p>
-                  {t(
-                    "Organizá grupos y asigná responsables. Que cada persona sepa dónde aportar y qué seguir.",
-                    "Organize groups and assign owners. Help everyone know where to contribute and what to track.",
-                  )}
-                </p>
-              </article>
-              <article className="tracking-benefit">
-                <div className="tracking-report-visual" aria-hidden="true">
-                  <div className="tracking-report-file">
-                    <FileSpreadsheet size={28} />
-                    <div>
-                      <strong>{t("Reporte de trabajos", "Job report")}</strong>
-                      <small>Excel · .xlsx</small>
-                    </div>
-                    <Download size={19} />
-                  </div>
-                  <span className="tracking-report-lines" />
-                </div>
-                <span className="tracking-card-number">
-                  03 / {t("REPORTES", "REPORTS")}
-                </span>
-                <h3>{t("Listos para compartir.", "Ready to share.")}</h3>
-                <p>
-                  {t(
-                    "Convertí tus registros en reportes de Excel para tu equipo, tus clientes o tu estudio contable.",
-                    "Turn your records into Excel reports for your team, your clients or your accountant.",
-                  )}
-                </p>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section id="flujo" className="tracking-flow tracking-section">
-          <div className="tracking-container tracking-flow-grid">
-            <div>
-              <div className="tracking-eyebrow">
-                {t("UN FLUJO SIMPLE", "A SIMPLE WORKFLOW")}
-              </div>
-              <h2>
-                {t("Del trabajo diario", "From daily work")}
-                <br />
-                {t("a una visión completa.", "to the full picture.")}
-              </h2>
-              <p>
-                {t(
-                  "Una forma más ordenada de trabajar, de principio a fin.",
-                  "A more organized way to work, from start to finish.",
-                )}
-              </p>
-              <Link to="/register" className="tracking-text-link">
-                {t("Empezar ahora", "Get started")}
-                <ArrowRight size={18} />
-              </Link>
-              <div className="tracking-flow-stamp">
-                <Wrench size={27} />
-                <span>
-                  {t("MANTENIMIENTO", "MAINTENANCE")}
-                </span>
-              </div>
-            </div>
-            <ol className="tracking-steps">
-              {[
-                [
-                  t("Prepará tu espacio", "Set up your workspace"),
-                  t(
-                    "Creá tu cuenta y organizá la información de tu equipo.",
-                    "Create your account and organize your team information.",
-                  ),
-                  Users,
-                ],
-                [
-                  t("Registrá lo que pasa", "Record what happens"),
-                  t(
-                    "Cargá trabajos, horas, ubicaciones y gastos asociados.",
-                    "Add jobs, hours, locations and associated expenses.",
-                  ),
-                  ClipboardList,
-                ],
-                [
-                  t(
-                    "Convertí registros en decisiones",
-                    "Turn records into decisions",
-                  ),
-                  t(
-                    "Revisá resultados y exportá reportes para planificar lo que sigue.",
-                    "Review results and export reports to plan your next steps.",
-                  ),
-                  FileSpreadsheet,
-                ],
-              ].map(([title, description, Icon], i) => (
-                <li key={title}>
-                  <span className="tracking-step-number">0{i + 1}</span>
-                  <div>
-                    <Icon size={23} />
-                    <h3>{title}</h3>
-                    <p>{description}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-        <section className="tracking-cta">
-          <div className="tracking-container tracking-cta-inner">
-            <div>
-              <div className="tracking-eyebrow">
-                {t("TU PRÓXIMO PASO", "YOUR NEXT STEP")}
-              </div>
-              <h2>
-                {t("Más claridad.", "More clarity.")}
-                <br />
-                {t("Mejor operación.", "Better operations.")}
-              </h2>
-            </div>
-            <div>
-              <p>
-                {t(
-                  "Dale a cada trabajo el seguimiento que merece.",
-                  "Give every job the maintenance follow-up it deserves.",
-                )}
-              </p>
-              <Link
-                to="/register"
-                className="tracking-button tracking-button-accent"
-              >
-                {t("Crear mi cuenta", "Create my account")}
-                <ArrowRight size={18} />
-              </Link>
-              <Link to="/login" className="tracking-cta-login">
-                {t(
-                  "¿Ya tenés cuenta? Ingresá",
-                  "Already have an account? Sign in",
-                )}
-              </Link>
-            </div>
-          </div>
-        </section>
-      </main>
-      <footer className="tracking-footer">
-        <div className="tracking-container">
-          <a
-            href="#"
-            className="tracking-brand"
-            aria-label={t("ServiFood Mantenimiento", "ServiFood Maintenance")}
-          >
-            <img
-              src="/servifood_logo_white_text_HQ.png"
-              alt="ServiFood"
-              width="180"
-              height="230"
-              loading="lazy"
-              decoding="async"
-            />
-            <span>{t("MANTENIMIENTO", "MAINTENANCE")}</span>
-          </a>
-          <p>
-            {t(
-              "Seguimiento profesional. Todos los días.",
-              "Professional maintenance management. Every day.",
-            )}
-          </p>
-          <span>© {new Date().getFullYear()} ServiFood</span>
-        </div>
-      </footer>
+    <div className="sf-access">
+      <Link className="sf-button sf-button-primary" to="/login">
+        {t('Iniciar sesión', 'Sign in')} <ArrowUpRight size={19} aria-hidden="true" />
+      </Link>
+      <Link className="sf-button sf-button-secondary" to="/register">
+        {t('Registrarse', 'Register')} <ArrowRight size={17} aria-hidden="true" />
+      </Link>
     </div>
   );
 }
 
-function ArrowDownIcon() {
-  return <ArrowRight size={16} className="tracking-arrow-down" />;
+function MaintenancePreview({ t }) {
+  return (
+    <figure className="sf-preview" aria-label={t('Ejemplo ilustrativo de un trabajo de mantenimiento', 'Illustrative maintenance job example')}>
+      <div className="sf-preview-top">
+        <span className="sf-preview-brand">
+          ServiFood<span> / {t('Mantenimiento', 'Maintenance')}</span>
+        </span>
+        <span className="sf-avatar">SF</span>
+      </div>
+      <div className="sf-preview-content">
+        <div className="sf-preview-heading">
+          <div>
+            <span className="sf-mini-label">{t('OPERACIÓN DE HOY', 'TODAY’S OPERATIONS')}</span>
+            <h3>{t('Trabajo del día', 'Today’s job')}</h3>
+          </div>
+          <span className="sf-today">
+            <Calendar size={12} /> {t('Hoy', 'Today')}
+          </span>
+        </div>
+
+        <div className="sf-preview-option sf-preview-selected">
+          <span className="sf-radio"><Check size={12} strokeWidth={3} /></span>
+          <div>
+            <strong>{t('Revisión de cámara de frío', 'Cold room inspection')}</strong>
+            <span>{t('Mantenimiento preventivo', 'Preventive maintenance')}</span>
+          </div>
+          <span className="sf-option-number">01</span>
+        </div>
+
+        <div className="sf-preview-option">
+          <span className="sf-radio" />
+          <div>
+            <strong>{t('Control de horno', 'Oven inspection')}</strong>
+            <span>{t('Equipo de planta', 'Plant equipment')}</span>
+          </div>
+          <span className="sf-option-number">02</span>
+        </div>
+
+        <div className="sf-order-details">
+          <span><Clock3 size={14} /> 08:30</span>
+          <span><MapPin size={14} /> {t('Cocina central', 'Central kitchen')}</span>
+        </div>
+
+        <div className="sf-confirmed">
+          <CheckCircle2 size={17} />
+          <span>{t('Trabajo asignado', 'Job assigned')}</span>
+          <Check size={16} />
+        </div>
+
+        <div className="sf-delivery">
+          <span>{t('Estado', 'Status')}</span>
+          <strong><i /> {t('En curso', 'In progress')}</strong>
+        </div>
+      </div>
+      <figcaption>{t('Vista ilustrativa · Los datos dependen de tu operación.', 'Illustrative view · Data depends on your operation.')}</figcaption>
+    </figure>
+  );
+}
+
+export default function LandingPage() {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const t = (es, en) => (isEn ? en : es);
+  const steps = buildSteps(t);
+
+  return (
+    <div className="sf-landing">
+      <Helmet>
+        <title>{t('Mantenimiento · ServiFood', 'Maintenance · ServiFood')}</title>
+        <meta
+          name="description"
+          content={t(
+            'Trabajos, responsables, costos, equipos y reportes de mantenimiento en un solo lugar.',
+            'Maintenance jobs, owners, costs, equipment and reports in one place.'
+          )}
+        />
+      </Helmet>
+
+      <a href="#contenido" className="sf-skip">{t('Ir al contenido', 'Skip to content')}</a>
+
+      <div className="sf-blue-stage">
+        <header className="sf-header sf-container">
+          <Link to="/" className="sf-logo-link" aria-label="ServiFood, inicio">
+            <img
+              src="/servifood_logo_white_text_HQ.png"
+              alt="ServiFood Catering"
+              width="180"
+              height="70"
+              style={{ width: 'auto', height: '58px', objectFit: 'contain' }}
+            />
+          </Link>
+
+          <nav className="sf-nav" aria-label={t('Navegación principal', 'Main navigation')}>
+            <a href="#como-funciona">{t('Cómo funciona', 'How it works')}</a>
+            <a href="#experiencia">{t('La experiencia', 'The experience')}</a>
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <LanguageToggle className="h-9 border-white/25 bg-white/10 px-3 text-xs text-white hover:bg-white/20 hover:text-white" />
+            <Link to="/login" className="sf-header-login">
+              {t('Iniciar sesión', 'Sign in')} <ArrowUpRight size={17} aria-hidden="true" />
+            </Link>
+          </div>
+        </header>
+
+        <main id="contenido">
+          <section className="sf-hero sf-container" aria-labelledby="sf-hero-title">
+            <div className="sf-hero-copy">
+              <span className="sf-eyebrow">
+                <span /> {t('OPERACIÓN CLARA. MENOS VUELTAS.', 'CLEAR OPERATIONS. LESS FRICTION.')}
+              </span>
+              <h1 id="sf-hero-title">
+                {t('Tu operación', 'Your operations')}
+                <br />
+                {t('diaria, ', 'every day, ')}<span>{t('simple', 'simple')}</span>
+                <br />
+                {t('y organizada', 'and organized')}<span className="sf-period">.</span>
+              </h1>
+              <p>
+                {t('Cada trabajo suma información útil.', 'Every job adds useful context.')}
+                <br />
+                {t(
+                  'Registrá tareas, responsables, costos y equipos con la misma claridad que usás en Pedidos.',
+                  'Track tasks, owners, costs and equipment with the same clarity you use in Orders.'
+                )}
+              </p>
+
+              <AccessLinks t={t} />
+
+              <div className="sf-hero-note">
+                <ShieldCheck size={15} aria-hidden="true" />
+                <span>{t('Tu operación. Tus registros. Todo en un lugar.', 'Your operations. Your records. All in one place.')}</span>
+              </div>
+            </div>
+
+            <div className="sf-hero-visual">
+              <div className="sf-orbit sf-orbit-one" />
+              <div className="sf-orbit sf-orbit-two" />
+              <div className="sf-food-frame">
+                <img
+                  src="/images/servifood-produccion.webp"
+                  alt={t('Operación de producción de ServiFood', 'ServiFood production operations')}
+                  width="1200"
+                  height="800"
+                  fetchPriority="high"
+                />
+              </div>
+              <div className="sf-visual-tag">
+                <span className="sf-tag-icon"><Wrench size={17} /></span>
+                <span>
+                  {t('Menos información dispersa.', 'Less scattered information.')}
+                  <strong>{t('Más control operativo.', 'More operational control.')}</strong>
+                </span>
+              </div>
+              <MaintenancePreview t={t} />
+            </div>
+
+            <div className="sf-hero-bottom">
+              <a href="#como-funciona">
+                <span className="sf-scroll-icon"><ArrowDown size={15} /></span>
+                {t('Conocé cómo funciona', 'See how it works')}
+              </a>
+              <span>{t('MANTENIMIENTO + TECNOLOGÍA', 'MAINTENANCE + TECHNOLOGY')}</span>
+            </div>
+          </section>
+
+          <section className="sf-process" id="como-funciona" aria-labelledby="sf-process-title">
+            <div className="sf-container">
+              <div className="sf-section-heading">
+                <div>
+                  <span className="sf-eyebrow sf-eyebrow-dark">{t('ASÍ DE SIMPLE', 'THAT SIMPLE')}</span>
+                  <h2 id="sf-process-title">
+                    {t('Cada trabajo.', 'Every job.')}
+                    <br />
+                    <span>{t('Sin complicaciones.', 'Without complications.')}</span>
+                  </h2>
+                </div>
+                <p>
+                  {t('Un flujo más claro, desde la carga', 'A clearer workflow, from the first entry')}
+                  <br className="sf-desktop-break" /> {t('hasta el seguimiento y el reporte.', 'to follow-up and reporting.')}
+                </p>
+              </div>
+
+              <div className="sf-steps">
+                {steps.map(({ number, icon: Icon, title, text }) => (
+                  <article className="sf-step" key={number}>
+                    <div className="sf-step-top">
+                      <span>{number}</span>
+                      <Icon size={25} strokeWidth={1.5} aria-hidden="true" />
+                    </div>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="sf-experience" id="experiencia" aria-labelledby="sf-experience-title">
+            <div className="sf-container sf-experience-grid">
+              <div className="sf-history-scene" aria-label={t('Ejemplo ilustrativo del seguimiento de trabajos', 'Illustrative job tracking example')}>
+                <span className="sf-scene-label"><span /> {t('TU OPERACIÓN, EN ORDEN', 'YOUR OPERATIONS, IN ORDER')}</span>
+
+                <div className="sf-history-card">
+                  <div className="sf-history-heading">
+                    <span className="sf-history-icon"><ClipboardList size={22} /></span>
+                    <div>
+                      <h3>{t('Trabajos recientes', 'Recent jobs')}</h3>
+                      <p>{t('Todo queda organizado.', 'Everything stays organized.')}</p>
+                    </div>
+                  </div>
+
+                  <div className="sf-history-row">
+                    <span className="sf-date-tile"><Calendar size={19} /></span>
+                    <div>
+                      <strong>{t('Revisión cámara de frío', 'Cold room inspection')}</strong>
+                      <span>{t('Cocina central · Hoy', 'Central kitchen · Today')}</span>
+                    </div>
+                    <span className="sf-status">{t('En curso', 'In progress')}</span>
+                  </div>
+
+                  <div className="sf-history-row">
+                    <span className="sf-date-tile"><Check size={19} /></span>
+                    <div>
+                      <strong>{t('Mantenimiento anterior', 'Previous maintenance')}</strong>
+                      <span>{t('Consultá detalle, costos y responsable', 'Review details, costs and owner')}</span>
+                    </div>
+                    <ChevronRight size={18} />
+                  </div>
+
+                  <div className="sf-history-bottom">
+                    <ShieldCheck size={14} />
+                    <span>{t('Accedé con tu cuenta personal', 'Access with your personal account')}</span>
+                  </div>
+                </div>
+
+                <div className="sf-mobile-note">
+                  <Smartphone size={23} />
+                  <span>{t('Con vos,', 'With you,')}<strong>{t('donde estés.', 'wherever you are.')}</strong></span>
+                </div>
+
+                <span className="sf-scene-caption">{t('Vista ilustrativa de Mantenimiento ServiFood', 'Illustrative ServiFood Maintenance view')}</span>
+              </div>
+
+              <div className="sf-experience-copy">
+                <span className="sf-eyebrow sf-eyebrow-dark">{t('PENSADO PARA LA OPERACIÓN', 'BUILT FOR OPERATIONS')}</span>
+                <h2 id="sf-experience-title">
+                  {t('La tranquilidad de', 'The confidence of')}
+                  <br />
+                  {t('tenerlo ', 'having it ')}<span>{t('ordenado.', 'organized.')}</span>
+                </h2>
+                <p>{t('Menos tiempo buscando información. Más claridad para decidir qué sigue.', 'Less time searching for information. More clarity for deciding what comes next.')}</p>
+
+                <ul className="sf-benefits">
+                  <li>
+                    <Clock3 size={20} />
+                    <div>
+                      <h3>{t('Simple desde el primer registro', 'Simple from the first entry')}</h3>
+                      <p>{t('Cargá lo necesario y seguí trabajando.', 'Add what you need and keep working.')}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <ClipboardList size={20} />
+                    <div>
+                      <h3>{t('Trabajos siempre a mano', 'Jobs always at hand')}</h3>
+                      <p>{t('Revisá estados, responsables y costos.', 'Review status, owners and costs.')}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <Smartphone size={20} />
+                    <div>
+                      <h3>{t('Desde donde te quede cómodo', 'From wherever works best')}</h3>
+                      <p>{t('Usalo desde celular, tablet o computadora.', 'Use it from phone, tablet or computer.')}</p>
+                    </div>
+                  </li>
+                </ul>
+
+                <Link to="/login" className="sf-text-link">
+                  {t('Entrar a Mantenimiento', 'Enter Maintenance')} <ArrowUpRight size={18} />
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          <section className="sf-final" aria-labelledby="sf-final-title">
+            <div className="sf-container sf-final-inner">
+              <div>
+                <span className="sf-eyebrow">{t('TU OPERACIÓN EMPIEZA ACÁ', 'YOUR OPERATIONS START HERE')}</span>
+                <h2 id="sf-final-title">
+                  {t('Trabajo claro.', 'Clear work.')}
+                  <br />
+                  {t('Todo organizado', 'Everything organized')}<span>.</span>
+                </h2>
+                <p>{t('Ingresá a ServiFood Mantenimiento y centralizá tu operación.', 'Sign in to ServiFood Maintenance and centralize your operations.')}</p>
+              </div>
+              <div className="sf-final-actions">
+                <AccessLinks t={t} />
+                <span>{t('¿Es tu primera vez? Creá tu cuenta para empezar.', 'First time here? Create your account to get started.')}</span>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer className="sf-footer sf-container">
+          <Link to="/" aria-label="ServiFood, inicio">
+            <img
+              src="/servifood_logo_white_text_HQ.png"
+              alt="ServiFood Catering"
+              width="120"
+              height="48"
+              style={{ width: 'auto', height: '42px', objectFit: 'contain' }}
+              loading="lazy"
+            />
+          </Link>
+          <p>{t('Tu operación diaria. Mejor organizada.', 'Your daily operations. Better organized.')}</p>
+          <span>© {new Date().getFullYear()} ServiFood.<br />{t('Todos los derechos reservados.', 'All rights reserved.')}</span>
+        </footer>
+      </div>
+    </div>
+  );
 }
