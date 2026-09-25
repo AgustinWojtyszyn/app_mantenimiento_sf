@@ -2,8 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import LanguageToggle from '@/components/layout/LanguageToggle';
-import ThemeToggle from '@/components/layout/ThemeToggle';
 import { isOnboardingInProgress, markManualNavNow, clearOnboardingState } from '@/onboarding/onboardingStorage';
 import {
   Calendar,
@@ -184,12 +182,6 @@ export default function Sidebar() {
                   <BookOpen className="mr-3 h-5 w-5 shrink-0" />
                   <span>{t('nav.tutorial')}</span>
                 </Link>
-              </li>
-              <li>
-                <div className="flex items-center gap-2 px-1 py-1">
-                  <LanguageToggle className="flex-1 border-slate-200 bg-white text-slate-700 hover:bg-blue-50 hover:text-blue-700" />
-                  <ThemeToggle className="border-slate-200 bg-white text-slate-700 hover:bg-blue-50 hover:text-blue-700" />
-                </div>
               </li>
               <li>
                 <button
