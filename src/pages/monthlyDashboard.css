@@ -273,4 +273,3 @@
 .monthly-chart-plot { position: relative; padding-left: 22px; }
 .monthly-chart-scale { position: absolute; inset: 4px auto 14px 0; display: flex; flex-direction: column; justify-content: space-between; color: var(--monthly-muted); font-size: 11px; }
 .monthly-chart-dates > span { color: var(--monthly-muted); }
-.monthly-filter-grid > label { line-height: 1.5; font-weight: 500; }
