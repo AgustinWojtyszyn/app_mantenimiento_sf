@@ -13,7 +13,7 @@ export default function DailyJobCreatePage() {
   return (
     <div className="maintenance-page w-full">
       <div className="mx-auto max-w-[1200px] space-y-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="orders-page-header flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <Button
               type="button"
