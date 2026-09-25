@@ -17,12 +17,15 @@ import {
   Menu,
   X,
   Wrench,
+  Settings,
 } from 'lucide-react';
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const { profile, user, signOut, isAdmin } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isEn = language === 'en';
+  const copy = (es, en) => (isEn ? en : es);
   const location = useLocation();
 
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email || 'Usuario';
@@ -45,13 +48,21 @@ export default function Sidebar() {
   ].filter((item) => (item.adminOnly ? isAdmin : true))), [t, isAdmin]);
 
   const menuSections = [
-    { label: 'Operación', items: operationItems },
-    { label: 'Reportes y análisis', items: reportItems },
-    { label: 'Administración', items: administrationItems },
+    { label: copy('Operación', 'Operations'), items: operationItems },
+    { label: copy('Reportes y análisis', 'Reports & analytics'), items: reportItems },
+    { label: copy('Administración', 'Administration'), items: administrationItems },
   ].filter((section) => section.items.length > 0);
 
   const allItems = [...operationItems, ...reportItems, ...administrationItems];
-  const activeItem = allItems.find((item) => location.pathname === item.path);
+  const isItemActive = (item) => {
+    if (item.path === '/app/trabajos-diarios') {
+      return location.pathname === item.path
+        || location.pathname.startsWith('/app/trabajos-diarios/')
+        || location.pathname.startsWith('/app/jobs/');
+    }
+    return location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
+  };
+  const activeItem = allItems.find(isItemActive);
   const currentLabel = activeItem?.label ?? t('nav.daily');
 
   const toggleSidebar = () => setIsOpen((value) => !value);
@@ -71,7 +82,7 @@ export default function Sidebar() {
 
   const renderItem = (item) => {
     const Icon = item.icon;
-    const active = location.pathname === item.path;
+    const active = isItemActive(item);
     return (
       <li key={item.path}>
         <Link to={item.path} onClick={handleNavClick} className={itemClass(active)}>
@@ -117,7 +128,7 @@ export default function Sidebar() {
             </div>
             <div className="mt-0.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
               <Wrench className="h-3 w-3" />
-              Mantenimiento
+              {copy('Mantenimiento', 'Maintenance')}
             </div>
           </Link>
           <button
@@ -146,7 +157,7 @@ export default function Sidebar() {
 
           <section aria-label="Cuenta y ayuda" className="mt-5 border-t border-slate-200 pt-4">
             <p className="mb-1.5 px-3 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
-              Cuenta y ayuda
+              {copy('Cuenta y ayuda', 'Account & help')}
             </p>
 
             <div className="mb-3 rounded-xl bg-slate-50 px-3 py-3">
@@ -156,6 +167,16 @@ export default function Sidebar() {
             </div>
 
             <ul className="space-y-1">
+              <li>
+                <Link
+                  to="/app/configuracion"
+                  onClick={handleNavClick}
+                  className={itemClass(location.pathname === '/app/configuracion')}
+                >
+                  <Settings className="mr-3 h-5 w-5 shrink-0" />
+                  <span>{t('nav.settings')}</span>
+                </Link>
+              </li>
               <li>
                 <Link
                   to="/app/tutorial"
