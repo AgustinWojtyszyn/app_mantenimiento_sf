@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 221.2 83.2% 33.3%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
  
     --secondary: 210 40% 96.1%;
@@ -32,9 +32,9 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 33.3%;
+    --ring: 221.2 83.2% 53.3%;
  
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
  
   .dark {
@@ -492,5 +492,135 @@
   .maintenance-table-shell,
   .maintenance-form-section {
     border-radius: 16px;
+  }
+}
+
+
+/* Pedidos visual parity layer */
+.orders-inspired-shell {
+  --orders-blue: #2563eb;
+  --orders-blue-dark: #1e40af;
+  --orders-orange: #f97316;
+  --orders-ink: #0f172a;
+  --orders-muted: #64748b;
+  --orders-line: #e2e8f0;
+  --orders-soft: #f8fafc;
+  background:
+    radial-gradient(circle at 16% 0%, rgb(96 165 250 / 0.18), transparent 28%),
+    linear-gradient(135deg, #2563eb 0%, #1d4ed8 48%, #1e40af 100%);
+}
+
+.orders-inspired-shell main {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(148 163 184 / .75) transparent;
+}
+
+.orders-inspired-shell .maintenance-page,
+.orders-inspired-shell .daily-dashboard,
+.orders-inspired-shell .monthly-dashboard {
+  color: var(--orders-ink);
+}
+
+.orders-inspired-shell .maintenance-toolbar,
+.orders-inspired-shell .maintenance-page-heading,
+.orders-inspired-shell .maintenance-panel,
+.orders-inspired-shell .maintenance-table-shell,
+.orders-inspired-shell .maintenance-form-section {
+  border-color: var(--orders-line);
+  border-top-width: 1px;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(15 23 42 / .08);
+}
+
+.orders-inspired-shell .maintenance-panel:hover,
+.orders-inspired-shell .maintenance-form-section:hover {
+  border-color: rgb(147 197 253 / .9);
+  box-shadow: 0 10px 28px rgb(15 23 42 / .10);
+}
+
+.orders-inspired-shell .maintenance-page :is(input, select, textarea),
+.orders-inspired-shell .form-lg :is(input, select, textarea) {
+  min-height: 46px;
+  border-color: #cbd5e1;
+  border-radius: .75rem;
+  background: #fff;
+  color: #111827;
+  box-shadow: none;
+}
+
+.orders-inspired-shell .maintenance-page :is(input, select, textarea):focus,
+.orders-inspired-shell .form-lg :is(input, select, textarea):focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / .14);
+}
+
+.orders-inspired-shell .orders-page-header {
+  overflow: hidden;
+  border: 1px solid rgb(191 219 254 / .28) !important;
+  border-radius: 1rem !important;
+  background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%) !important;
+  padding: 1rem 1.25rem !important;
+  color: #fff !important;
+  box-shadow: 0 14px 30px rgb(30 64 175 / .22) !important;
+}
+
+.orders-inspired-shell .orders-page-header h1,
+.orders-inspired-shell .orders-page-header h2,
+.orders-inspired-shell .orders-page-header h3 {
+  color: #fff !important;
+}
+
+.orders-inspired-shell .orders-page-header p,
+.orders-inspired-shell .orders-page-header span:not(.orders-keep-color) {
+  color: #dbeafe !important;
+}
+
+.orders-inspired-shell .orders-page-header > div:first-child svg,
+.orders-inspired-shell .orders-page-header .orders-header-icon {
+  color: #fff;
+}
+
+.orders-inspired-shell .orders-page-header button[variant='outline'] {
+  border-color: rgb(255 255 255 / .35);
+}
+
+.orders-inspired-shell .orders-content-card {
+  border: 1px solid var(--orders-line);
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(15 23 42 / .08);
+}
+
+.orders-inspired-shell table {
+  border-color: var(--orders-line);
+}
+
+.orders-inspired-shell thead {
+  background: #f8fafc;
+}
+
+.orders-inspired-shell th {
+  color: #475569;
+}
+
+.orders-inspired-shell tbody tr:hover {
+  background: #eff6ff;
+}
+
+.dark .orders-inspired-shell {
+  background:
+    radial-gradient(circle at 16% 0%, rgb(96 165 250 / 0.16), transparent 28%),
+    linear-gradient(135deg, #1e3a8a 0%, #172554 55%, #0f172a 100%);
+}
+
+.dark .orders-inspired-shell .orders-sidebar {
+  background: #fff;
+  color: #0f172a;
+}
+
+@media (max-width: 767px) {
+  .orders-inspired-shell .orders-page-header {
+    padding: .9rem 1rem !important;
   }
 }
