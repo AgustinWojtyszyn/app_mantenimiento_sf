@@ -133,8 +133,8 @@ export default function AdminPage() {
   );
 
   return (
-    <div className="space-y-6 text-gray-900 dark:text-white bg-slate-50 dark:bg-slate-950 p-4 md:p-6 rounded-2xl border border-gray-200 dark:border-slate-900">
-      <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-4 shadow-sm text-gray-900 dark:text-white">
+    <div className="space-y-6 text-gray-900">
+      <div className="orders-page-header">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-50 md:text-3xl">Panel de Administración</h1>
