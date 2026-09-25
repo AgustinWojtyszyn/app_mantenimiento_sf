@@ -1,22 +1,19 @@
-
 import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
-import ThemeToggle from '@/components/layout/ThemeToggle';
-import LanguageToggle from '@/components/layout/LanguageToggle';
 
 export default function AppLayout() {
-  const isDashboard = useLocation().pathname.replace(/\/$/, '') === '/app/trabajos-diarios';
   return (
-    <div className={isDashboard ? "dashboard-layout flex min-h-screen bg-slate-50 dark:bg-slate-950 text-foreground font-sans" : "flex h-screen bg-background text-foreground overflow-hidden font-sans"}>
+    <div className="orders-inspired-shell flex min-h-dvh w-full bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-slate-900">
       <Sidebar />
-      <div className="hidden lg:flex fixed top-4 right-6 z-50 items-center gap-2">
-        <LanguageToggle className="shadow-md bg-background/80 backdrop-blur-md border border-border/70" />
-        <ThemeToggle className="shadow-md bg-background/80 backdrop-blur-md border border-border/70" />
-      </div>
-      <main className={isDashboard ? "min-w-0 flex-1 w-full p-4 lg:p-8 pt-16 sm:pt-20" : "flex-1 overflow-y-auto w-full p-4 lg:p-8 pt-16 sm:pt-20 lg:pt-10"}>
-        <div className={isDashboard ? "w-full min-w-0 mx-auto text-base" : "max-w-7xl mx-auto space-y-6 text-[15px] sm:text-base lg:text-lg"}>
-          <Outlet />
+      <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden">
+        <div
+          className="min-h-dvh w-full p-4 pt-16 md:p-8 md:pt-8"
+          style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        >
+          <div className="mx-auto w-full max-w-[1600px]">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>
