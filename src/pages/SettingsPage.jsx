@@ -116,9 +116,9 @@ export default function SettingsPage() {
   };
 
     return (
-        <div className="space-y-10 max-w-4xl mx-auto py-8 animate-in fade-in duration-500">
-            <div>
-	    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-slate-50">Configuración</h1>
+        <div className="mx-auto max-w-4xl space-y-6 animate-in fade-in duration-500">
+            <div className="orders-page-header">
+	    <h1 className="text-3xl md:text-4xl font-bold">Configuración</h1>
 	    <p className="text-lg md:text-xl text-gray-500 dark:text-slate-300">Gestiona tu cuenta y seguridad</p>
             </div>
 
