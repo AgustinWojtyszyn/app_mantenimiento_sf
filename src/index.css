@@ -571,8 +571,7 @@
   color: #fff !important;
 }
 
-.orders-inspired-shell .orders-page-header p,
-.orders-inspired-shell .orders-page-header span:not(.orders-keep-color) {
+.orders-inspired-shell .orders-page-header p {
   color: #dbeafe !important;
 }
 
@@ -623,4 +622,17 @@
   .orders-inspired-shell .orders-page-header {
     padding: .9rem 1rem !important;
   }
+}
+
+.orders-inspired-shell .bg-\[\#1e3a8a\] {
+  background-color: #2563eb !important;
+}
+.orders-inspired-shell .hover\:bg-blue-900:hover {
+  background-color: #1d4ed8 !important;
+}
+.orders-inspired-shell .text-\[\#1e3a8a\] {
+  color: #2563eb !important;
+}
+.orders-inspired-shell .border-\[\#1e3a8a\] {
+  border-color: #2563eb !important;
 }
