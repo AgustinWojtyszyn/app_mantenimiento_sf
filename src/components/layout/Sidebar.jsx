@@ -115,7 +115,7 @@ export default function Sidebar() {
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         md:sticky md:top-0 md:w-64 md:translate-x-0
       `}>
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4">
+        <div className="flex h-[72px] items-center justify-between border-b border-slate-200 px-4">
           <Link to="/app/trabajos-diarios" onClick={handleNavClick} className="min-w-0">
             <div className="leading-none">
               <span className="text-[2.35rem] font-black tracking-[-0.055em] text-blue-600">Servi</span>
