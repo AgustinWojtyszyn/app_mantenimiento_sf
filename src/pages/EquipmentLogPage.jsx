@@ -2239,7 +2239,7 @@ export default function EquipmentLogPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-5">
+      <div className="orders-page-header">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-[#1e3a8a] dark:bg-blue-900/40 dark:text-blue-100">
