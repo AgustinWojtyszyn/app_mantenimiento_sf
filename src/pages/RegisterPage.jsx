@@ -93,7 +93,7 @@ export default function RegisterPage() {
 
         <div className="mt-6 grid gap-3">
           <Link to="/login" className="block">
-            <Button className="h-12 w-full bg-[#082b59] text-base font-bold text-white hover:bg-[#0a376d]">
+            <Button className="h-12 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-base font-bold text-white shadow-lg hover:from-orange-600 hover:to-orange-700">
               {copy('Ir a iniciar sesión', 'Go to sign in')}
             </Button>
           </Link>
@@ -198,7 +198,7 @@ export default function RegisterPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="h-12 w-full bg-[#082b59] text-base font-bold text-white shadow-lg shadow-blue-950/10 hover:bg-[#0a376d]"
+            className="h-12 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-base font-bold text-white shadow-lg hover:from-orange-600 hover:to-orange-700 hover:shadow-xl"
           >
             {loading ? copy('Creando cuenta...', 'Creating account...') : copy('Crear cuenta', 'Create account')}
           </Button>
