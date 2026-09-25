@@ -28,8 +28,6 @@ export default function Sidebar() {
   const copy = (es, en) => (isEn ? en : es);
   const location = useLocation();
 
-  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email || 'Usuario';
-  const displayEmail = profile?.email || user?.email || '';
   const displayRole = profile?.role || '';
 
   const operationItems = useMemo(() => ([
@@ -118,15 +116,15 @@ export default function Sidebar() {
         sidebar orders-sidebar fixed left-0 top-0 z-50 flex h-dvh w-[min(85vw,320px)] flex-col
         border-r-4 border-orange-500 bg-white shadow-2xl transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:sticky md:top-0 md:w-64 md:translate-x-0
+        md:sticky md:top-0 md:w-56 md:translate-x-0
       `}>
         <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4">
           <Link to="/app/trabajos-diarios" onClick={handleNavClick} className="min-w-0">
             <div className="leading-none">
-              <span className="text-[2rem] font-black tracking-[-0.05em] text-blue-600">Servi</span>
-              <span className="text-[2rem] font-black tracking-[-0.05em] text-orange-500">Food</span>
+              <span className="text-[1.75rem] font-black tracking-[-0.05em] text-blue-600">Servi</span>
+              <span className="text-[1.75rem] font-black tracking-[-0.05em] text-orange-500">Food</span>
             </div>
-            <div className="mt-0.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
+            <div className="mt-1 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">
               <Wrench className="h-3 w-3" />
               {copy('Mantenimiento', 'Maintenance')}
             </div>
@@ -142,7 +140,7 @@ export default function Sidebar() {
         </div>
 
         <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-white px-3 pb-4 pt-4">
-          <div className="flex-1 space-y-5">
+          <div className="flex-1 space-y-4">
             {menuSections.map((section) => (
               <section key={section.label} aria-label={section.label}>
                 <p className="mb-1.5 px-3 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
@@ -160,11 +158,11 @@ export default function Sidebar() {
               {copy('Cuenta y ayuda', 'Account & help')}
             </p>
 
-            <div className="mb-3 rounded-xl bg-slate-50 px-3 py-3">
-              <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>
-              {displayEmail ? <p className="mt-0.5 truncate text-xs text-slate-500">{displayEmail}</p> : null}
-              {displayRole ? <p className="mt-1 text-[10px] font-black uppercase tracking-[0.12em] text-blue-600">{displayRole}</p> : null}
-            </div>
+            {displayRole ? (
+              <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.12em] text-blue-600">
+                {displayRole}
+              </div>
+            ) : null}
 
             <ul className="space-y-1">
               <li>
