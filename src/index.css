@@ -187,15 +187,15 @@
   position: relative;
   isolation: isolate;
   display: flex;
-  min-height: clamp(124px, 10vw, 148px);
+  min-height: clamp(92px, 7vw, 106px);
   overflow: hidden;
   flex-direction: column;
   justify-content: center;
   border: 1px solid rgb(148 163 184 / 0.16);
-  border-radius: 16px;
+  border-radius: 14px;
   background: linear-gradient(135deg, #020817 0%, #081a38 52%, #0b2349 100%);
   box-shadow:
-    0 12px 28px rgb(2 6 23 / 0.2),
+    0 8px 22px rgb(2 6 23 / 0.18),
     inset 0 1px 0 rgb(255 255 255 / 0.08),
     inset 0 -1px 0 rgb(15 23 42 / 0.65);
 }
@@ -206,53 +206,53 @@
   justify-content: center;
   flex: 1;
   flex-direction: column;
-  gap: clamp(6px, 0.8vw, 10px);
-  padding: 12px clamp(14px, 3vw, 34px) 14px;
+  gap: clamp(3px, 0.45vw, 5px);
+  padding: 8px clamp(14px, 3vw, 34px) 9px;
   text-align: center;
 }
 
 .maintenance-hero__title {
   max-width: 100%;
   color: #fff8e7;
-  font-size: clamp(1.2rem, 1.9vw, 1.65rem);
+  font-size: clamp(1.05rem, 1.55vw, 1.35rem);
   font-style: italic;
   font-weight: 950;
   line-height: 1;
   letter-spacing: 0;
   white-space: nowrap;
-  text-shadow: 0 3px 12px rgb(0 0 0 / 0.3);
+  text-shadow: 0 2px 9px rgb(0 0 0 / 0.28);
   transform: skewX(-7deg);
 }
 
 .maintenance-hero__logo {
   width: auto;
-  height: clamp(54px, 5vw, 72px);
-  max-width: min(300px, 78vw);
+  height: clamp(42px, 3.8vw, 52px);
+  max-width: min(230px, 72vw);
   object-fit: contain;
-  filter: drop-shadow(0 7px 14px rgb(0 0 0 / 0.3));
+  filter: drop-shadow(0 5px 10px rgb(0 0 0 / 0.28));
 }
 
 @media (max-width: 640px) {
   .maintenance-hero {
-    min-height: 126px;
-    border-radius: 14px;
+    min-height: 94px;
+    border-radius: 12px;
   }
 
   .maintenance-hero__content {
-    gap: 7px;
-    padding: 12px 12px 14px;
+    gap: 4px;
+    padding: 8px 10px 9px;
   }
 
   .maintenance-hero__title {
     max-width: 100%;
-    font-size: clamp(1.05rem, 5vw, 1.35rem);
+    font-size: clamp(0.95rem, 4.4vw, 1.15rem);
     white-space: normal;
     text-wrap: balance;
   }
 
   .maintenance-hero__logo {
-    height: 54px;
-    max-width: 118px;
+    height: 42px;
+    max-width: 104px;
   }
 }
 
