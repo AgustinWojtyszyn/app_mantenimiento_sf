@@ -377,7 +377,7 @@ export default function WorkersPage() {
   if (loading && workers.length === 0) return <LoadingSpinner />;
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center">
+      <div className="orders-page-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
 	      <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-50 md:text-3xl">{t('workersPage.title')}</h1>
 	      <p className="text-base md:text-lg text-gray-500 dark:text-slate-300">{t('workersPage.subtitle')}</p>
